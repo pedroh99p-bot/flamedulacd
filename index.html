@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FlaMedula - Medula sem medo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
+    <style>
+        /* === SYSTEM & VARIABLES === */
+        :root {
+            /* Colors */
+            --donor-main: #B91C1C;
+            --donor-dark: #7F1D1D;
+            --donor-light: #DC2626;
+            
+            --patient-main: #2563EB;
+            --patient-dark: #1D4ED8;
+            --patient-bg: #DBEAFE;
+            
+            --redome-main: #F97316;
+            --redome-dark: #EA580C;
+            --redome-bg: #FFEDD5;
+            
+            --bg-page: #FAFAF7;
+            --bg-surface: #FFFFFF;
+            --text-main: #111827;
+            --text-muted: #6B7280;
+            --border-light: rgba(0,0,0,0.08);
+            
+            /* Typography */
+            --font-main: 'Inter', sans-serif;
+            --font-display: 'Oswald', sans-serif;
+            
+            /* Shadows & Radii (iOS style) */
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+            --shadow-lg: 0 20px 40px rgba(0,0,0,0.12);
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+            --radius-full: 9999px;
+            
+            /* Layout */
+            --container-w: 1200px;
+            --nav-h: 80px;
+        }
+
+        /* === RESET & BASE === */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+        img, video { max-width: 100%; height: auto; display: block; }
+        a { text-decoration: none; color: inherit; cursor: pointer; }
+        button { border: none; background: none; font-family: inherit; cursor: pointer; }
+        ul { list-style: none; }
+
+        /* Typography Utilities */
+        .title-lg { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; }
+        .title-md { font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; }
+        .title-sm { font-size: 1.25rem; font-weight: 600; line-height: 1.3; }
+        .text-body { font-size: 1rem; color: var(--text-muted); }
+        .text-large { font-size: 1.125rem; color: var(--text-muted); }
+
+        .container {
+            width: 100%;
+            max-width: var(--container-w);
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* === BUTTONS === */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn-donor {
+            background-color: var(--donor-main);
+            color: white;
+            box-shadow: 0 4px 12px rgba(185, 28, 28, 0.2);
+        }
+        .btn-donor:hover { background-color: var(--donor-dark); }
+        .btn-patient {
+            background-color: var(--patient-main);
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+        .btn-patient:hover { background-color: var(--patient-dark); }
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--text-main);
+            color: var(--text-main);
+        }
+        .btn-outline:hover { background-color: var(--text-main); color: white; }
+
+        /* === NAVBAR === */
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: var(--nav-h);
+            background: rgba(250, 250, 247, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-light);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+        }
+        .nav-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+        .nav-logo img { height: 40px; }
+        .nav-links { display: flex; gap: 32px; align-items: center; }
+        .nav-links a { font-weight: 500; font-size: 0.95rem; color: var(--text-muted); transition: color 0.2s; }
+        .nav-links a:hover { color: var(--text-main); }
+        .nav-actions { display: flex; gap: 12px; }
+        
+        @media (max-width: 900px) {
+            .nav-links { display: none; }
+            .nav-actions .btn { padding: 10px 16px; font-size: 0.85rem; }
+            .btn-text { display: none; } /* Hide text on very small screens, keep emoji */
+        }
+
+        /* === HERO CAROUSEL === */
+        .hero-section {
+            padding-top: calc(var(--nav-h) + 24px);
+            padding-bottom: 40px;
+        }
+        .hero-card {
+            background: linear-gradient(135deg, var(--donor-main) 0%, var(--donor-dark) 100%);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            position: relative;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            color: white;
+            box-shadow: var(--shadow-lg);
+        }
+        /* Abstract network texture overlay */
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 0%, transparent 40%),
+                              radial-gradient(circle at 80% 70%, rgba(255,255,255,0.05) 0%, transparent 50%);
+            opacity: 0.8;
+            pointer-events: none;
+        }
+        
+        .carousel-track {
+            position: relative;
+            flex: 1;
+            display: flex;
+        }
+        .carousel-slide {
+            position: absolute;
+            inset: 0;
+            padding: 48px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            transform: translateY(20px);
+        }
+        .carousel-slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .slide-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(8px);
+            padding: 6px 16px;
+            border-radius: var(--radius-full);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            width: fit-content;
+        }
+        .slide-title { font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; line-height: 1.1; margin-bottom: 16px; max-width: 800px;}
+        .slide-text { font-size: 1.125rem; opacity: 0.9; margin-bottom: 32px; max-width: 600px; line-height: 1.6;}
+        .slide-btn {
+            background: white; color: var(--donor-main); padding: 14px 28px;
+            border-radius: var(--radius-full); font-weight: 600; text-decoration: none;
+            width: fit-content; transition: transform 0.2s;
+        }
+        .slide-btn:hover { transform: scale(1.05); }
+
+        .carousel-controls {
+            padding: 0 48px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: relative;
+            z-index: 10;
+        }
+        .carousel-dots { display: flex; gap: 8px; }
+        .dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: rgba(255,255,255,0.3); cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .dot.active { background: white; width: 24px; border-radius: 8px; }
+        
+        .progress-bar {
+            height: 3px; background: rgba(255,255,255,0.2); border-radius: 3px;
+            overflow: hidden; width: 200px;
+        }
+        .progress-fill {
+            height: 100%; background: white; width: 0%;
+            transform-origin: left;
+        }
+
+        @media (max-width: 768px) {
+            .hero-card { min-height: 450px; border-radius: var(--radius-lg); }
+            .carousel-slide { padding: 32px 24px; }
+        }
+
+        /* === ROLLERS === */
+        .roller-wrapper {
+            background: var(--bg-surface);
+            padding: 16px 0;
+            overflow: hidden;
+            display: flex;
+            border-top: 1px solid var(--border-light);
+            border-bottom: 1px solid var(--border-light);
+        }
+        .roller-wrapper.dark { background: var(--text-main); color: white; }
+        
+        .roller-track {
+            display: flex;
+            white-space: nowrap;
+            animation: scroll-left 25s linear infinite;
+        }
+        .roller-track.reverse { animation-name: scroll-right; }
+        
+        .roller-item {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        .roller-item span { color: var(--donor-main); }
+
+        @keyframes scroll-left { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        @keyframes scroll-right { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
+        
+        @media (prefers-reduced-motion: reduce) {
+            .roller-track { animation-duration: 60s; }
+        }
+
+        /* === ACTION HUB === */
+        .hub-section { padding: 80px 0; }
+        .hub-header { text-align: center; margin-bottom: 56px; max-width: 600px; margin-inline: auto; }
+        
+        .hub-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            transition: opacity 0.3s;
+        }
+        
+        .hub-card {
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            padding: 40px 32px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .hub-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+        
+        .card-icon {
+            font-size: 2.5rem; margin-bottom: 24px;
+            width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;
+            border-radius: var(--radius-md);
+        }
+        .card-donor .card-icon { background: rgba(185, 28, 28, 0.1); }
+        .card-patient .card-icon { background: var(--patient-bg); }
+        .card-redome .card-icon { background: var(--redome-bg); }
+        
+        .hub-card img { height: 32px; margin-bottom: 24px; object-fit: contain; }
+        
+        .hub-card h3 { font-size: 1.5rem; margin-bottom: 12px; color: var(--text-main); }
+        .hub-card p { color: var(--text-muted); margin-bottom: 32px; flex: 1; }
+        
+        .card-btn {
+            width: 100%; padding: 14px; border-radius: var(--radius-full);
+            font-weight: 600; text-align: center; transition: opacity 0.2s;
+        }
+        .card-donor .card-btn { background: var(--donor-main); color: white; }
+        .card-patient .card-btn { background: var(--patient-main); color: white; }
+        .card-redome .card-btn { background: var(--redome-main); color: white; }
+        .hub-card:hover .card-btn { opacity: 0.9; }
+
+        @media (max-width: 900px) {
+            .hub-grid { grid-template-columns: 1fr; }
+        }
+
+        /* === ACTION PANELS (Simulated Forms) === */
+        .panel-container {
+            display: none;
+            background: var(--bg-surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-light);
+            padding: 40px;
+            max-width: 700px;
+            margin: 0 auto;
+            animation: slideUp 0.4s ease forwards;
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+        .btn-back { display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-weight: 500; font-size: 0.9rem; }
+        .btn-back:hover { color: var(--text-main); }
+        
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-col-full { grid-column: 1 / -1; }
+        
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group label { font-size: 0.9rem; font-weight: 600; color: var(--text-main); }
+        .form-control {
+            padding: 14px 16px; border-radius: var(--radius-md);
+            border: 1px solid #E5E7EB; background: #F9FAFB;
+            font-family: inherit; font-size: 1rem; color: var(--text-main);
+            transition: all 0.2s;
+        }
+        .form-control:focus { outline: none; border-color: var(--donor-main); box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.1); background: white;}
+        
+        .radio-group { display: flex; gap: 16px; }
+        .radio-label { display: flex; align-items: center; gap: 8px; font-size: 0.95rem; cursor: pointer; }
+        
+        .checkbox-group { display: flex; align-items: flex-start; gap: 12px; margin-top: 16px; }
+        .checkbox-group input { margin-top: 4px; width: 18px; height: 18px; accent-color: var(--donor-main); cursor: pointer;}
+        .checkbox-group label { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; }
+        
+        .panel-btn { width: 100%; margin-top: 32px; padding: 16px; font-size: 1.05rem; }
+        
+        /* Redome Panel Info */
+        .info-list { margin: 24px 0; background: var(--redome-bg); padding: 24px; border-radius: var(--radius-md); }
+        .info-list li { margin-bottom: 12px; display: flex; align-items: center; gap: 12px; font-weight: 500; color: var(--redome-dark);}
+        
+        .success-msg { display: none; text-align: center; padding: 40px 20px; }
+        .success-icon { font-size: 4rem; margin-bottom: 16px; }
+
+        @media (max-width: 600px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .panel-container { padding: 24px; }
+        }
+
+        /* === VIDEO SECTION === */
+        .video-section {
+            padding: 80px 0;
+            background: linear-gradient(to bottom, var(--bg-page), white);
+        }
+        .video-layout {
+            display: flex;
+            align-items: center;
+            gap: 64px;
+        }
+        
+        .video-wrapper {
+            flex: 0 0 320px;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            aspect-ratio: 9/16;
+            background: #000;
+        }
+        .video-element { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* Custom Controls Overlay */
+        .custom-controls {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column; justify-content: flex-end;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 40%);
+            padding: 24px; opacity: 0; transition: opacity 0.3s;
+        }
+        .video-wrapper:hover .custom-controls,
+        .video-wrapper.paused .custom-controls { opacity: 1; }
+        
+        .play-btn-center {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 64px; height: 64px; border-radius: 50%; background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 24px; transition: transform 0.2s; cursor: pointer;
+        }
+        .play-btn-center:hover { transform: translate(-50%, -50%) scale(1.1); }
+        .video-wrapper:not(.paused) .play-btn-center { display: none; }
+        
+        .control-bar { display: flex; align-items: center; gap: 16px; width: 100%; }
+        .control-btn { color: white; font-size: 1.2rem; }
+        .vid-progress-container {
+            flex: 1; height: 4px; background: rgba(255,255,255,0.3);
+            border-radius: 2px; cursor: pointer; position: relative;
+        }
+        .vid-progress-filled {
+            height: 100%; background: var(--donor-main); border-radius: 2px; width: 0%;
+            pointer-events: none;
+        }
+
+        .video-text { flex: 1; }
+        .video-text h2 { margin-bottom: 16px; color: var(--text-main); }
+        .video-text p { margin-bottom: 32px; font-size: 1.125rem; color: var(--text-muted); }
+        .bullet-list { display: flex; flex-direction: column; gap: 16px; }
+        .bullet-item { display: flex; align-items: flex-start; gap: 12px; font-weight: 500; }
+        .bullet-icon { flex-shrink: 0; }
+
+        @media (max-width: 900px) {
+            .video-layout { flex-direction: column; text-align: center; gap: 40px; }
+            .video-wrapper { width: 100%; max-width: 320px; margin: 0 auto; }
+            .bullet-item { text-align: left; }
+        }
+
+        /* === MEDULA SEM MEDO (FLIP CARDS) === */
+        .faq-section { padding: 80px 0; background: var(--bg-page); }
+        .faq-header { text-align: center; margin-bottom: 56px; }
+        
+        .faq-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+        
+        .flip-card {
+            background-color: transparent;
+            perspective: 1000px;
+            aspect-ratio: 4/3;
+            cursor: pointer;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%; height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .flip-card:hover .flip-card-inner { transform: rotateY(180deg); }
+        
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%; height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .flip-card-front {
+            background: white; border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-sm);
+        }
+        .flip-card-front h3 { font-size: 1.5rem; color: var(--text-main); line-height: 1.3;}
+        .flip-icon { font-size: 2rem; margin-bottom: 16px; opacity: 0.5; }
+        
+        .flip-card-back {
+            background: linear-gradient(135deg, var(--donor-main), var(--donor-dark));
+            color: white; transform: rotateY(180deg);
+        }
+        .flip-card-back p { font-size: 1.125rem; font-weight: 500; line-height: 1.5; margin-bottom: auto;}
+        .card-logo { width: 80px; opacity: 0.8; margin-top: 24px; }
+
+        @media (max-width: 768px) {
+            .faq-grid { grid-template-columns: 1fr; }
+            .flip-card { aspect-ratio: auto; min-height: 250px; }
+            /* On mobile, tapping handles the hover state naturally in most modern browsers, 
+               but we add an active state for explicit feedback */
+            .flip-card:active .flip-card-inner { transform: rotateY(180deg); }
+            .flip-card-front, .flip-card-back { padding: 32px 24px; }
+        }
+
+        /* === QUEM SOMOS & TRANSPARENCIA === */
+        .transparency-section {
+            padding: 100px 0;
+            background-color: #F4F4F0; /* Off-white quente */
+            position: relative;
+        }
+        .transparency-section::before {
+            content: ''; position: absolute; inset: 0; opacity: 0.4; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23b91c1c' fill-opacity='0.05' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='3'/%3E%3Ccircle cx='13' cy='13' r='3'/%3E%3C/g%3E%3C/svg%3E");
+        }
+        .trans-layout {
+            display: flex; gap: 64px; align-items: center; position: relative; z-index: 1;
+        }
+        .trans-text { flex: 1; }
+        .trans-manifesto {
+            font-size: 1.5rem; font-weight: 500; color: var(--text-main);
+            line-height: 1.4; margin-top: 24px; margin-bottom: 24px; letter-spacing: -0.01em;
+        }
+        .trans-metrics { flex: 1; display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .metric-card {
+            background: white; padding: 24px; border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm); border: 1px solid var(--border-light);
+            display: flex; flex-direction: column;
+        }
+        .metric-title { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;}
+        .metric-value { font-size: 3rem; font-weight: 700; color: var(--donor-main); line-height: 1; margin-bottom: 8px; font-family: var(--font-display); }
+        .metric-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; }
+        .trans-disclaimer { grid-column: 1 / -1; text-align: center; font-size: 0.8rem; color: #9CA3AF; margin-top: 8px; }
+
+        @media (max-width: 900px) {
+            .trans-layout { flex-direction: column; gap: 40px; }
+            .trans-manifesto { font-size: 1.25rem; }
+        }
+        @media (max-width: 600px) { .trans-metrics { grid-template-columns: 1fr; } }
+
+        /* === AÇÕES (CARROSSEL EDITORIAL) === */
+        .actions-section { padding: 80px 0; background: var(--bg-surface); }
+        .actions-header { margin-bottom: 48px; display: flex; justify-content: space-between; align-items: flex-end; }
+        
+        .carousel-container {
+            display: flex; gap: 24px; overflow-x: auto; padding-bottom: 32px;
+            scroll-snap-type: x mandatory; scrollbar-width: none; /* Firefox */
+        }
+        .carousel-container::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+        
+        .action-card {
+            flex: 0 0 340px; scroll-snap-align: start; background: var(--bg-page);
+            border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border-light);
+            display: flex; flex-direction: column; transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .action-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+        
+        .action-img { height: 200px; background: linear-gradient(135deg, #f3f4f6, #e5e7eb); position: relative; }
+        /* Placeholder styling for images */
+        .action-img::after {
+            content: '📷'; position: absolute; inset: 0; display: flex;
+            align-items: center; justify-content: center; font-size: 3rem; opacity: 0.2;
+        }
+        
+        .action-content { padding: 24px; flex: 1; display: flex; flex-direction: column; }
+        .action-meta { display: flex; gap: 12px; font-size: 0.85rem; font-weight: 600; color: var(--donor-main); margin-bottom: 12px; }
+        .action-meta span { display: flex; align-items: center; gap: 4px; }
+        .action-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; line-height: 1.3; }
+        .action-desc { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 24px; flex: 1; }
+        .action-btn { font-weight: 600; color: var(--patient-main); display: inline-flex; align-items: center; gap: 8px; font-size: 0.95rem; }
+        .action-btn:hover { text-decoration: underline; }
+
+        /* === APOIO FINANCEIRO === */
+        .support-section {
+            padding: 100px 0; background: linear-gradient(135deg, var(--donor-dark) 0%, #450A0A 100%);
+            color: white; position: relative; overflow: hidden;
+        }
+        .support-section::before {
+            content: ''; position: absolute; top: -50%; left: -10%; width: 60%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%); pointer-events: none;
+        }
+        .support-layout { display: flex; gap: 64px; align-items: center; position: relative; z-index: 1; }
+        .support-content { flex: 1; max-width: 600px; }
+        .support-content p { font-size: 1.125rem; opacity: 0.9; margin: 24px 0; line-height: 1.6; }
+        .support-bullets { margin-bottom: 40px; }
+        .support-bullets li { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; font-weight: 500; }
+        .support-visual { flex: 1; display: flex; justify-content: center; }
+        .support-heart { font-size: 8rem; animation: pulse 2s infinite ease-in-out; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3)); }
+        
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        
+        @media (max-width: 900px) {
+            .support-layout { flex-direction: column; text-align: center; gap: 40px; }
+            .support-content { margin: 0 auto; }
+            .support-bullets li { justify-content: center; }
+        }
+
+        /* === DEPOIMENTOS === */
+        .testimonials-section { padding: 80px 0; background: var(--bg-page); }
+        .testim-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px; }
+        .testim-card {
+            background: var(--bg-surface); padding: 32px; border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light); box-shadow: var(--shadow-sm);
+            display: flex; flex-direction: column;
+        }
+        .testim-quote { font-size: 1.125rem; font-style: italic; color: var(--text-main); flex: 1; margin-bottom: 24px; line-height: 1.5; }
+        .testim-author { border-top: 1px solid var(--border-light); padding-top: 16px; }
+        .testim-name { font-weight: 600; font-size: 0.95rem; color: var(--text-main); }
+        .testim-role { font-size: 0.85rem; color: var(--text-muted); }
+
+        @media (max-width: 900px) { .testim-grid { grid-template-columns: 1fr; } }
+
+        /* === FAQ === */
+        .faq-accordion-section { padding: 80px 0; background: var(--bg-surface); }
+        .faq-container { max-width: 800px; margin: 0 auto; margin-top: 48px; }
+        .faq-item { border-bottom: 1px solid var(--border-light); }
+        .faq-item:last-child { border-bottom: none; }
+        .faq-question {
+            width: 100%; text-align: left; padding: 24px 0; font-size: 1.125rem;
+            font-weight: 600; color: var(--text-main); display: flex; justify-content: space-between;
+            align-items: center; cursor: pointer; transition: color 0.2s;
+        }
+        .faq-question:hover { color: var(--donor-main); }
+        .faq-icon { font-size: 1.5rem; color: var(--donor-main); transition: transform 0.3s ease; }
+        .faq-answer {
+            max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.4s ease;
+            color: var(--text-muted); line-height: 1.6;
+        }
+        .faq-item.active .faq-icon { transform: rotate(45deg); }
+        .faq-item.active .faq-answer { max-height: 300px; padding-bottom: 24px; } /* max-height is enough for content */
+
+        /* === CTA FINAL === */
+        .cta-final {
+            padding: 100px 0; text-align: center; background: var(--bg-page);
+            border-top: 1px solid var(--border-light);
+        }
+        .cta-final-box {
+            max-width: 800px; margin: 0 auto; background: white; padding: 64px 32px;
+            border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); border: 1px solid var(--border-light);
+        }
+        .cta-final-box h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; margin-bottom: 16px; letter-spacing: -0.02em; }
+        .cta-final-box p { font-size: 1.125rem; color: var(--text-muted); margin-bottom: 40px; }
+        .cta-buttons { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+        .cta-buttons .btn { min-width: 200px; padding: 16px 24px; font-size: 1rem; }
+
+        /* === FOOTER === */
+        .footer { padding: 64px 0 32px; background: #0A0A0A; color: white; }
+        .footer-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 48px; margin-bottom: 48px; }
+        .footer-brand img { height: 40px; filter: brightness(0) invert(1); margin-bottom: 16px; }
+        .footer-brand p { color: #A3A3A3; font-size: 0.9rem; max-width: 300px; line-height: 1.5; }
+        .footer-links { display: flex; gap: 64px; justify-content: flex-end; }
+        .footer-col h4 { font-size: 1rem; font-weight: 600; margin-bottom: 16px; color: white; }
+        .footer-col ul { display: flex; flex-direction: column; gap: 12px; }
+        .footer-col a { color: #A3A3A3; font-size: 0.9rem; transition: color 0.2s; }
+        .footer-col a:hover { color: white; }
+        
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.1); padding-top: 32px;
+            display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px;
+        }
+        .footer-disclaimer {
+            background: rgba(255,255,255,0.05); padding: 16px 24px; border-radius: var(--radius-md);
+            color: #D4D4D4; font-size: 0.85rem; max-width: 800px; border-left: 4px solid var(--donor-main);
+        }
+        .footer-copy { color: #737373; font-size: 0.8rem; }
+
+        @media (max-width: 900px) {
+            .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+            .footer-links { justify-content: flex-start; flex-wrap: wrap; gap: 32px; }
+            .footer-brand p { max-width: 100%; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="container nav-inner">
+            <a href="#" class="nav-logo">
+                <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781279524/Untitled_design_17_1_x7qbdx.webp" alt="FlaMedula Logo">
+            </a>
+            <div class="nav-links">
+                <a href="#">Início</a>
+                <a href="#hub">Cadastro</a>
+                <a href="#medula-sem-medo">Medula sem medo</a>
+            </div>
+            <div class="nav-actions">
+                <a href="#hub" class="btn btn-donor" onclick="openPanel('donor')"><span class="btn-text">Doador</span> 🩸</a>
+                <a href="#hub" class="btn btn-patient" onclick="openPanel('patient')"><span class="btn-text">Paciente</span> 💙</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO CAROUSEL -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-card">
+                <div class="carousel-track" id="carouselTrack">
+                    <!-- Slides injected by JS -->
+                </div>
+                
+                <div class="carousel-controls">
+                    <div class="carousel-dots" id="carouselDots">
+                        <!-- Dots injected by JS -->
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ROLLER 1 -->
+    <div class="roller-wrapper dark">
+        <div class="roller-track">
+            <!-- Content duplicated for seamless loop -->
+            <div class="roller-item">🩸 INFORMAÇÃO <span>•</span> 🧬 MEDULA SEM MEDO <span>•</span> 🔄 DADOS ATUALIZADOS <span>•</span> 💙 MOBILIZAÇÃO <span>•</span></div>
+            <div class="roller-item">🩸 INFORMAÇÃO <span>•</span> 🧬 MEDULA SEM MEDO <span>•</span> 🔄 DADOS ATUALIZADOS <span>•</span> 💙 MOBILIZAÇÃO <span>•</span></div>
+            <div class="roller-item">🩸 INFORMAÇÃO <span>•</span> 🧬 MEDULA SEM MEDO <span>•</span> 🔄 DADOS ATUALIZADOS <span>•</span> 💙 MOBILIZAÇÃO <span>•</span></div>
+        </div>
+    </div>
+
+    <!-- ACTION HUB -->
+    <section id="hub" class="hub-section">
+        <div class="container">
+            <div class="hub-header" id="hubHeader">
+                <h2 class="title-md">Como você quer ajudar hoje?</h2>
+                <p class="text-large" style="margin-top: 16px;">Escolha um caminho. A FlaMedula orienta, organiza e mobiliza com responsabilidade.</p>
+            </div>
+
+            <!-- Main Cards Grid -->
+            <div class="hub-grid" id="hubGrid">
+                <!-- Donor Card -->
+                <div class="hub-card card-donor" onclick="openPanel('donor')">
+                    <div class="card-icon">🩸</div>
+                    <h3>Cadastrar doador</h3>
+                    <p>Entre para a rede de pessoas disponíveis para receber orientações, campanhas e avisos de mobilização.</p>
+                    <div class="btn card-btn">Começar como doador</div>
+                </div>
+
+                <!-- Patient Card -->
+                <div class="hub-card card-patient" onclick="openPanel('patient')">
+                    <div class="card-icon">💙</div>
+                    <h3>Cadastrar paciente/caso</h3>
+                    <p>Sinalize um caso para análise, orientação e possível mobilização responsável por nossa equipe.</p>
+                    <div class="btn card-btn">Cadastrar caso</div>
+                </div>
+
+                <!-- REDOME Card -->
+                <div class="hub-card card-redome" onclick="openPanel('redome')">
+                    <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781283383/logo-redome_wmvgt8.png" alt="REDOME">
+                    <h3>Atualizar cadastro</h3>
+                    <p>Já é cadastrado? Manter telefone, e-mail e cidade atualizados pode ser tão importante quanto se cadastrar.</p>
+                    <div class="btn card-btn" style="color:var(--text-main)">Ver orientação</div>
+                </div>
+            </div>
+
+            <!-- PANELS (Hidden by default) -->
+            
+            <!-- Donor Panel -->
+            <div class="panel-container" id="panel-donor">
+                <div class="panel-header">
+                    <h3 class="title-sm">Cadastro de Doador</h3>
+                    <button class="btn-back" onclick="closePanels()">✕ Fechar</button>
+                </div>
+                <form id="form-donor" onsubmit="handleFormSubmit(event, 'donor')">
+                    <div class="form-grid">
+                        <div class="form-group form-col-full">
+                            <label>Nome completo</label>
+                            <input type="text" class="form-control" required placeholder="Digite seu nome">
+                        </div>
+                        <div class="form-group">
+                            <label>WhatsApp</label>
+                            <input type="tel" class="form-control" required placeholder="(00) 00000-0000">
+                        </div>
+                        <div class="form-group">
+                            <label>Cidade / Estado</label>
+                            <input type="text" class="form-control" required placeholder="Ex: Rio de Janeiro / RJ">
+                        </div>
+                        
+                        <div class="form-group form-col-full" style="margin-top: 16px;">
+                            <label>Você já doa sangue?</label>
+                            <div class="radio-group">
+                                <label class="radio-label"><input type="radio" name="sangue" value="sim"> Sim</label>
+                                <label class="radio-label"><input type="radio" name="sangue" value="nao"> Não</label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group form-col-full">
+                            <label>Você já é doador cadastrado de medula?</label>
+                            <div class="radio-group">
+                                <label class="radio-label"><input type="radio" name="medula" value="sim"> Sim</label>
+                                <label class="radio-label"><input type="radio" name="medula" value="nao"> Não</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group form-col-full">
+                            <label>Canal preferido de contato</label>
+                            <select class="form-control">
+                                <option>WhatsApp</option>
+                                <option>E-mail</option>
+                                <option>Ligação</option>
+                            </select>
+                        </div>
+
+                        <div class="checkbox-group form-col-full">
+                            <input type="checkbox" id="lgpd-donor" required>
+                            <label for="lgpd-donor">Autorizo a FlaMedula a armazenar meus dados e entrar em contato para orientações e campanhas, seguindo a LGPD. Entendo que este <b>não</b> é o cadastro oficial do REDOME.</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-donor panel-btn">Simular envio</button>
+                </form>
+                <div class="success-msg" id="success-donor">
+                    <div class="success-icon">✅</div>
+                    <h3 class="title-sm">Simulação de cadastro enviada!</h3>
+                    <p class="text-body" style="margin-top: 8px;">Na versão final, os dados serão salvos com segurança.</p>
+                    <button class="btn btn-outline" style="margin-top: 24px;" onclick="closePanels()">Voltar aos cards</button>
+                </div>
+            </div>
+
+            <!-- Patient Panel -->
+            <div class="panel-container" id="panel-patient">
+                <div class="panel-header">
+                    <h3 class="title-sm">Sinalizar Caso/Paciente</h3>
+                    <button class="btn-back" onclick="closePanels()">✕ Fechar</button>
+                </div>
+                <form id="form-patient" onsubmit="handleFormSubmit(event, 'patient')">
+                    <div class="form-grid">
+                        <div class="form-group form-col-full">
+                            <label>Quem está cadastrando?</label>
+                            <select class="form-control">
+                                <option>O próprio paciente</option>
+                                <option>Familiar</option>
+                                <option>Profissional de saúde</option>
+                                <option>Amigo/Apoiador</option>
+                            </select>
+                        </div>
+                        <div class="form-group form-col-full">
+                            <label>Nome ou identificação segura do paciente</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Cidade / Estado onde está</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Hospital de referência (opcional)</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="form-group form-col-full">
+                            <label>Telefone para contato da equipe FlaMedula</label>
+                            <input type="tel" class="form-control" required placeholder="(00) 00000-0000">
+                        </div>
+                        
+                        <div class="checkbox-group form-col-full">
+                            <input type="checkbox" id="lgpd-patient" required>
+                            <label for="lgpd-patient">Autorizo a análise deste caso pela equipe da FlaMedula para possível orientação e mobilização responsável. Entendo que cada caso é avaliado individualmente.</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-patient panel-btn">Simular envio</button>
+                </form>
+                <div class="success-msg" id="success-patient">
+                    <div class="success-icon">💙</div>
+                    <h3 class="title-sm">Caso recebido para análise (Simulação)</h3>
+                    <p class="text-body" style="margin-top: 8px;">Nossa equipe entraria em contato pelo número informado.</p>
+                    <button class="btn btn-outline" style="margin-top: 24px;" onclick="closePanels()">Voltar aos cards</button>
+                </div>
+            </div>
+
+            <!-- REDOME Panel -->
+            <div class="panel-container" id="panel-redome">
+                <div class="panel-header">
+                    <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781283383/logo-redome_wmvgt8.png" alt="REDOME" style="height: 24px;">
+                    <button class="btn-back" onclick="closePanels()">✕ Fechar</button>
+                </div>
+                <div>
+                    <h3 class="title-sm" style="color: var(--redome-dark);">A importância de atualizar dados</h3>
+                    <p class="text-body" style="margin-top: 8px;">A compatibilidade é rara. Quando ela acontece, o REDOME precisa conseguir falar com você rapidamente. Mantenha em dia:</p>
+                    
+                    <ul class="info-list">
+                        <li>📞 Telefone celular e fixo</li>
+                        <li>✉️ E-mail pessoal</li>
+                        <li>📍 Endereço e Cidade</li>
+                    </ul>
+
+                    <div style="padding: 16px; background: #FEF2F2; border-radius: 8px; border-left: 4px solid var(--donor-main); margin-bottom: 24px;">
+                        <p style="font-size: 0.9rem; color: var(--donor-dark);"><b>Aviso:</b> A FlaMedula orienta, mas a atualização oficial <b>deve</b> ser feita nos canais oficiais do REDOME e Hemocentros.</p>
+                    </div>
+
+                    <button class="btn card-btn" style="background: var(--redome-main); color: white;" onclick="closePanels()">Entendi, quero me informar melhor</button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ROLLER 2 -->
+    <div class="roller-wrapper">
+        <div class="roller-track reverse">
+            <div class="roller-item">📍 REGIÃO <span>•</span> 📲 CONTATO <span>•</span> 🩸 DOADORES <span>•</span> 🧬 MEDULA <span>•</span> 💙 PACIENTES <span>•</span></div>
+            <div class="roller-item">📍 REGIÃO <span>•</span> 📲 CONTATO <span>•</span> 🩸 DOADORES <span>•</span> 🧬 MEDULA <span>•</span> 💙 PACIENTES <span>•</span></div>
+            <div class="roller-item">📍 REGIÃO <span>•</span> 📲 CONTATO <span>•</span> 🩸 DOADORES <span>•</span> 🧬 MEDULA <span>•</span> 💙 PACIENTES <span>•</span></div>
+        </div>
+    </div>
+
+    <!-- VIDEO SECTION -->
+    <section class="video-section">
+        <div class="container video-layout">
+            
+            <!-- Custom Video Player -->
+            <div class="video-wrapper paused" id="vidWrapper">
+                <video class="video-element" id="infoVideo" playsinline preload="metadata">
+                    <source src="https://res.cloudinary.com/dm9mnc97u/video/upload/v1777677171/download_wq1ltu.mp4" type="video/mp4">
+                    Seu navegador não suporta vídeos.
+                </video>
+                
+                <div class="play-btn-center" id="playCenterBtn">▶</div>
+                
+                <div class="custom-controls">
+                    <div class="control-bar">
+                        <button class="control-btn" id="playPauseBtn">▶</button>
+                        <div class="vid-progress-container" id="vidProgressContainer">
+                            <div class="vid-progress-filled" id="vidProgressFilled"></div>
+                        </div>
+                        <button class="control-btn" id="muteBtn">🔊</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Text Content -->
+            <div class="video-text">
+                <h2 class="title-md">Medula sem medo começa com informação</h2>
+                <p>Entender o processo ajuda a reduzir medo, corrigir confusões e aproximar mais pessoas da causa.</p>
+                
+                <div class="bullet-list">
+                    <div class="bullet-item">
+                        <span class="bullet-icon">✅</span>
+                        <span>Medula óssea <b>não é</b> medula espinhal.</span>
+                    </div>
+                    <div class="bullet-item">
+                        <span class="bullet-icon">✅</span>
+                        <span>A coleta pode acontecer de formas diferentes.</span>
+                    </div>
+                    <div class="bullet-item">
+                        <span class="bullet-icon">✅</span>
+                        <span>A definição é sempre conduzida pela equipe médica, visando segurança.</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FAQ / MEDULA SEM MEDO -->
+    <section id="medula-sem-medo" class="faq-section">
+        <div class="container">
+            <div class="faq-header">
+                <h2 class="title-md">Medula sem medo</h2>
+                <p class="text-large" style="margin-top: 12px;">Dúvidas comuns respondidas de forma direta.</p>
+            </div>
+
+            <div class="faq-grid">
+                <!-- Card 1 -->
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="flip-icon">🤔</div>
+                            <h3>É sempre pela coluna?</h3>
+                        </div>
+                        <div class="flip-card-back">
+                            <p>Não. A coleta pode acontecer por métodos diferentes. A definição é feita pela equipe médica de acordo com cada caso.</p>
+                            <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781279524/Untitled_design_17_1_x7qbdx.webp" class="card-logo" alt="Logo">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="flip-icon">📝</div>
+                            <h3>Cadastro já é doação?</h3>
+                        </div>
+                        <div class="flip-card-back">
+                            <p>Não. Cadastro é o primeiro passo para ser encontrado e orientado quando houver compatibilidade com algum paciente.</p>
+                            <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781279524/Untitled_design_17_1_x7qbdx.webp" class="card-logo" alt="Logo">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="flip-icon">🧬</div>
+                            <h3>Medula óssea é medula espinhal?</h3>
+                        </div>
+                        <div class="flip-card-back">
+                            <p>Não. São coisas diferentes. Essa confusão aumenta o medo sem necessidade. A medula óssea fica dentro dos ossos.</p>
+                            <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781279524/Untitled_design_17_1_x7qbdx.webp" class="card-logo" alt="Logo">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="flip-icon">🔄</div>
+                            <h3>Por que atualizar meus dados importa?</h3>
+                        </div>
+                        <div class="flip-card-back">
+                            <p>Porque telefone, e-mail e cidade corretos ajudam os canais oficiais a encontrarem você caso seja compatível com alguém.</p>
+                            <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781279524/Untitled_design_17_1_x7qbdx.webp" class="card-logo" alt="Logo">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ROLLER 3 -->
+    <div class="roller-wrapper dark">
+        <div class="roller-track">
+            <div class="roller-item">❤️ INFORMAÇÃO REDUZ MEDO <span>•</span> 🩸 CADASTRO ORGANIZA <span>•</span> 💙 MOBILIZAÇÃO APROXIMA <span>•</span></div>
+            <div class="roller-item">❤️ INFORMAÇÃO REDUZ MEDO <span>•</span> 🩸 CADASTRO ORGANIZA <span>•</span> 💙 MOBILIZAÇÃO APROXIMA <span>•</span></div>
+            <div class="roller-item">❤️ INFORMAÇÃO REDUZ MEDO <span>•</span> 🩸 CADASTRO ORGANIZA <span>•</span> 💙 MOBILIZAÇÃO APROXIMA <span>•</span></div>
+            <div class="roller-item">❤️ INFORMAÇÃO REDUZ MEDO <span>•</span> 🩸 CADASTRO ORGANIZA <span>•</span> 💙 MOBILIZAÇÃO APROXIMA <span>•</span></div>
+        </div>
+    </div>
+
+    <!-- QUEM SOMOS E TRANSPARÊNCIA -->
+    <section class="transparency-section" id="quem-somos">
+        <div class="container trans-layout">
+            <div class="trans-text">
+                <h2 class="title-md">Quem somos</h2>
+                <p class="trans-manifesto">"A FlaMedula existe para transformar informação em movimento. Organizamos orientação, campanhas e dados para que mais pessoas saibam como ajudar — e para que a solidariedade chegue mais rápido a quem precisa."</p>
+                <p class="text-large">A rede cresce quando cada pessoa entende seu papel: doar, atualizar dados, cadastrar um caso ou apoiar uma campanha.</p>
+            </div>
+            
+            <div class="trans-metrics">
+                <div class="metric-card">
+                    <div class="metric-title">🩸 Doadores cadastrados</div>
+                    <div class="metric-value" data-target="328">0</div>
+                    <div class="metric-desc">pessoas adicionadas à base da rede</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">🧬 Interessados em medula</div>
+                    <div class="metric-value" data-target="146">0</div>
+                    <div class="metric-desc">pessoas que querem receber orientação</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">🔄 Atualizações REDOME orientadas</div>
+                    <div class="metric-value" data-target="89">0</div>
+                    <div class="metric-desc">pessoas lembradas sobre manter dados atualizados</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">💙 Casos recebidos</div>
+                    <div class="metric-value" data-target="24">0</div>
+                    <div class="metric-desc">casos enviados para análise inicial</div>
+                </div>
+                <p class="trans-disclaimer">Dados demonstrativos do protótipo.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- AÇÕES FLAMEDULA -->
+    <section class="actions-section" id="acoes">
+        <div class="container">
+            <div class="actions-header">
+                <div>
+                    <h2 class="title-md">Ações FlaMedula</h2>
+                    <p class="text-large" style="margin-top: 8px;">Acompanhe o movimento da rede na prática.</p>
+                </div>
+            </div>
+            
+            <div class="carousel-container" id="actionsCarousel">
+                <!-- Cards injected by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ROLLER 4 -->
+    <div class="roller-wrapper">
+        <div class="roller-track reverse">
+            <div class="roller-item">📣 CAMPANHAS ATIVAS <span>•</span> 🚗 DESLOCAMENTO <span>•</span> 📲 COMUNICAÇÃO <span>•</span> 🧩 ORGANIZAÇÃO <span>•</span></div>
+            <div class="roller-item">📣 CAMPANHAS ATIVAS <span>•</span> 🚗 DESLOCAMENTO <span>•</span> 📲 COMUNICAÇÃO <span>•</span> 🧩 ORGANIZAÇÃO <span>•</span></div>
+            <div class="roller-item">📣 CAMPANHAS ATIVAS <span>•</span> 🚗 DESLOCAMENTO <span>•</span> 📲 COMUNICAÇÃO <span>•</span> 🧩 ORGANIZAÇÃO <span>•</span></div>
+            <div class="roller-item">📣 CAMPANHAS ATIVAS <span>•</span> 🚗 DESLOCAMENTO <span>•</span> 📲 COMUNICAÇÃO <span>•</span> 🧩 ORGANIZAÇÃO <span>•</span></div>
+        </div>
+    </div>
+
+    <!-- APOIO FINANCEIRO -->
+    <section class="support-section" id="apoiar">
+        <div class="container support-layout">
+            <div class="support-content">
+                <h2 class="title-lg">Ajude a manter a rede em movimento</h2>
+                <p>Por trás de cada campanha existe comunicação, deslocamento, tecnologia, organização e gente fazendo a rede acontecer. Seu apoio ajuda a FlaMedula a manter essa mobilização viva.</p>
+                
+                <ul class="support-bullets">
+                    <li><span style="font-size: 1.5rem;">📣</span> Fortalecer campanhas</li>
+                    <li><span style="font-size: 1.5rem;">🚗</span> Apoiar deslocamentos e ações presenciais</li>
+                    <li><span style="font-size: 1.5rem;">📲</span> Manter comunicação e orientação</li>
+                    <li><span style="font-size: 1.5rem;">🧩</span> Organizar dados e mobilização</li>
+                </ul>
+                
+                <a href="#apoiar" class="btn" style="background: white; color: var(--donor-dark); font-size: 1.1rem; padding: 16px 32px;">❤️ Quero me tornar apoiador</a>
+            </div>
+            <div class="support-visual">
+                <div class="support-heart">❤️</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DEPOIMENTOS -->
+    <section class="testimonials-section">
+        <div class="container">
+            <h2 class="title-md" style="text-align: center;">Vozes da rede</h2>
+            
+            <div class="testim-grid">
+                <div class="testim-card">
+                    <p class="testim-quote">"Eu tinha medo porque não entendia. Depois da orientação, ficou muito mais claro."</p>
+                    <div class="testim-author">
+                        <div class="testim-name">Voluntária orientada</div>
+                        <div class="testim-role">Rede FlaMedula</div>
+                    </div>
+                </div>
+                <div class="testim-card">
+                    <p class="testim-quote">"Ter alguém explicando o caminho fez diferença em um momento de muita ansiedade."</p>
+                    <div class="testim-author">
+                        <div class="testim-name">Familiar de paciente</div>
+                        <div class="testim-role">Campanha acompanhada</div>
+                    </div>
+                </div>
+                <div class="testim-card">
+                    <p class="testim-quote">"A atualização dos dados é simples, mas muita gente esquece. Esse lembrete importa."</p>
+                    <div class="testim-author">
+                        <div class="testim-name">Apoiador da causa</div>
+                        <div class="testim-role">Mobilização REDOME</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq-accordion-section">
+        <div class="container">
+            <div style="text-align: center;">
+                <h2 class="title-md">Perguntas Frequentes</h2>
+                <p class="text-large" style="margin-top: 8px;">As dúvidas mais comuns sobre a nossa atuação.</p>
+            </div>
+            
+            <div class="faq-container" id="faqContainer">
+                <!-- FAQ Item 1 -->
+                <div class="faq-item">
+                    <div class="faq-question">A FlaMedula faz cadastro oficial no REDOME? <span class="faq-icon">+</span></div>
+                    <div class="faq-answer">Não. A FlaMedula orienta e mobiliza. O cadastro oficial, a triagem e os processos de doação seguem pelos canais oficiais, como REDOME, hemocentros e equipes de saúde.</div>
+                </div>
+                <!-- FAQ Item 2 -->
+                <div class="faq-item">
+                    <div class="faq-question">Medula óssea é medula espinhal? <span class="faq-icon">+</span></div>
+                    <div class="faq-answer">Não. São coisas diferentes. Essa confusão aumenta o medo sem necessidade.</div>
+                </div>
+                <!-- FAQ Item 3 -->
+                <div class="faq-item">
+                    <div class="faq-question">Cadastro na FlaMedula já é doação? <span class="faq-icon">+</span></div>
+                    <div class="faq-answer">Não. O cadastro na rede ajuda a organizar orientação, contato e campanhas. A doação depende dos canais oficiais e das etapas médicas.</div>
+                </div>
+                <!-- FAQ Item 4 -->
+                <div class="faq-item">
+                    <div class="faq-question">Como meus dados serão usados? <span class="faq-icon">+</span></div>
+                    <div class="faq-answer">Os dados ajudam a FlaMedula a orientar, organizar contatos e mobilizar campanhas com responsabilidade, conforme sua autorização.</div>
+                </div>
+                <!-- FAQ Item 5 -->
+                <div class="faq-item">
+                    <div class="faq-question">Posso cadastrar um paciente? <span class="faq-icon">+</span></div>
+                    <div class="faq-answer">Sim. Familiares, responsáveis, profissionais de saúde ou apoiadores podem sinalizar um caso para análise e possível orientação.</div>
+                </div>
+                <!-- FAQ Item 6 -->
+                <div class="faq-item">
+                    <div class="faq-question">Como posso apoiar financeiramente? <span class="faq-icon">+</span></div>
+                    <div class="faq-answer">A landing principal apenas direciona para a página futura de apoio. Não há Pix, checkout ou pagamento direto nesta página.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA FINAL -->
+    <section class="cta-final">
+        <div class="container">
+            <div class="cta-final-box">
+                <h2>A rede cresce quando mais pessoas sabem como ajudar.</h2>
+                <p>Escolha um caminho e ajude a FlaMedula a transformar informação em mobilização responsável.</p>
+                <div class="cta-buttons">
+                    <a href="#hub" class="btn btn-donor" onclick="openPanel('donor')">🩸 Cadastrar doador</a>
+                    <a href="#hub" class="btn btn-patient" onclick="openPanel('patient')">💙 Cadastrar paciente</a>
+                    <a href="#hub" class="btn" style="background: var(--redome-main); color: white;" onclick="openPanel('redome')">🔄 Atualizar REDOME</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781279524/Untitled_design_17_1_x7qbdx.webp" alt="FlaMedula Logo">
+                    <p>Informação, cadastro e mobilização responsável.</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-col">
+                        <h4>Ações</h4>
+                        <ul>
+                            <li><a href="#hub">Cadastro</a></li>
+                            <li><a href="#medula-sem-medo">Medula sem medo</a></li>
+                            <li><a href="#acoes">Últimas campanhas</a></li>
+                            <li><a href="#apoiar">Apoiar causa</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="footer-disclaimer">
+                    <b>Aviso de Responsabilidade:</b> A FlaMedula orienta e mobiliza, mas não substitui REDOME, hemocentros ou canais oficiais de saúde. O cadastro oficial e a doação são conduzidos exclusivamente pelas equipes médicas responsáveis.
+                </div>
+                <p class="footer-copy">© 2026 FlaMedula. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script>
+        // === MOCK DATA FOR HERO ===
+        const heroNewsItems = [
+            {
+                categoria: "Mobilização", emoji: "🩸",
+                titulo: "Informação clara aproxima mais doadores",
+                texto: "A FlaMedula organiza orientação, cadastro e campanhas para fortalecer a rede de sangue e medula.",
+                cta: "Começar cadastro", path: "donor"
+            },
+            {
+                categoria: "Rede ativa", emoji: "🔄",
+                titulo: "Atualizar dados também salva oportunidades",
+                texto: "Quem já está no REDOME precisa manter telefone, e-mail e cidade atualizados para continuar encontrável.",
+                cta: "Atualizar REDOME", path: "redome"
+            },
+            {
+                categoria: "Pacientes", emoji: "💙",
+                titulo: "Cada caso precisa de orientação responsável",
+                texto: "Famílias, profissionais de saúde e apoiadores podem sinalizar casos para análise e mobilização cuidadosa.",
+                cta: "Cadastrar paciente", path: "patient"
+            }
+        ];
+
+        // === HERO CAROUSEL LOGIC ===
+        const track = document.getElementById('carouselTrack');
+        const dotsContainer = document.getElementById('carouselDots');
+        const progressFill = document.getElementById('progressFill');
+        let currentSlide = 0;
+        const slideDuration = 6000; // 6 seconds
+        let slideInterval;
+
+        function initCarousel() {
+            heroNewsItems.forEach((item, index) => {
+                // Create Slide
+                const slide = document.createElement('div');
+                slide.className = `carousel-slide ${index === 0 ? 'active' : ''}`;
+                slide.innerHTML = `
+                    <div class="slide-tag"><span>${item.emoji}</span> ${item.categoria}</div>
+                    <h2 class="slide-title">${item.titulo}</h2>
+                    <p class="slide-text">${item.texto}</p>
+                    <a href="#hub" class="slide-btn" onclick="openPanel('${item.path}')">${item.cta}</a>
+                `;
+                track.appendChild(slide);
+
+                // Create Dot
+                const dot = document.createElement('div');
+                dot.className = `dot ${index === 0 ? 'active' : ''}`;
+                dot.onclick = () => goToSlide(index);
+                dotsContainer.appendChild(dot);
+            });
+
+            startAutoplay();
+        }
+
+        function goToSlide(index) {
+            const slides = document.querySelectorAll('.carousel-slide');
+            const dots = document.querySelectorAll('.dot');
+            
+            slides[currentSlide].classList.remove('active');
+            dots[currentSlide].classList.remove('active');
+            
+            currentSlide = index;
+            
+            slides[currentSlide].classList.add('active');
+            dots[currentSlide].classList.add('active');
+            
+            resetAutoplay();
+        }
+
+        function nextSlide() {
+            let next = (currentSlide + 1) % heroNewsItems.length;
+            goToSlide(next);
+        }
+
+        function startAutoplay() {
+            // Animate progress bar via CSS transition
+            progressFill.style.transition = 'none';
+            progressFill.style.width = '0%';
+            
+            setTimeout(() => {
+                progressFill.style.transition = `width ${slideDuration}ms linear`;
+                progressFill.style.width = '100%';
+            }, 50);
+
+            slideInterval = setInterval(nextSlide, slideDuration);
+        }
+
+        function resetAutoplay() {
+            clearInterval(slideInterval);
+            startAutoplay();
+        }
+
+        // === ACTION HUB LOGIC ===
+        const hubGrid = document.getElementById('hubGrid');
+        const hubHeader = document.getElementById('hubHeader');
+        const panels = ['donor', 'patient', 'redome'];
+
+        function openPanel(type) {
+            // Hide grid
+            hubGrid.style.display = 'none';
+            hubHeader.style.display = 'none';
+            
+            // Hide all panels
+            panels.forEach(p => {
+                document.getElementById(`panel-${p}`).style.display = 'none';
+                // Reset success messages
+                const form = document.getElementById(`form-${p}`);
+                const success = document.getElementById(`success-${p}`);
+                if(form) form.style.display = 'block';
+                if(success) success.style.display = 'none';
+            });
+            
+            // Show selected panel
+            const panel = document.getElementById(`panel-${type}`);
+            panel.style.display = 'block';
+            
+            // Scroll to it smoothly if clicked from outside (like nav)
+            panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function closePanels() {
+            // Hide all panels
+            panels.forEach(p => document.getElementById(`panel-${p}`).style.display = 'none');
+            
+            // Show grid
+            hubGrid.style.display = 'grid';
+            hubHeader.style.display = 'block';
+            
+            // Scroll back slightly
+            document.getElementById('hub').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function handleFormSubmit(e, type) {
+            e.preventDefault(); // Prevent actual submission
+            
+            // Hide form, show success
+            document.getElementById(`form-${type}`).style.display = 'none';
+            document.getElementById(`success-${type}`).style.display = 'block';
+        }
+
+
+        // === VIDEO PLAYER LOGIC ===
+        const video = document.getElementById('infoVideo');
+        const wrapper = document.getElementById('vidWrapper');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const playCenterBtn = document.getElementById('playCenterBtn');
+        const muteBtn = document.getElementById('muteBtn');
+        const progressCont = document.getElementById('vidProgressContainer');
+        const progressFillVid = document.getElementById('vidProgressFilled');
+
+        function togglePlay() {
+            if (video.paused) {
+                video.play();
+                wrapper.classList.remove('paused');
+                playPauseBtn.textContent = '⏸';
+            } else {
+                video.pause();
+                wrapper.classList.add('paused');
+                playPauseBtn.textContent = '▶';
+            }
+        }
+
+        function toggleMute() {
+            video.muted = !video.muted;
+            muteBtn.textContent = video.muted ? '🔇' : '🔊';
+        }
+
+        video.addEventListener('timeupdate', () => {
+            if(!video.duration) return;
+            const percent = (video.currentTime / video.duration) * 100;
+            progressFillVid.style.width = `${percent}%`;
+        });
+
+        progressCont.addEventListener('click', (e) => {
+            const rect = progressCont.getBoundingClientRect();
+            const pos = (e.clientX - rect.left) / rect.width;
+            video.currentTime = pos * video.duration;
+        });
+
+        playPauseBtn.addEventListener('click', togglePlay);
+        playCenterBtn.addEventListener('click', togglePlay);
+        video.addEventListener('click', togglePlay);
+        muteBtn.addEventListener('click', toggleMute);
+        
+        // Ensure video ends gracefully
+        video.addEventListener('ended', () => {
+            wrapper.classList.add('paused');
+            playPauseBtn.textContent = '▶';
+            progressFillVid.style.width = '100%';
+        });
+
+
+        // === ACTIONS CAROUSEL LOGIC ===
+        const actionsData = [
+            {
+                data: "12 JUN", local: "Rio de Janeiro",
+                titulo: "Campanha de orientação em comunidade",
+                resumo: "Uma ação para levar informação sobre sangue, medula e atualização de cadastro a novos voluntários.",
+                cta: "Ver ação"
+            },
+            {
+                data: "28 JUN", local: "Baixada Fluminense",
+                titulo: "Mobilização para novos doadores",
+                resumo: "Encontro com moradores, famílias e apoiadores para fortalecer a rede de cadastro e orientação.",
+                cta: "Ver ação"
+            },
+            {
+                data: "05 JUL", local: "Online",
+                titulo: "Roda de conversa: medula sem medo",
+                resumo: "Um momento para tirar dúvidas, reduzir mitos e explicar a importância de manter dados atualizados.",
+                cta: "Ver ação"
+            },
+            {
+                data: "18 JUL", local: "Hospital parceiro",
+                titulo: "Apoio a campanha de paciente",
+                resumo: "Organização de comunicação e mobilização responsável para ampliar o alcance de um caso.",
+                cta: "Ver ação"
+            }
+        ];
+
+        function initActionsCarousel() {
+            const container = document.getElementById('actionsCarousel');
+            if(!container) return;
+            
+            actionsData.forEach(action => {
+                const card = document.createElement('div');
+                card.className = 'action-card';
+                card.innerHTML = `
+                    <div class="action-img"></div>
+                    <div class="action-content">
+                        <div class="action-meta">
+                            <span>📅 ${action.data}</span>
+                            <span>📍 ${action.local}</span>
+                        </div>
+                        <h3 class="action-title">${action.titulo}</h3>
+                        <p class="action-desc">${action.resumo}</p>
+                        <a href="#" class="action-btn">${action.cta} ➔</a>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // === METRICS COUNTER ANIMATION ===
+        function initCounters() {
+            const counters = document.querySelectorAll('.metric-value');
+            const speed = 100; // Lower is faster
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const counter = entry.target;
+                        const target = +counter.getAttribute('data-target');
+                        
+                        const updateCount = () => {
+                            const count = +counter.innerText;
+                            const inc = target / speed;
+                            
+                            if (count < target) {
+                                counter.innerText = Math.ceil(count + inc);
+                                setTimeout(updateCount, 15);
+                            } else {
+                                counter.innerText = target;
+                            }
+                        };
+                        updateCount();
+                        observer.unobserve(counter); // Animate only once
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            counters.forEach(counter => observer.observe(counter));
+        }
+
+        // === FAQ ACCORDION LOGIC ===
+        function initFAQ() {
+            const faqItems = document.querySelectorAll('.faq-item');
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                question.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+                    
+                    // Close all others
+                    faqItems.forEach(i => i.classList.remove('active'));
+                    
+                    // Toggle current
+                    if (!isActive) {
+                        item.classList.add('active');
+                    }
+                });
+            });
+        }
+
+
+        // === INITIALIZE ===
+        document.addEventListener('DOMContentLoaded', () => {
+            initCarousel();
+            initActionsCarousel();
+            initCounters();
+            initFAQ();
+        });
+
+    </script>
+</body>
+</html>
