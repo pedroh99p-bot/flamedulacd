@@ -1,4 +1,4 @@
-import { hasSeenIntro, showIntroVideoOverlay } from './introVideo.js';
+import { showIntroVideoOverlay } from './introVideo.js';
 
 export function initPreloader() {
   window.addEventListener('load', () => {
@@ -10,11 +10,7 @@ export function initPreloader() {
       setTimeout(() => {
         if (preloader) preloader.style.display = 'none';
 
-        if (!hasSeenIntro()) {
-          showIntroVideoOverlay();
-        } else {
-          document.body.classList.remove('is-loading');
-        }
+        showIntroVideoOverlay();
       }, 600);
     }, 2200);
   });

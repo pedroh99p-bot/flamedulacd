@@ -116,33 +116,6 @@
     font-size: 0.95rem;
     padding: 13px 16px;
 }
-.video-audio-toggle {
-    position: absolute;
-    top: 14px;
-    right: 14px;
-    z-index: 30;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 34px;
-    padding: 7px 12px;
-    border-radius: var(--radius-full);
-    background: rgba(10, 10, 10, 0.68);
-    border: 1px solid rgba(255,255,255,0.25);
-    color: white;
-    box-shadow: 0 10px 24px rgba(0,0,0,0.24);
-    font-size: 0.78rem;
-    font-weight: 800;
-    backdrop-filter: blur(10px);
-}
-.video-audio-toggle.is-audio-on {
-    background: rgba(255,255,255,0.92);
-    color: var(--donor-dark);
-}
-.video-audio-toggle[hidden] {
-    display: none;
-}
-
 #containerIntroVideo {
     width: clamp(260px, 82vw, 400px);
     max-width: 420px;

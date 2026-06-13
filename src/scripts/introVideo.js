@@ -7,32 +7,14 @@ function getIntroElements() {
     introOverlay: document.getElementById('intro-overlay'),
     introVideo: document.getElementById('introVideo'),
     introContainer: document.getElementById('containerIntroVideo'),
-    continueButton: document.getElementById('btn-continue-site'),
-    audioToggleButton: document.getElementById('btn-toggle-intro-audio')
+    continueButton: document.getElementById('btn-continue-site')
   };
-}
-
-function markIntroSeen() {
-  try {
-    sessionStorage.setItem('flamedula_intro_seen', 'true');
-  } catch (error) {
-    console.warn('Nao foi possivel salvar o estado do video de entrada.', error);
-  }
-}
-
-export function hasSeenIntro() {
-  try {
-    return sessionStorage.getItem('flamedula_intro_seen');
-  } catch (error) {
-    return false;
-  }
 }
 
 export function closeIntroOverlay() {
   const { introOverlay, introVideo } = getIntroElements();
   if (!introOverlay) {
     document.body.classList.remove('is-loading');
-    markIntroSeen();
     return;
   }
 
@@ -40,19 +22,17 @@ export function closeIntroOverlay() {
   setTimeout(() => {
     introOverlay.style.display = 'none';
     document.body.classList.remove('is-loading');
-    markIntroSeen();
     if (introVideo) introVideo.pause();
   }, 500);
 }
 
 function updateIntroAudioUi() {
-  const { introVideo, audioToggleButton } = getIntroElements();
-  if (!introVideo || !audioToggleButton) return;
+  const { introVideo } = getIntroElements();
+  const muteBtn = document.querySelector('#containerIntroVideo .reels-mute-btn');
+  if (!introVideo || !muteBtn) return;
 
   const hasAudio = !introVideo.muted && introVideo.volume > 0;
-  audioToggleButton.hidden = false;
-  audioToggleButton.textContent = hasAudio ? 'Silenciar' : 'Ativar \u00e1udio';
-  audioToggleButton.classList.toggle('is-audio-on', hasAudio);
+  muteBtn.textContent = hasAudio ? '\ud83d\udd0a' : '\ud83d\udd07';
 }
 
 async function playIntro({ withAudio }) {
@@ -74,27 +54,9 @@ async function playIntro({ withAudio }) {
   }
 }
 
-async function playIntroWithAudio() {
-  const success = await playIntro({ withAudio: true });
-  if (!success) updateIntroAudioUi();
-}
-
-async function toggleIntroAudio() {
-  const { introVideo } = getIntroElements();
-  if (!introVideo) return;
-
-  if (introVideo.muted || introVideo.volume === 0) {
-    await playIntroWithAudio();
-  } else {
-    introVideo.muted = true;
-    updateIntroAudioUi();
-  }
-}
-
 export function initIntroVideo() {
-  const { continueButton, audioToggleButton, introVideo } = getIntroElements();
+  const { continueButton, introVideo } = getIntroElements();
   if (continueButton) continueButton.addEventListener('click', closeIntroOverlay);
-  if (audioToggleButton) audioToggleButton.addEventListener('click', toggleIntroAudio);
   if (introVideo) introVideo.addEventListener('volumechange', updateIntroAudioUi);
 }
 

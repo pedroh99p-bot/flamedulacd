@@ -85,18 +85,16 @@ export function initInfoVideoCtas() {
   const cadastroButton = document.getElementById('startCadastroBtn');
   const video = document.getElementById('infoVideo');
   const wrapper = document.getElementById('vidWrapperInfo');
-  const audioToggle = document.getElementById('infoAudioToggleBtn');
   const playBtn = document.getElementById('playPauseBtnInfo');
+  const muteBtn = document.getElementById('muteBtnInfo');
   let hasTriedViewportPlay = false;
   let userPaused = false;
   let internalPlayAttempt = false;
 
   const updateAudioUi = () => {
-    if (!video || !audioToggle) return;
+    if (!video || !muteBtn) return;
     const hasAudio = !video.muted && video.volume > 0;
-    audioToggle.hidden = false;
-    audioToggle.textContent = hasAudio ? 'Silenciar' : 'Ativar \u00e1udio';
-    audioToggle.classList.toggle('is-audio-on', hasAudio);
+    muteBtn.textContent = hasAudio ? '\ud83d\udd0a' : '\ud83d\udd07';
   };
 
   const playInfoVideo = async ({ withAudio }) => {
@@ -131,12 +129,6 @@ export function initInfoVideoCtas() {
   }
 
   if (!video || !wrapper) return;
-
-  if (audioToggle) {
-    audioToggle.addEventListener('click', () => {
-      playInfoVideo({ withAudio: true });
-    });
-  }
 
   video.addEventListener('volumechange', updateAudioUi);
   video.addEventListener('pause', () => {
