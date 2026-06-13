@@ -1,0 +1,63 @@
+/* === RESPONSIVE & MOTION PREFERENCES === */
+
+@media (max-width: 900px) {
+    :root { --nav-h: 80px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .preloader-logo-wrapper { animation: none; filter: drop-shadow(0 0 15px rgba(185,28,28,0.4)); }
+}
+
+@media (max-width: 900px) {
+    .nav-links { display: none; }
+    .nav-actions { gap: 8px; }
+    .nav-actions .btn { padding: 10px 16px; font-size: 0.85rem; }
+    .nav-inner { padding: 0 12px; }
+    .nav-logo img { height: 50px; }
+}
+
+@media (max-width: 768px) {
+    .hero-card { min-height: 450px; border-radius: var(--radius-lg); }
+    .carousel-slide { padding: 32px 24px; }
+    .carousel-controls { padding: 0 24px 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) { .roller-track { animation-duration: 60s; } }
+
+@media (max-width: 900px) { .hub-grid { grid-template-columns: 1fr; } }
+
+@media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } .panel-container { padding: 24px; } }
+
+@media (max-width: 900px) {
+    .video-layout { flex-direction: column-reverse; gap: 40px; }
+    .bullet-item { text-align: left; }
+    .video-text .btn { width: 100%; margin-bottom: 12px;}
+}
+
+@media (max-width: 900px) {
+    .edu-timeline { flex-direction: column; gap: 48px; }
+    .edu-timeline::before { top: 0; bottom: 0; left: 24px; width: 2px; height: auto; background: linear-gradient(180deg, rgba(185, 28, 28, 0.1), var(--donor-main), rgba(185, 28, 28, 0.1)); right: auto;}
+    .edu-step { left: -24px; top: 50%; transform: translateY(-50%); }
+    .edu-card { text-align: left; padding-left: 48px;}
+    .edu-card h3, .edu-card p { text-align: left; }
+    .affinity-block { grid-template-columns: 1fr; }
+}
+
+@media (min-width: 769px) { .mobile-carousel { overflow-x: visible; scroll-snap-type: none; display: grid; flex-wrap: wrap;} }
+
+@media (max-width: 900px) { 
+    .transparency-layout { grid-template-columns: 1fr; gap: 48px; }
+    .transparency-connector { display: none; }
+}
+
+@media (max-width: 768px) { .action-card { flex: 0 0 85%; } }
+
+@media (max-width: 900px) { .support-pillars { grid-template-columns: 1fr 1fr; } }
+
+@media (min-width: 768px) {
+    .testimonial-card { flex: 0 0 calc(33.333% - 16px); scroll-snap-align: start; }
+}
+
+@media (max-width: 600px) { .redome-box { padding: 32px 24px; } }
+
+@media (max-width: 900px) { .footer-grid { grid-template-columns: 1fr; gap: 40px;} .footer-bottom { flex-direction: column; gap: 16px; text-align: center;} }

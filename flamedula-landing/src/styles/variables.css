@@ -1,0 +1,36 @@
+/* === SYSTEM & VARIABLES === */
+:root {
+    --donor-main: #B91C1C;
+    --donor-dark: #7F1D1D;
+    --donor-light: #DC2626;
+    
+    --patient-main: #2563EB;
+    --patient-dark: #1D4ED8;
+    --patient-bg: #DBEAFE;
+    
+    --redome-main: #F97316;
+    --redome-dark: #EA580C;
+    --redome-bg: #FFF7ED;
+    
+    --bg-page: #FAFAF7;
+    --bg-surface: #FFFFFF;
+    --bg-dark: #0A0A0A;
+    --text-main: #111827;
+    --text-muted: #6B7280;
+    --border-light: rgba(0,0,0,0.08);
+    
+    --font-main: 'Inter', sans-serif;
+    --font-display: 'Oswald', sans-serif;
+    --font-premium: 'Sora', sans-serif;
+    
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+    --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+    --shadow-lg: 0 20px 40px rgba(0,0,0,0.12);
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+    --radius-full: 9999px;
+    
+    --container-w: 1200px;
+    --nav-h: 110px; /* Aumentado para acomodar a logo 100% maior */
+}
