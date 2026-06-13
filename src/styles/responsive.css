@@ -29,6 +29,14 @@
 @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } .panel-container { padding: 24px; } }
 
 @media (max-width: 900px) {
+    #containerIntroVideo {
+        width: clamp(260px, 82vw, 360px);
+        max-height: 62vh;
+    }
+    .intro-step {
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
     .video-section { padding: 56px 0 64px; }
     .video-layout {
         grid-template-columns: 1fr;
@@ -47,7 +55,7 @@
     }
     .video-info-player {
         width: min(86vw, 330px);
-        max-height: 60vh;
+        max-height: 58vh;
     }
     .video-highlight-card {
         margin: 24px 0;
@@ -59,12 +67,24 @@
         gap: 12px;
     }
     .video-text .btn { width: 100%; }
+    .video-layout::before {
+        top: 18%;
+        left: auto;
+        right: 4%;
+    }
+    .video-layout::after {
+        display: none;
+    }
 }
 
 @media (max-width: 420px) {
+    #containerIntroVideo {
+        width: clamp(260px, 82vw, 340px);
+        max-height: 62vh;
+    }
     .video-info-player {
         width: min(88vw, 320px);
-        max-height: 58vh;
+        max-height: 56vh;
     }
 }
 

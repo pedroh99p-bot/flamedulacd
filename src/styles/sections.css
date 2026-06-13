@@ -137,8 +137,33 @@
     align-items: center;
     gap: 28px 64px;
 }
+.video-layout::before,
+.video-layout::after {
+    position: absolute;
+    z-index: -1;
+    content: '?';
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1;
+    pointer-events: none;
+}
+.video-layout::before {
+    top: 26%;
+    left: 42%;
+    color: rgba(185, 28, 28, 0.055);
+    font-size: clamp(5rem, 10vw, 10rem);
+    transform: rotate(-8deg);
+}
+.video-layout::after {
+    right: 2%;
+    bottom: 8%;
+    color: rgba(185, 28, 28, 0.045);
+    font-size: clamp(4.5rem, 8vw, 8rem);
+    transform: rotate(18deg);
+}
 .video-copy-main {
     grid-area: header;
+    position: relative;
 }
 .video-player-stage {
     grid-area: player;
@@ -169,7 +194,7 @@
 .video-highlight-card {
     background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--border-light); border-radius: var(--radius-md);
-    padding: 24px; margin: 32px 0; box-shadow: var(--shadow-sm);
+    padding: 22px; margin: 26px 0; box-shadow: var(--shadow-sm);
 }
 .video-highlight-card h4 { font-size: 1.1rem; color: var(--donor-dark); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;}
 .video-highlight-card p { font-size: 0.95rem; color: var(--text-main); line-height: 1.6; margin-bottom: 16px;}
@@ -184,11 +209,11 @@
     font-size: 0.95rem;
     color: var(--text-main);
     background: rgba(255,255,255,0.82);
-    border: 1px solid rgba(185, 28, 28, 0.12);
+    border: 1px solid rgba(185, 28, 28, 0.18);
     border-left: 4px solid var(--donor-main);
     border-radius: 12px;
     padding: 14px 16px;
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 14px 32px rgba(185, 28, 28, 0.08);
 }
 .bullet-icon {
     display: inline-flex;
@@ -206,7 +231,7 @@
 .video-info-player {
     width: min(100%, 330px);
     max-height: 560px;
-    box-shadow: 0 24px 60px rgba(10,10,10,0.22);
+    box-shadow: 0 24px 60px rgba(10,10,10,0.22), 0 0 44px rgba(185, 28, 28, 0.18);
 }
 .video-info-player video {
     object-fit: contain;

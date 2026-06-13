@@ -82,30 +82,47 @@ export function setupVideoReelsPlayer(wrapperId, videoId, centerBtnId, playBtnId
 }
 
 export function initInfoVideoCtas() {
-  const watchButton = document.getElementById('watchInfoVideoBtn');
   const cadastroButton = document.getElementById('startCadastroBtn');
-  const faqButton = document.getElementById('videoFaqBtn');
   const video = document.getElementById('infoVideo');
   const wrapper = document.getElementById('vidWrapperInfo');
+  const audioToggle = document.getElementById('infoAudioToggleBtn');
+  const playBtn = document.getElementById('playPauseBtnInfo');
+  let hasTriedViewportPlay = false;
+  let userPaused = false;
+  let internalPlayAttempt = false;
 
-  if (watchButton && video && wrapper) {
-    watchButton.addEventListener('click', () => {
-      video.muted = false;
-      try {
-        Promise.resolve(video.play())
-          .then(() => {
-            wrapper.classList.remove('paused');
-            const playBtn = document.getElementById('playPauseBtnInfo');
-            if (playBtn) playBtn.textContent = '\u23f8';
-          })
-          .catch(() => {
-            wrapper.classList.add('paused');
-          });
-      } catch {
-        wrapper.classList.add('paused');
-      }
-    });
-  }
+  const updateAudioUi = () => {
+    if (!video || !audioToggle) return;
+    const hasAudio = !video.muted && video.volume > 0;
+    audioToggle.hidden = false;
+    audioToggle.textContent = hasAudio ? 'Silenciar' : 'Ativar \u00e1udio';
+    audioToggle.classList.toggle('is-audio-on', hasAudio);
+  };
+
+  const playInfoVideo = async ({ withAudio }) => {
+    if (!video || !wrapper) return false;
+
+    internalPlayAttempt = true;
+    video.volume = 1;
+    video.muted = !withAudio;
+
+    try {
+      await video.play();
+      wrapper.classList.remove('paused');
+      if (playBtn) playBtn.textContent = '\u23f8';
+      updateAudioUi();
+      return true;
+    } catch {
+      wrapper.classList.add('paused');
+      if (playBtn) playBtn.textContent = '\u25b6';
+      updateAudioUi();
+      return false;
+    } finally {
+      window.setTimeout(() => {
+        internalPlayAttempt = false;
+      }, 0);
+    }
+  };
 
   if (cadastroButton) {
     cadastroButton.addEventListener('click', () => {
@@ -113,9 +130,32 @@ export function initInfoVideoCtas() {
     });
   }
 
-  if (faqButton) {
-    faqButton.addEventListener('click', () => {
-      document.getElementById('educacional')?.scrollIntoView({ behavior: 'smooth' });
+  if (!video || !wrapper) return;
+
+  if (audioToggle) {
+    audioToggle.addEventListener('click', () => {
+      playInfoVideo({ withAudio: true });
     });
+  }
+
+  video.addEventListener('volumechange', updateAudioUi);
+  video.addEventListener('pause', () => {
+    if (!internalPlayAttempt) userPaused = true;
+  });
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      const entry = entries[0];
+      if (!entry || hasTriedViewportPlay || userPaused || entry.intersectionRatio < 0.5) return;
+
+      hasTriedViewportPlay = true;
+      playInfoVideo({ withAudio: true }).then((playedWithAudio) => {
+        if (playedWithAudio) return;
+
+        playInfoVideo({ withAudio: false });
+      });
+    }, { threshold: [0, 0.5, 0.75] });
+
+    observer.observe(wrapper);
   }
 }

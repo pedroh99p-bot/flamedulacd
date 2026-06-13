@@ -7,9 +7,7 @@ function getIntroElements() {
     introOverlay: document.getElementById('intro-overlay'),
     introVideo: document.getElementById('introVideo'),
     introContainer: document.getElementById('containerIntroVideo'),
-    enterButton: document.getElementById('btn-enter-site'),
-    skipButton: document.getElementById('btn-skip-intro'),
-    watchWithAudioButton: document.getElementById('btn-watch-with-audio'),
+    continueButton: document.getElementById('btn-continue-site'),
     audioToggleButton: document.getElementById('btn-toggle-intro-audio')
   };
 }
@@ -48,20 +46,13 @@ export function closeIntroOverlay() {
 }
 
 function updateIntroAudioUi() {
-  const { introVideo, watchWithAudioButton, audioToggleButton } = getIntroElements();
-  if (!introVideo) return;
+  const { introVideo, audioToggleButton } = getIntroElements();
+  if (!introVideo || !audioToggleButton) return;
 
   const hasAudio = !introVideo.muted && introVideo.volume > 0;
-
-  if (watchWithAudioButton) {
-    watchWithAudioButton.textContent = hasAudio ? 'Assistindo com áudio' : 'Assistir com áudio';
-  }
-
-  if (audioToggleButton) {
-    audioToggleButton.hidden = false;
-    audioToggleButton.textContent = hasAudio ? 'Silenciar' : 'Ativar áudio';
-    audioToggleButton.classList.toggle('is-audio-on', hasAudio);
-  }
+  audioToggleButton.hidden = false;
+  audioToggleButton.textContent = hasAudio ? 'Silenciar' : 'Ativar \u00e1udio';
+  audioToggleButton.classList.toggle('is-audio-on', hasAudio);
 }
 
 async function playIntro({ withAudio }) {
@@ -85,13 +76,7 @@ async function playIntro({ withAudio }) {
 
 async function playIntroWithAudio() {
   const success = await playIntro({ withAudio: true });
-  if (!success) {
-    const { audioToggleButton } = getIntroElements();
-    if (audioToggleButton) {
-      audioToggleButton.hidden = false;
-      audioToggleButton.textContent = 'Ativar áudio';
-    }
-  }
+  if (!success) updateIntroAudioUi();
 }
 
 async function toggleIntroAudio() {
@@ -107,10 +92,8 @@ async function toggleIntroAudio() {
 }
 
 export function initIntroVideo() {
-  const { enterButton, skipButton, watchWithAudioButton, audioToggleButton, introVideo } = getIntroElements();
-  if (enterButton) enterButton.addEventListener('click', closeIntroOverlay);
-  if (skipButton) skipButton.addEventListener('click', closeIntroOverlay);
-  if (watchWithAudioButton) watchWithAudioButton.addEventListener('click', playIntroWithAudio);
+  const { continueButton, audioToggleButton, introVideo } = getIntroElements();
+  if (continueButton) continueButton.addEventListener('click', closeIntroOverlay);
   if (audioToggleButton) audioToggleButton.addEventListener('click', toggleIntroAudio);
   if (introVideo) introVideo.addEventListener('volumechange', updateIntroAudioUi);
 }
@@ -142,7 +125,6 @@ export function showIntroVideoOverlay() {
   playIntro({ withAudio: true }).then((playedWithAudio) => {
     if (playedWithAudio) return;
 
-    introVideo.muted = true;
     const muteBtn = document.querySelector('#containerIntroVideo .reels-mute-btn');
     if (muteBtn) muteBtn.textContent = '\ud83d\udd07';
 
