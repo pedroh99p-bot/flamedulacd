@@ -102,6 +102,10 @@
 @media (max-width: 900px) { 
     .transparency-layout { grid-template-columns: 1fr; gap: 48px; }
     .transparency-connector { display: none; }
+    .transparency-section { background-attachment: scroll; }
+    .network-purpose { padding: 22px; margin-top: 40px; }
+    .purpose-grid { grid-template-columns: 1fr; gap: 12px; }
+    .purpose-card { padding: 18px; }
 }
 
 @media (max-width: 768px) { .action-card { flex: 0 0 85%; } }
