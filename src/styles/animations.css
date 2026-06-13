@@ -15,6 +15,47 @@
 
 @keyframes heartbeat { 0%, 100% { transform: scale(1); } 10%, 30% { transform: scale(1.15); } }
 
+@keyframes impactNumberIn {
+    from { opacity: 0; transform: translateY(12px) scale(0.94); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes impactGlowPulse {
+    0%, 100% { filter: drop-shadow(0 0 0 rgba(185, 28, 28, 0)); }
+    50% { filter: drop-shadow(0 0 14px rgba(185, 28, 28, 0.24)); }
+}
+
+@keyframes timelineGrow {
+    from { height: 0; }
+    to { height: calc(100% - 32px); }
+}
+
+@keyframes eduCardIn {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes timelineDotIn {
+    from { opacity: 0; transform: scale(0.82); }
+    to { opacity: 1; transform: scale(1); }
+}
+
 /* === ANIMATIONS (Scroll Reveal) === */
 .reveal-up { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
 .reveal-up.active { opacity: 1; transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+    .impact-number,
+    .impact-micro,
+    .reveal-up.active .edu-timeline::after,
+    .reveal-up.active .edu-card,
+    .reveal-up.active .edu-step {
+        animation: none !important;
+    }
+    .edu-timeline::after { height: calc(100% - 32px); }
+    .edu-card,
+    .edu-step {
+        opacity: 1;
+        transform: none;
+    }
+}

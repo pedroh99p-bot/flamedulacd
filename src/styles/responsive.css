@@ -89,11 +89,15 @@
 }
 
 @media (max-width: 900px) {
-    .edu-timeline { flex-direction: column; gap: 48px; }
-    .edu-timeline::before { top: 0; bottom: 0; left: 24px; width: 2px; height: auto; background: linear-gradient(180deg, rgba(185, 28, 28, 0.1), var(--donor-main), rgba(185, 28, 28, 0.1)); right: auto;}
-    .edu-step { left: -24px; top: 50%; transform: translateY(-50%); }
-    .edu-card { text-align: left; padding-left: 48px;}
-    .edu-card h3, .edu-card p { text-align: left; }
+    .educational-section { padding: 62px 0 88px; }
+    .educational-section .container { padding-left: 22px; padding-right: 22px; }
+    .edu-header { margin-bottom: 28px; }
+    .impact-block { margin-bottom: 38px; }
+    .edu-timeline { gap: 18px; margin-bottom: 48px; padding-left: 58px; }
+    .edu-timeline::before,
+    .edu-timeline::after { left: 22px; }
+    .edu-step { left: -58px; top: 22px; }
+    .edu-card { padding: 22px 20px; }
     .affinity-block { grid-template-columns: 1fr; }
 }
 
