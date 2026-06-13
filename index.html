@@ -56,7 +56,13 @@
                     <p style="font-size: 0.8rem; line-height: 1.4; margin-bottom: 0; color: rgba(255,255,255,0.8);">A coleta de medula pode ser por <b>aférese (pela veia)</b> ou <b>punção</b>. A decisão é sempre segura e feita pela equipe médica.</p>
                 </div>
 
-                <button class="btn btn-donor btn-glow" id="btn-enter-site" style="width: 100%; font-size: 1rem; padding: 14px;">Entrar direto no site</button>
+                <button class="intro-audio-toggle" id="btn-toggle-intro-audio" type="button" hidden>Ativar áudio</button>
+
+                <div class="intro-action-row">
+                    <button class="btn btn-donor btn-glow" id="btn-watch-with-audio" type="button">Assistir com áudio</button>
+                    <button class="btn btn-outline intro-light-btn" id="btn-enter-site" type="button">Entrar direto no site</button>
+                    <button class="intro-skip-btn" id="btn-skip-intro" type="button">Pular</button>
+                </div>
             </div>
 
         </div>
@@ -303,21 +309,26 @@
     <!-- INFO VIDEO SECTION -->
     <section class="video-section pattern-dots">
         <div class="container video-layout reveal-up">
-            
-            <div class="video-reels-container" id="vidWrapperInfo">
-                <div class="video-player-title">Entenda a doação de medula</div>
-                <div class="video-reels-player-wrapper">
-                    <video id="infoVideo" playsinline preload="metadata">
-                        <source src="https://res.cloudinary.com/dm9mnc97u/video/upload/v1777677171/download_wq1ltu.mp4" type="video/mp4">
-                    </video>
-                    
-                    <div class="play-btn-center" id="playCenterBtnInfo">▶</div>
-                    
-                    <div class="reels-controls-overlay">
-                        <div class="reels-progress-container" id="vidProgressContainerInfo"><div class="reels-progress-filled" id="vidProgressFilledInfo"></div></div>
-                        <div class="reels-controls-row">
-                            <button class="reels-btn reels-play-btn" id="playPauseBtnInfo">▶</button>
-                            <button class="reels-btn reels-mute-btn" id="muteBtnInfo">🔊</button>
+
+            <div class="video-copy-main">
+                <span class="video-label-top">VÍDEO EXPLICATIVO</span>
+                <h2 class="title-md">Antes do medo, entenda como funciona.</h2>
+            </div>
+
+            <div class="video-player-stage">
+                <div class="video-reels-container video-info-player" id="vidWrapperInfo">
+                    <div class="video-player-title">Entenda a doação de medula</div>
+                    <div class="video-reels-player-wrapper">
+                        <video id="infoVideo" playsinline preload="metadata">
+                            <source src="https://res.cloudinary.com/dm9mnc97u/video/upload/v1777677171/download_wq1ltu.mp4" type="video/mp4">
+                        </video>
+
+                        <div class="reels-controls-overlay">
+                            <div class="reels-progress-container" id="vidProgressContainerInfo"><div class="reels-progress-filled" id="vidProgressFilledInfo"></div></div>
+                            <div class="reels-controls-row">
+                                <button class="reels-btn reels-play-btn" id="playPauseBtnInfo" type="button">▶</button>
+                                <button class="reels-btn reels-mute-btn" id="muteBtnInfo" type="button">🔊</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -325,25 +336,24 @@
 
             <!-- Text Content -->
             <div class="video-text">
-                <span class="video-label-top">VÍDEO EXPLICATIVO</span>
-                <h2 class="title-md">Antes do medo, entenda como funciona.</h2>
-                <p class="text-large" style="margin-top: 16px;">Muita gente deixa de se cadastrar porque confunde medula óssea com medula espinhal. Assista ao vídeo e entenda, de forma simples, o que muda quando a informação chega antes do medo.</p>
+                <p class="text-large video-support-text">Assista ao vídeo e entenda por que medula óssea não é medula espinhal — e como a informação certa ajuda mais pessoas a se aproximarem da causa.</p>
                 
                 <div class="video-highlight-card">
                     <h4>Você sabia?</h4>
-                    <p>Em alguns casos, a coleta pode acontecer pelo sangue periférico, por aférese. Em outros casos, pode ser por punção da medula óssea. A definição do método é conduzida pela equipe médica.</p>
+                    <p>Em alguns casos, a coleta pode acontecer pelo sangue periférico, por aférese. Em outros, pode ser por punção da medula óssea. A definição é conduzida pela equipe médica.</p>
                     <span class="video-highlight-micro">A FlaMedula orienta e mobiliza. O cadastro oficial, a triagem e a doação seguem pelos canais oficiais de saúde.</span>
                 </div>
 
                 <div class="bullet-list">
-                    <div class="bullet-item"><span class="bullet-icon">✅</span><span>Medula óssea não é medula espinhal.</span></div>
-                    <div class="bullet-item"><span class="bullet-icon">✅</span><span>Cadastro não é doação imediata.</span></div>
-                    <div class="bullet-item"><span class="bullet-icon">✅</span><span>A forma de coleta é definida pela equipe médica.</span></div>
+                    <div class="bullet-item"><span class="bullet-icon">✓</span><span>Medula óssea não é medula espinhal</span></div>
+                    <div class="bullet-item"><span class="bullet-icon">✓</span><span>Cadastro não é doação imediata</span></div>
+                    <div class="bullet-item"><span class="bullet-icon">✓</span><span>A equipe médica conduz a definição do método</span></div>
                 </div>
 
-                <div style="display: flex; gap: 16px; flex-wrap: wrap;">
-                    <button class="btn btn-donor btn-glow" onclick="document.getElementById('hub-cadastro').scrollIntoView({behavior: 'smooth'})">Assistir e começar meu cadastro</button>
-                    <button class="btn btn-outline" onclick="document.getElementById('educacional').scrollIntoView({behavior: 'smooth'})">Tirar dúvidas</button>
+                <div class="video-cta-row">
+                    <button class="btn btn-donor btn-glow" id="watchInfoVideoBtn" type="button">Assistir vídeo</button>
+                    <button class="btn btn-donor btn-glow" id="startCadastroBtn" type="button">Começar cadastro</button>
+                    <button class="btn btn-outline" id="videoFaqBtn" type="button">Tirar dúvidas</button>
                 </div>
             </div>
 

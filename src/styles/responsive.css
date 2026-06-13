@@ -29,9 +29,43 @@
 @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } .panel-container { padding: 24px; } }
 
 @media (max-width: 900px) {
-    .video-layout { flex-direction: column-reverse; gap: 40px; }
+    .video-section { padding: 56px 0 64px; }
+    .video-layout {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "header"
+            "player"
+            "content";
+        gap: 22px;
+    }
+    .video-copy-main,
+    .video-text {
+        text-align: left;
+    }
+    .video-player-stage {
+        width: 100%;
+    }
+    .video-info-player {
+        width: min(86vw, 330px);
+        max-height: 60vh;
+    }
+    .video-highlight-card {
+        margin: 24px 0;
+        padding: 20px;
+    }
     .bullet-item { text-align: left; }
-    .video-text .btn { width: 100%; margin-bottom: 12px;}
+    .video-cta-row {
+        display: grid;
+        gap: 12px;
+    }
+    .video-text .btn { width: 100%; }
+}
+
+@media (max-width: 420px) {
+    .video-info-player {
+        width: min(88vw, 320px);
+        max-height: 58vh;
+    }
 }
 
 @media (max-width: 900px) {

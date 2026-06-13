@@ -7,7 +7,10 @@ function getIntroElements() {
     introOverlay: document.getElementById('intro-overlay'),
     introVideo: document.getElementById('introVideo'),
     introContainer: document.getElementById('containerIntroVideo'),
-    enterButton: document.getElementById('btn-enter-site')
+    enterButton: document.getElementById('btn-enter-site'),
+    skipButton: document.getElementById('btn-skip-intro'),
+    watchWithAudioButton: document.getElementById('btn-watch-with-audio'),
+    audioToggleButton: document.getElementById('btn-toggle-intro-audio')
   };
 }
 
@@ -44,9 +47,72 @@ export function closeIntroOverlay() {
   }, 500);
 }
 
+function updateIntroAudioUi() {
+  const { introVideo, watchWithAudioButton, audioToggleButton } = getIntroElements();
+  if (!introVideo) return;
+
+  const hasAudio = !introVideo.muted && introVideo.volume > 0;
+
+  if (watchWithAudioButton) {
+    watchWithAudioButton.textContent = hasAudio ? 'Assistindo com áudio' : 'Assistir com áudio';
+  }
+
+  if (audioToggleButton) {
+    audioToggleButton.hidden = false;
+    audioToggleButton.textContent = hasAudio ? 'Silenciar' : 'Ativar áudio';
+    audioToggleButton.classList.toggle('is-audio-on', hasAudio);
+  }
+}
+
+async function playIntro({ withAudio }) {
+  const { introVideo, introContainer } = getIntroElements();
+  if (!introVideo) return false;
+
+  introVideo.volume = 1;
+  introVideo.muted = !withAudio;
+
+  try {
+    await introVideo.play();
+    if (introContainer) introContainer.classList.remove('paused');
+    updateIntroAudioUi();
+    return true;
+  } catch {
+    if (introContainer) introContainer.classList.add('paused');
+    updateIntroAudioUi();
+    return false;
+  }
+}
+
+async function playIntroWithAudio() {
+  const success = await playIntro({ withAudio: true });
+  if (!success) {
+    const { audioToggleButton } = getIntroElements();
+    if (audioToggleButton) {
+      audioToggleButton.hidden = false;
+      audioToggleButton.textContent = 'Ativar áudio';
+    }
+  }
+}
+
+async function toggleIntroAudio() {
+  const { introVideo } = getIntroElements();
+  if (!introVideo) return;
+
+  if (introVideo.muted || introVideo.volume === 0) {
+    await playIntroWithAudio();
+  } else {
+    introVideo.muted = true;
+    updateIntroAudioUi();
+  }
+}
+
 export function initIntroVideo() {
-  const { enterButton } = getIntroElements();
+  const { enterButton, skipButton, watchWithAudioButton, audioToggleButton, introVideo } = getIntroElements();
   if (enterButton) enterButton.addEventListener('click', closeIntroOverlay);
+  if (skipButton) skipButton.addEventListener('click', closeIntroOverlay);
+  if (watchWithAudioButton) watchWithAudioButton.addEventListener('click', playIntroWithAudio);
+  if (audioToggleButton) audioToggleButton.addEventListener('click', toggleIntroAudio);
+  if (introVideo) introVideo.addEventListener('volumechange', updateIntroAudioUi);
 }
 
 export function showIntroVideoOverlay() {
@@ -63,30 +129,6 @@ export function showIntroVideoOverlay() {
 
   if (!introVideo) return;
 
-  introVideo.muted = false;
-  const playPromise = introVideo.play();
-
-  if (playPromise !== undefined) {
-    playPromise.catch((error) => {
-      console.log('Autoplay com audio bloqueado. Tentando fallback mutado...', error);
-      introVideo.muted = true;
-      const muteBtn = document.querySelector('#containerIntroVideo .reels-mute-btn');
-      if (muteBtn) muteBtn.textContent = '\ud83d\udd07';
-
-      introVideo.play().catch(() => {
-        const playCenter = document.querySelector('#containerIntroVideo .play-btn-center');
-        const playBtn = document.querySelector('#containerIntroVideo .reels-play-btn');
-        if (playCenter) {
-          playCenter.style.display = 'flex';
-          playCenter.style.opacity = '1';
-          playCenter.style.pointerEvents = 'auto';
-        }
-        if (playBtn) playBtn.textContent = '\u25b6';
-        if (introContainer) introContainer.classList.add('paused');
-      });
-    });
-  }
-
   const playCenter = document.querySelector('#containerIntroVideo .play-btn-center');
   const playBtn = document.querySelector('#containerIntroVideo .reels-play-btn');
   if (playCenter) playCenter.style.display = 'none';
@@ -96,4 +138,27 @@ export function showIntroVideoOverlay() {
     setupVideoReelsPlayer('containerIntroVideo', 'introVideo', null, null, null, null, null, true);
     introPlayerInitialized = true;
   }
+
+  playIntro({ withAudio: true }).then((playedWithAudio) => {
+    if (playedWithAudio) return;
+
+    introVideo.muted = true;
+    const muteBtn = document.querySelector('#containerIntroVideo .reels-mute-btn');
+    if (muteBtn) muteBtn.textContent = '\ud83d\udd07';
+
+    playIntro({ withAudio: false }).then((playedMuted) => {
+      if (playedMuted) return;
+
+      if (playCenter) {
+        playCenter.style.display = 'flex';
+        playCenter.style.opacity = '1';
+        playCenter.style.pointerEvents = 'auto';
+      }
+      if (playBtn) playBtn.textContent = '\u25b6';
+      if (introContainer) introContainer.classList.add('paused');
+      updateIntroAudioUi();
+    });
+  });
+
+  updateIntroAudioUi();
 }

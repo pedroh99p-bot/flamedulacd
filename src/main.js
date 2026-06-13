@@ -9,7 +9,7 @@ import './styles/responsive.css';
 import { initPreloader } from './scripts/preloader.js';
 import { initIntroVideo } from './scripts/introVideo.js';
 import { initHubCadastro } from './scripts/hubCadastro.js';
-import { setupVideoReelsPlayer } from './scripts/videoPlayer.js';
+import { initInfoVideoCtas, setupVideoReelsPlayer } from './scripts/videoPlayer.js';
 import { initHeroCarousel, renderActions, renderAmbassadors, renderTeam, renderTestimonials } from './scripts/carousels.js';
 import { renderMetrics, setupScrollReveal } from './scripts/counters.js';
 import { initFaq } from './scripts/faq.js';
@@ -29,5 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
   renderActions();
   renderTestimonials();
   setupScrollReveal();
-  setupVideoReelsPlayer('vidWrapperInfo', 'infoVideo', 'playCenterBtnInfo', 'playPauseBtnInfo', 'muteBtnInfo', 'vidProgressContainerInfo', 'vidProgressFilledInfo');
+  setupVideoReelsPlayer('vidWrapperInfo', 'infoVideo', null, 'playPauseBtnInfo', 'muteBtnInfo', 'vidProgressContainerInfo', 'vidProgressFilledInfo');
+  initInfoVideoCtas();
 });

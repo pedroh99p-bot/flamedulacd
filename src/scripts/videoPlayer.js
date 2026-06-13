@@ -23,11 +23,27 @@ export function setupVideoReelsPlayer(wrapperId, videoId, centerBtnId, playBtnId
     centerBtn = wrapper.querySelector('.play-btn-center');
   }
 
+  function playWithUi() {
+    try {
+      const playAttempt = video.play();
+      Promise.resolve(playAttempt)
+        .then(() => {
+          wrapper.classList.remove('paused');
+          if (playBtn) playBtn.textContent = '\u23f8';
+        })
+        .catch(() => {
+          wrapper.classList.add('paused');
+          if (playBtn) playBtn.textContent = '\u25b6';
+        });
+    } catch {
+      wrapper.classList.add('paused');
+      if (playBtn) playBtn.textContent = '\u25b6';
+    }
+  }
+
   function togglePlay() {
     if (video.paused) {
-      video.play();
-      wrapper.classList.remove('paused');
-      if (playBtn) playBtn.textContent = '\u23f8';
+      playWithUi();
     } else {
       video.pause();
       wrapper.classList.add('paused');
@@ -47,6 +63,7 @@ export function setupVideoReelsPlayer(wrapperId, videoId, centerBtnId, playBtnId
 
   if (progCont) {
     progCont.addEventListener('click', (event) => {
+      if (!video.duration) return;
       const rect = progCont.getBoundingClientRect();
       video.currentTime = ((event.clientX - rect.left) / rect.width) * video.duration;
     });
@@ -62,4 +79,43 @@ export function setupVideoReelsPlayer(wrapperId, videoId, centerBtnId, playBtnId
     if (playBtn) playBtn.textContent = '\u25b6';
     if (progFill) progFill.style.width = '100%';
   });
+}
+
+export function initInfoVideoCtas() {
+  const watchButton = document.getElementById('watchInfoVideoBtn');
+  const cadastroButton = document.getElementById('startCadastroBtn');
+  const faqButton = document.getElementById('videoFaqBtn');
+  const video = document.getElementById('infoVideo');
+  const wrapper = document.getElementById('vidWrapperInfo');
+
+  if (watchButton && video && wrapper) {
+    watchButton.addEventListener('click', () => {
+      video.muted = false;
+      try {
+        Promise.resolve(video.play())
+          .then(() => {
+            wrapper.classList.remove('paused');
+            const playBtn = document.getElementById('playPauseBtnInfo');
+            if (playBtn) playBtn.textContent = '\u23f8';
+          })
+          .catch(() => {
+            wrapper.classList.add('paused');
+          });
+      } catch {
+        wrapper.classList.add('paused');
+      }
+    });
+  }
+
+  if (cadastroButton) {
+    cadastroButton.addEventListener('click', () => {
+      document.getElementById('hub-cadastro')?.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+
+  if (faqButton) {
+    faqButton.addEventListener('click', () => {
+      document.getElementById('educacional')?.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
 }
