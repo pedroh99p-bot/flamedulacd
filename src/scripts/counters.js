@@ -25,6 +25,27 @@ export function setupScrollReveal() {
   }, { threshold: 0.1 });
 
   document.querySelectorAll('.reveal-up').forEach((element) => observer.observe(element));
+  setupEducationalTimelineProgress();
+}
+
+function setupEducationalTimelineProgress() {
+  const timeline = document.querySelector('.edu-timeline');
+  if (!timeline) return;
+
+  const updateProgress = () => {
+    const rect = timeline.getBoundingClientRect();
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+    const start = viewportHeight * 0.82;
+    const end = viewportHeight * 0.22;
+    const rawProgress = (start - rect.top) / (start - end + rect.height * 0.55);
+    const progress = Math.min(Math.max(rawProgress, 0), 1);
+
+    timeline.style.setProperty('--timeline-progress', progress.toFixed(3));
+  };
+
+  updateProgress();
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  window.addEventListener('resize', updateProgress);
 }
 
 function animateMetrics(container) {
