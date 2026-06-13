@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FlaMedula - Medula sem medo</title>
-    
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,32 +12,23 @@
     <style>
         /* === SYSTEM & VARIABLES === */
         :root {
-            /* Colors */
             --donor-main: #B91C1C;
             --donor-dark: #7F1D1D;
             --donor-light: #DC2626;
-            
             --patient-main: #2563EB;
             --patient-dark: #1D4ED8;
             --patient-bg: #DBEAFE;
-            
             --redome-main: #F97316;
             --redome-dark: #EA580C;
             --redome-bg: #FFEDD5;
-            
             --accent-gold: #FBBF24;
-            
             --bg-page: #FAFAF7;
             --bg-surface: #FFFFFF;
             --text-main: #111827;
             --text-muted: #4B5563;
             --border-light: rgba(0,0,0,0.08);
-            
-            /* Typography */
             --font-main: 'Inter', sans-serif;
             --font-display: 'Oswald', sans-serif;
-            
-            /* Shadows & Radii (iOS style) */
             --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
             --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
             --shadow-lg: 0 20px 40px rgba(0,0,0,0.12);
@@ -46,8 +36,6 @@
             --radius-lg: 24px;
             --radius-xl: 32px;
             --radius-full: 9999px;
-            
-            /* Layout */
             --container-w: 1200px;
             --nav-h: 72px;
         }
@@ -55,14 +43,7 @@
         /* === RESET & BASE === */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
-        body {
-            font-family: var(--font-main);
-            background-color: var(--bg-page);
-            color: var(--text-main);
-            line-height: 1.5;
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
-        }
+        body { font-family: var(--font-main); background-color: var(--bg-page); color: var(--text-main); line-height: 1.5; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
         img, video { max-width: 100%; height: auto; display: block; }
         a { text-decoration: none; color: inherit; cursor: pointer; }
         button { border: none; background: none; font-family: inherit; cursor: pointer; }
@@ -76,58 +57,24 @@
         .text-large { font-size: 1.125rem; color: var(--text-muted); }
         .text-center { text-align: center; }
 
-        .container {
-            width: 100%;
-            max-width: var(--container-w);
-            margin: 0 auto;
-            padding: 0 24px;
-        }
+        .container { width: 100%; max-width: var(--container-w); margin: 0 auto; padding: 0 24px; }
 
         /* === PRELOADER === */
-        #flamedula-preloader {
-            position: fixed; inset: 0;
-            background: #050505;
-            z-index: 9999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: white;
-            transition: opacity 0.6s ease, visibility 0.6s ease;
-        }
-        #flamedula-preloader::before {
-            content: ''; position: absolute; inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
-            pointer-events: none;
-        }
+        #flamedula-preloader { position: fixed; inset: 0; background: #050505; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; transition: opacity 0.6s ease, visibility 0.6s ease; }
+        #flamedula-preloader::before { content: ''; position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E"); pointer-events: none; }
         body.is-loading { overflow: hidden; height: 100vh; }
         .preloader-hidden { opacity: 0; visibility: hidden; }
-        
-        /* Logo Preloader: Mantém cores originais com glow sutil para dar contraste no fundo preto */
-        .preloader-logo {
-            width: 150px; margin-bottom: 32px; object-fit: contain;
-            animation: pulseLogo 2.5s infinite ease-in-out;
-            filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.15));
-            background: transparent; padding: 0; border-radius: 0; box-shadow: none;
-        }
-        @keyframes pulseLogo {
-            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.15)); }
-            50% { transform: scale(1.03); filter: drop-shadow(0 0 35px rgba(220, 38, 38, 0.3)); }
-        }
-        
+        .preloader-logo { width: 150px; margin-bottom: 32px; object-fit: contain; animation: pulseLogo 2.5s infinite ease-in-out; filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.15)); background: transparent; padding: 0; border-radius: 0; box-shadow: none; }
+        @keyframes pulseLogo { 0%, 100% { transform: scale(1); filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.15)); } 50% { transform: scale(1.03); filter: drop-shadow(0 0 35px rgba(220, 38, 38, 0.3)); } }
         .preloader-text { font-family: var(--font-display); font-size: 1.75rem; font-weight: 600; letter-spacing: 0.02em; margin-bottom: 8px; text-transform: uppercase; color: white; position: relative; z-index: 2; text-align: center;}
         .preloader-subtext { font-size: 1rem; color: rgba(255,255,255,0.7); margin-bottom: 40px; font-weight: 500; position: relative; z-index: 2; text-align: center; }
-        
         .preloader-bar-container { width: 240px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; position: relative; z-index: 2;}
-        .preloader-bar {
-            position: absolute; top: 0; left: 0; height: 100%; width: 40%;
-            background: var(--donor-light); border-radius: 4px;
-            animation: indeterminateBar 1.2s infinite ease-in-out;
-            box-shadow: 0 0 12px rgba(220, 38, 38, 0.8);
-        }
+        .preloader-bar { position: absolute; top: 0; left: 0; height: 100%; width: 40%; background: var(--donor-light); border-radius: 4px; animation: indeterminateBar 1.2s infinite ease-in-out; box-shadow: 0 0 12px rgba(220, 38, 38, 0.8); }
         @keyframes indeterminateBar { 0% { left: -40%; } 100% { left: 100%; } }
 
         /* === GLOBAL UTILITIES & TEXTURES === */
         .reveal-up { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
         .reveal-up.active { opacity: 1; transform: translateY(0); }
-        
         .pattern-grid { background-image: radial-gradient(rgba(0,0,0,0.06) 1px, transparent 1px); background-size: 24px 24px; }
         .pattern-dots { background-image: radial-gradient(rgba(185,28,28,0.05) 2px, transparent 2px); background-size: 32px 32px; }
         .pattern-curves { background: radial-gradient(circle at 100% 50%, transparent 20%, rgba(37, 99, 235, 0.03) 21%, rgba(37, 99, 235, 0.03) 34%, transparent 35%, transparent), radial-gradient(circle at 0% 50%, transparent 20%, rgba(185, 28, 28, 0.03) 21%, rgba(185, 28, 28, 0.03) 34%, transparent 35%, transparent) 0 -50px; background-size: 100px 100px; }
@@ -136,7 +83,6 @@
         .bg-glow-hub { position: relative; }
         .bg-glow-hub::before { content: ''; position: absolute; top: 10%; left: 50%; transform: translateX(-50%); width: 80%; height: 60%; background: radial-gradient(ellipse at center, rgba(37,99,235,0.05) 0%, rgba(185,28,28,0.03) 50%, transparent 70%); pointer-events: none; z-index: 0; }
         
-        /* Heart Divider */
         .heart-divider { display: flex; align-items: center; justify-content: center; gap: 16px; padding: 40px 0; opacity: 0.7; }
         .heart-divider::before, .heart-divider::after { content: ''; height: 1px; width: 60px; background: linear-gradient(90deg, transparent, var(--donor-main)); }
         .heart-divider::after { background: linear-gradient(270deg, transparent, var(--donor-main)); }
@@ -152,349 +98,260 @@
                 overflow-x: auto; scroll-snap-type: x mandatory;
                 gap: 16px; padding-bottom: 24px;
                 margin-inline: -24px; padding-inline: 24px;
-                scrollbar-width: none; /* Firefox */
+                scrollbar-width: none;
             }
-            .mobile-carousel::-webkit-scrollbar { display: none; } /* Chrome */
+            .mobile-carousel::-webkit-scrollbar { display: none; }
             .mobile-carousel > * { flex: 0 0 85%; scroll-snap-align: center; }
         }
 
         /* === BUTTONS === */
-        .btn {
-            display: inline-flex; align-items: center; justify-content: center;
-            padding: 12px 24px; border-radius: var(--radius-full);
-            font-weight: 600; font-size: 0.95rem; transition: all 0.3s ease;
-            text-align: center; position: relative; z-index: 1; overflow: hidden;
-        }
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 24px; border-radius: var(--radius-full); font-weight: 600; font-size: 0.95rem; transition: all 0.3s ease; text-align: center; position: relative; z-index: 1; overflow: hidden; }
         .btn:active { transform: scale(0.97); }
-        
-        /* Glow Effect on Hover */
-        .btn-glow::after {
-            content: ''; position: absolute; inset: 0; border-radius: inherit;
-            box-shadow: 0 0 15px currentColor; opacity: 0; transition: opacity 0.3s; z-index: -1;
-        }
+        .btn-glow::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: 0 0 15px currentColor; opacity: 0; transition: opacity 0.3s; z-index: -1; }
         .btn:hover.btn-glow::after { opacity: 0.4; }
-        
         .btn-donor { background-color: var(--donor-main); color: white; box-shadow: 0 4px 12px rgba(185, 28, 28, 0.25); }
         .btn-donor:hover { background-color: var(--donor-dark); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(185, 28, 28, 0.35); }
-        
         .btn-patient { background-color: var(--patient-main); color: white; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25); }
         .btn-patient:hover { background-color: var(--patient-dark); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35); }
-        
         .btn-outline { background-color: transparent; border: 2px solid var(--text-main); color: var(--text-main); }
         .btn-outline:hover { background-color: var(--text-main); color: white; transform: translateY(-2px); }
-
         .btn-white { background: white; color: var(--donor-main); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .btn-white:hover { background: #f9fafb; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
 
-        /* === NAVBAR (MOBILE OPTIMIZED) === */
-        .navbar {
-            position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h);
-            background: rgba(250, 250, 247, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border-light); z-index: 1000; display: flex; align-items: center;
-        }
+        /* === NAVBAR === */
+        .navbar { position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h); background: rgba(250, 250, 247, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-light); z-index: 1000; display: flex; align-items: center; }
         .nav-inner { display: flex; justify-content: space-between; align-items: center; width: 100%; }
         .nav-logo img { height: 36px; object-fit: contain; }
         .nav-links { display: flex; gap: 32px; align-items: center; }
         .nav-links a { font-weight: 500; font-size: 0.95rem; color: var(--text-muted); transition: color 0.2s; }
         .nav-links a:hover { color: var(--text-main); }
         .nav-actions { display: flex; gap: 12px; align-items: center; }
-        
         @media (max-width: 900px) {
             .nav-links { display: none; }
             .nav-logo img { height: 28px; }
             .nav-actions { gap: 8px; }
-            /* Keep buttons touchable but compact on mobile */
             .nav-actions .btn { padding: 8px 14px; font-size: 0.85rem; }
             .btn-text { display: inline-block; }
         }
-        @media (max-width: 380px) {
-            .nav-actions .btn { padding: 8px 10px; font-size: 0.8rem; }
-        }
+        @media (max-width: 380px) { .nav-actions .btn { padding: 8px 10px; font-size: 0.8rem; } }
 
         /* === HERO CAROUSEL === */
         .hero-section { padding-top: calc(var(--nav-h) + 24px); padding-bottom: 24px; }
-        .hero-card {
-            background: linear-gradient(135deg, var(--donor-main) 0%, #450a0a 100%);
-            border-radius: var(--radius-xl); overflow: hidden; position: relative;
-            min-height: 520px; display: flex; flex-direction: column; color: white;
-            box-shadow: var(--shadow-lg);
-        }
-        /* Visual Texture */
-        .hero-card::before {
-            content: ''; position: absolute; inset: 0;
-            background-image: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 0%, transparent 40%),
-                              radial-gradient(circle at 80% 70%, rgba(255,255,255,0.05) 0%, transparent 50%);
-            opacity: 0.8; pointer-events: none; z-index: 1;
-        }
-        .hero-card::after {
-            content: ''; position: absolute; inset: 0;
-            background-image: radial-gradient(rgba(0,0,0,0.15) 1px, transparent 1px); background-size: 20px 20px;
-            pointer-events: none; opacity: 0.5; z-index: 1;
-        }
-        
+        .hero-card { background: linear-gradient(135deg, var(--donor-main) 0%, #450a0a 100%); border-radius: var(--radius-xl); overflow: hidden; position: relative; min-height: 520px; display: flex; flex-direction: column; color: white; box-shadow: var(--shadow-lg); }
+        .hero-card::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 0%, transparent 40%), radial-gradient(circle at 80% 70%, rgba(255,255,255,0.05) 0%, transparent 50%); opacity: 0.8; pointer-events: none; z-index: 1; }
+        .hero-card::after { content: ''; position: absolute; inset: 0; background-image: radial-gradient(rgba(0,0,0,0.15) 1px, transparent 1px); background-size: 20px 20px; pointer-events: none; opacity: 0.5; z-index: 1; }
         .carousel-track { position: relative; flex: 1; display: flex; z-index: 2; }
-        .carousel-slide {
-            position: absolute; inset: 0; padding: 64px; display: flex; flex-direction: column; justify-content: center;
-            opacity: 0; visibility: hidden; transition: opacity 0.8s ease, transform 0.8s ease;
-            transform: scale(0.98) translateY(10px);
-        }
+        .carousel-slide { position: absolute; inset: 0; padding: 64px; display: flex; flex-direction: column; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.8s ease, transform 0.8s ease; transform: scale(0.98) translateY(10px); }
         .carousel-slide.active { opacity: 1; visibility: visible; transform: scale(1) translateY(0); }
-        
-        .slide-tag {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);
-            padding: 8px 16px; border-radius: var(--radius-full);
-            font-size: 0.9rem; font-weight: 600; margin-bottom: 24px; width: fit-content;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
+        .slide-tag { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.15); backdrop-filter: blur(8px); padding: 8px 16px; border-radius: var(--radius-full); font-size: 0.9rem; font-weight: 600; margin-bottom: 24px; width: fit-content; border: 1px solid rgba(255,255,255,0.2); }
         .slide-title { font-size: clamp(2.2rem, 4.5vw, 3.5rem); font-weight: 700; line-height: 1.1; margin-bottom: 16px; max-width: 800px; text-shadow: 0 4px 12px rgba(0,0,0,0.4); }
         .slide-text { font-size: 1.15rem; opacity: 0.9; margin-bottom: 40px; max-width: 600px; line-height: 1.6; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        
-        .slide-btn {
-            background: white; color: var(--donor-main); padding: 16px 32px;
-            border-radius: var(--radius-full); font-weight: 600; font-size: 1.05rem;
-            text-decoration: none; width: fit-content; transition: all 0.3s;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-        }
+        .slide-btn { background: white; color: var(--donor-main); padding: 16px 32px; border-radius: var(--radius-full); font-weight: 600; font-size: 1.05rem; text-decoration: none; width: fit-content; transition: all 0.3s; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
         .slide-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.3); }
-
         .carousel-controls { padding: 0 64px 40px; display: flex; flex-direction: column; gap: 20px; position: relative; z-index: 10; }
         .carousel-dots { display: flex; gap: 12px; }
         .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.3); cursor: pointer; transition: all 0.3s ease; }
         .dot.active { background: white; width: 32px; border-radius: 8px; box-shadow: 0 0 10px rgba(255,255,255,0.5); }
-        
         .progress-bar { height: 4px; background: rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden; width: 240px; }
         .progress-fill { height: 100%; background: white; width: 0%; transform-origin: left; box-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        @media (max-width: 768px) { .hero-card { min-height: 480px; } .carousel-slide { padding: 40px 24px; } .carousel-controls { padding: 0 24px 32px; } }
 
-        @media (max-width: 768px) {
-            .hero-card { min-height: 480px; }
-            .carousel-slide { padding: 40px 24px; }
-            .carousel-controls { padding: 0 24px 32px; }
-        }
-
-        /* === ROLLERS INTELLIGENT SYSTEM (NO EMOJIS, FASTER) === */
+        /* === ROLLERS === */
         .roller-wrapper { padding: 16px 0; overflow: hidden; display: flex; border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); }
-        
-        /* Thematic Variations */
         .roller-wine { background: var(--donor-dark); color: white; border-color: rgba(255,255,255,0.1); }
         .roller-light { background: var(--bg-surface); color: var(--donor-dark); border-color: var(--border-light); }
         .roller-blue { background: var(--patient-bg); color: var(--donor-dark); border-color: rgba(37,99,235,0.1); }
         .roller-red-soft { background: #FEF2F2; color: var(--donor-main); border-color: rgba(185,28,28,0.1); }
         .roller-orange { background: linear-gradient(90deg, #FFF7ED, #FFEDD5); color: var(--redome-dark); border-color: rgba(234, 88, 12, 0.1); }
         .roller-black { background: #050505; color: white; border-color: rgba(255,255,255,0.1); }
-
         .roller-track { display: flex; white-space: nowrap; animation: scroll-left 18s linear infinite; }
         .roller-track.reverse { animation-name: scroll-right; }
-        
-        .roller-item {
-            font-family: var(--font-display); font-size: 1.35rem; font-weight: 500;
-            text-transform: uppercase; letter-spacing: 0.1em; padding: 0 24px;
-            display: flex; align-items: center; gap: 24px; opacity: 0.9;
-        }
+        .roller-item { font-family: var(--font-display); font-size: 1.35rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; padding: 0 24px; display: flex; align-items: center; gap: 24px; opacity: 0.9; }
         .roller-item span { opacity: 0.5; font-size: 1.2rem; }
-
         @keyframes scroll-left { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         @keyframes scroll-right { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
         @media (prefers-reduced-motion: reduce) { .roller-track { animation-duration: 90s; } }
 
-        /* === ACTION HUB === */
+        /* === ACTION HUB (COMPACTO) === */
         .hub-section { padding: 80px 0; }
-        .hub-header { text-align: center; margin-bottom: 56px; max-width: 600px; margin-inline: auto; position: relative; z-index: 2; }
+        .hub-header { text-align: center; margin-bottom: 40px; max-width: 600px; margin-inline: auto; position: relative; z-index: 2; }
         .hub-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; transition: opacity 0.3s; position: relative; z-index: 2; }
         
         .hub-card {
             background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border-radius: var(--radius-lg);
-            padding: 40px 32px; box-shadow: var(--shadow-md); border: 1px solid var(--border-light);
+            padding: 32px 24px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-light);
             display: flex; flex-direction: column; align-items: flex-start;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; position: relative; overflow: hidden;
         }
-        .hub-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); }
+        .hub-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
         
-        .card-icon { font-size: 2.5rem; margin-bottom: 24px; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-md); transition: transform 0.3s; }
-        .hub-card:hover .card-icon { transform: scale(1.1); }
-        .card-donor .card-icon { background: rgba(185, 28, 28, 0.1); }
-        .card-patient .card-icon { background: var(--patient-bg); }
-        .card-redome .card-icon { background: var(--redome-bg); }
+        .card-icon-wrap { width: 56px; height: 56px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 20px; transition: transform 0.3s; }
+        .hub-card:hover .card-icon-wrap { transform: scale(1.1); }
+        .card-donor .card-icon-wrap { background: rgba(185, 28, 28, 0.1); }
+        .card-patient .card-icon-wrap { background: var(--patient-bg); }
+        .card-support .card-icon-wrap { background: rgba(251, 191, 36, 0.2); }
         
-        .hub-card img { height: 32px; margin-bottom: 24px; object-fit: contain; }
-        .hub-card h3 { font-size: 1.5rem; margin-bottom: 12px; color: var(--text-main); }
-        .hub-card p { color: var(--text-muted); margin-bottom: 32px; flex: 1; line-height: 1.6; }
+        .hub-card h3 { font-size: 1.35rem; margin-bottom: 8px; color: var(--text-main); line-height: 1.2;}
+        .hub-card p { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 24px; flex: 1; line-height: 1.5; }
         
-        .card-btn { width: 100%; padding: 14px; border-radius: var(--radius-full); font-weight: 600; text-align: center; transition: all 0.3s; }
+        .card-btn { width: 100%; padding: 12px; border-radius: var(--radius-full); font-weight: 600; text-align: center; transition: all 0.3s; }
         .card-donor .card-btn { background: var(--donor-main); color: white; }
         .card-patient .card-btn { background: var(--patient-main); color: white; }
-        .card-redome .card-btn { background: var(--redome-main); color: white; }
+        .card-support .card-btn { background: var(--accent-gold); color: var(--text-main); }
         .hub-card:hover .card-btn { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
         
         /* PANELS */
         .panel-container { display: none; background: var(--bg-surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); border: 1px solid var(--border-light); padding: 40px; max-width: 700px; margin: 0 auto; animation: slideUp 0.4s ease forwards; position: relative; z-index: 2; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
-        .btn-back { display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-weight: 500; font-size: 0.9rem; }
-        .btn-back:hover { color: var(--text-main); }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid var(--border-light); padding-bottom: 16px; }
+        .btn-back { display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-weight: 600; font-size: 0.95rem; background: rgba(0,0,0,0.05); padding: 6px 12px; border-radius: var(--radius-full); transition: background 0.2s;}
+        .btn-back:hover { background: rgba(0,0,0,0.1); color: var(--text-main); }
+        
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .form-col-full { grid-column: 1 / -1; }
         .form-group { display: flex; flex-direction: column; gap: 8px; }
         .form-group label { font-size: 0.9rem; font-weight: 600; color: var(--text-main); }
         .form-control { padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid #E5E7EB; background: #F9FAFB; font-family: inherit; font-size: 1rem; color: var(--text-main); transition: all 0.2s; }
         .form-control:focus { outline: none; border-color: var(--donor-main); box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.1); background: white; }
-        .radio-group { display: flex; gap: 16px; }
-        .radio-label { display: flex; align-items: center; gap: 8px; font-size: 0.95rem; cursor: pointer; }
-        .checkbox-group { display: flex; align-items: flex-start; gap: 12px; margin-top: 16px; }
+        
+        /* Options grid for Radio buttons */
+        .options-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+        .option-label { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 1px solid var(--border-light); border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s; background: white; }
+        .option-label:hover { border-color: var(--donor-main); background: #fef2f2; }
+        .option-label input[type="radio"] { width: 18px; height: 18px; accent-color: var(--donor-main); cursor: pointer;}
+        
+        .checkbox-group { display: flex; align-items: flex-start; gap: 12px; margin-top: 16px; background: #f9fafb; padding: 16px; border-radius: var(--radius-md); }
         .checkbox-group input { margin-top: 4px; width: 18px; height: 18px; accent-color: var(--donor-main); cursor: pointer; }
         .checkbox-group label { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; }
         .panel-btn { width: 100%; margin-top: 32px; padding: 16px; font-size: 1.05rem; }
-        .info-list { margin: 24px 0; background: var(--redome-bg); padding: 24px; border-radius: var(--radius-md); }
-        .info-list li { margin-bottom: 12px; display: flex; align-items: center; gap: 12px; font-weight: 500; color: var(--redome-dark); }
+        
+        /* Support Panel specifics */
+        .support-blocks { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+        .support-mini-card { background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); padding: 12px; border-radius: var(--radius-md); font-weight: 500; font-size: 0.9rem; text-align: center; color: var(--text-main);}
+        
         .success-msg { display: none; text-align: center; padding: 40px 20px; }
         .success-icon { font-size: 4rem; margin-bottom: 16px; }
 
-        @media (max-width: 900px) { .hub-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 900px) { .hub-grid { grid-template-columns: 1fr; gap: 16px; } }
         @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } .panel-container { padding: 24px; } }
 
-        /* === VIDEO SECTION (Refined) === */
+        /* === VIDEO SECTION === */
         .video-section { padding: 80px 0; background: var(--bg-page); position: relative; }
-        /* Smooth blend to next section */
-        .video-section::after {
-            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 60px;
-            background: linear-gradient(to bottom, transparent, white); pointer-events: none;
-        }
-        
+        .video-section::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; background: linear-gradient(to bottom, transparent, white); pointer-events: none; }
         .video-layout { display: flex; align-items: center; gap: 64px; }
-        .video-wrapper {
-            flex: 0 0 320px; border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-lg);
-            position: relative; aspect-ratio: 9/16; background: #000;
-        }
+        .video-wrapper { flex: 0 0 320px; border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-lg); position: relative; aspect-ratio: 9/16; background: #000; }
         .video-element { width: 100%; height: 100%; object-fit: cover; }
-        /* Hides native controls completely on webkit to prevent duplicate buttons */
         .video-wrapper video::-webkit-media-controls { display: none !important; }
-        
-        .custom-controls {
-            position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end;
-            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 40%); padding: 24px; opacity: 0; transition: opacity 0.3s;
-        }
+        .custom-controls { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 40%); padding: 24px; opacity: 0; transition: opacity 0.3s; }
         .video-wrapper:hover .custom-controls, .video-wrapper.paused .custom-controls { opacity: 1; }
-        
-        .play-btn-center {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 64px; height: 64px; border-radius: 50%;
-            background: rgba(255,255,255,0.2); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center;
-            color: white; font-size: 24px; transition: transform 0.2s; cursor: pointer;
-        }
+        .play-btn-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 64px; height: 64px; border-radius: 50%; background: rgba(255,255,255,0.2); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; transition: transform 0.2s; cursor: pointer; }
         .play-btn-center:hover { transform: translate(-50%, -50%) scale(1.1); }
         .video-wrapper:not(.paused) .play-btn-center { display: none; }
-        
         .control-bar { display: flex; align-items: center; gap: 16px; width: 100%; }
         .control-btn { color: white; font-size: 1.2rem; }
         .vid-progress-container { flex: 1; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; cursor: pointer; position: relative; }
         .vid-progress-filled { height: 100%; background: var(--donor-main); border-radius: 2px; width: 0%; pointer-events: none; }
-
         .video-text { flex: 1; }
         .video-text h2 { margin-bottom: 16px; color: var(--text-main); }
         .video-text p { font-size: 1.125rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 24px; }
-        
-        .video-bullets-card {
-            background: rgba(255,255,255,0.6); backdrop-filter: blur(8px); border: 1px solid rgba(0,0,0,0.05);
-            border-radius: var(--radius-md); padding: 24px; margin-bottom: 32px; box-shadow: var(--shadow-sm);
-            border-left: 4px solid var(--donor-main);
-        }
-        
+        .video-bullets-card { background: rgba(255,255,255,0.6); backdrop-filter: blur(8px); border: 1px solid rgba(0,0,0,0.05); border-radius: var(--radius-md); padding: 24px; margin-bottom: 32px; box-shadow: var(--shadow-sm); border-left: 4px solid var(--donor-main); }
         .video-ctas { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
-
-        @media (max-width: 900px) {
-            .video-layout { flex-direction: column; text-align: center; gap: 40px; }
-            .video-wrapper { width: 100%; max-width: 320px; margin: 0 auto; }
-            .video-ctas { align-items: stretch; }
-            .video-ctas .btn { width: 100%; text-align: center; justify-content: center; }
-            .video-bullets-card { text-align: left; }
-        }
+        @media (max-width: 900px) { .video-layout { flex-direction: column; text-align: center; gap: 40px; } .video-wrapper { width: 100%; max-width: 320px; margin: 0 auto; } .video-ctas { align-items: stretch; } .video-ctas .btn { width: 100%; text-align: center; justify-content: center; } .video-bullets-card { text-align: left; } }
 
         /* === MEDULA SEM MEDO (FLIP CARDS) === */
         .faq-section { padding: 80px 0; background: var(--bg-surface); position: relative; z-index: 1;}
         .faq-header { text-align: center; margin-bottom: 56px; }
         .faq-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
-        
         .flip-card { background-color: transparent; perspective: 1000px; aspect-ratio: 4/3; cursor: pointer; }
         .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
         .flip-card:hover .flip-card-inner { transform: rotateY(180deg); }
-        
-        .flip-card-front, .flip-card-back {
-            position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden;
-            border-radius: var(--radius-lg); padding: 40px; display: flex; flex-direction: column; justify-content: center;
-        }
+        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: var(--radius-lg); padding: 40px; display: flex; flex-direction: column; justify-content: center; }
         .flip-card-front { background: white; border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); }
         .flip-card-front h3 { font-size: 1.5rem; color: var(--text-main); line-height: 1.3; }
         .flip-icon { font-size: 2.5rem; margin-bottom: 16px; opacity: 0.5; }
-        
         .flip-card-back { background: linear-gradient(135deg, var(--donor-main), var(--donor-dark)); color: white; transform: rotateY(180deg); box-shadow: var(--shadow-md); }
         .flip-card-back p { font-size: 1.125rem; font-weight: 500; line-height: 1.5; margin-bottom: auto; }
         .card-logo { width: 80px; opacity: 0.8; margin-top: 24px; filter: brightness(0) invert(1); }
+        @media (max-width: 768px) { .faq-grid { grid-template-columns: 1fr; } .flip-card { aspect-ratio: auto; min-height: 250px; } .flip-card:active .flip-card-inner { transform: rotateY(180deg); } .flip-card-front, .flip-card-back { padding: 32px 24px; } }
 
-        @media (max-width: 768px) {
-            .faq-grid { grid-template-columns: 1fr; }
-            .flip-card { aspect-ratio: auto; min-height: 250px; }
-            .flip-card:active .flip-card-inner { transform: rotateY(180deg); }
-            .flip-card-front, .flip-card-back { padding: 32px 24px; }
-        }
-
-        /* === QUEM SOMOS / TRANSPARÊNCIA === */
-        .transparency-section { padding: 80px 0; background-color: var(--bg-page); position: relative; }
+        /* === QUEM SOMOS / TRANSPARÊNCIA (DARK PREMIUM) === */
+        .transparency-section { padding: 80px 0; background-color: #0A0A0A; color: white; position: relative; }
         .transparency-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; position: relative; z-index: 2; }
         .manifesto-block h2 { margin-bottom: 16px; color: var(--donor-main); }
-        .manifesto-block p { font-size: 1.125rem; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
-        .manifesto-block strong { color: var(--text-main); font-weight: 600; }
+        .manifesto-block p { font-size: 1.125rem; color: rgba(255,255,255,0.7); margin-bottom: 24px; line-height: 1.6; }
+        .manifesto-block strong { color: white; font-weight: 600; }
         
         .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        .metric-card { background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 24px; text-align: center; transition: transform 0.3s, box-shadow 0.3s; }
-        .metric-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-sm); }
-        .metric-value { font-family: var(--font-display); font-size: 2.5rem; font-weight: 600; color: var(--donor-main); line-height: 1; margin-bottom: 8px; }
-        .metric-label { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
-        .metric-demo-label { display: inline-block; margin-top: 16px; font-size: 0.75rem; color: #9CA3AF; background: #F3F4F6; padding: 4px 8px; border-radius: 4px; }
+        .metric-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); padding: 24px; text-align: center; transition: transform 0.3s; }
+        .metric-card:hover { transform: translateY(-4px); }
+        .metric-value { font-family: var(--font-display); font-size: 2.5rem; font-weight: 600; color: var(--donor-main); line-height: 1; margin-bottom: 8px; text-shadow: 0 0 15px rgba(185,28,28,0.3);}
+        .metric-label { font-size: 0.85rem; color: rgba(255,255,255,0.7); font-weight: 500; }
+        .metric-demo-label { display: inline-block; margin-top: 16px; font-size: 0.75rem; color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 4px; }
 
-        /* TEAM & AMBASSADORS (Compact & Carousel Ready) */
-        .team-container { margin-top: 64px; position: relative; z-index: 2; border-top: 1px solid var(--border-light); padding-top: 64px; }
-        .team-grid { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 24px; }
+        /* TEAM & AMBASSADORS (DARK MODE & VERTICAL CARDS) */
+        .team-container { margin-top: 64px; position: relative; z-index: 2; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 64px; }
+        .team-header { display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 32px; }
+        .team-header h3 { font-size: 1.5rem; color: white; margin-bottom: 8px; }
+        .team-header p { color: rgba(255,255,255,0.7); }
         
-        .team-member { display: flex; align-items: center; gap: 12px; background: var(--bg-surface); border: 1px solid var(--border-light); padding: 8px 16px 8px 8px; border-radius: var(--radius-full); box-shadow: var(--shadow-sm); transition: transform 0.2s; }
-        .team-member:hover { transform: translateY(-2px); }
-        .member-photo { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #f3f4f6, #e5e7eb); display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--text-muted); overflow: hidden; flex-shrink: 0;}
-        .member-info h4 { font-size: 0.9rem; margin-bottom: 2px; }
-        .member-info p { font-size: 0.75rem; color: var(--text-muted); }
+        .team-grid { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-bottom: 48px; }
+        .team-card-v {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-lg);
+            padding: 32px 24px; display: flex; flex-direction: column; align-items: center; text-align: center;
+            flex: 0 0 200px; transition: transform 0.2s, background 0.2s;
+        }
+        .team-card-v:hover { transform: translateY(-4px); background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15);}
+        .team-avatar-v {
+            width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #374151, #1f2937);
+            margin-bottom: 16px; display: flex; align-items: center; justify-content: center;
+            font-weight: 600; color: rgba(255,255,255,0.6); font-size: 1.5rem;
+            border: 2px solid rgba(255,255,255,0.1); box-shadow: 0 4px 12px rgba(0,0,0,0.5); overflow: hidden;
+        }
+        .team-avatar-v img { width: 100%; height: 100%; object-fit: cover; }
+        .team-name-v { font-weight: 600; font-size: 1rem; color: white; line-height: 1.2; margin-bottom: 6px; }
+        .team-role-v { font-size: 0.8rem; color: rgba(255,255,255,0.6); line-height: 1.3; }
 
         .ambassadors-section { margin-top: 48px; }
-        .ambassadors-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 24px; }
+        .ambassadors-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; max-width: 800px; margin: 0 auto; margin-top: 24px; }
         
-        .ambassador-card { display: flex; align-items: flex-start; gap: 16px; background: var(--bg-surface); border: 1px solid rgba(185, 28, 28, 0.15); padding: 20px; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); position: relative; overflow: hidden; transition: transform 0.2s; }
-        .ambassador-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .ambassador-card {
+            display: flex; align-items: flex-start; gap: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(185, 28, 28, 0.3);
+            padding: 24px; border-radius: var(--radius-md); position: relative; overflow: hidden; transition: transform 0.2s;
+        }
+        .ambassador-card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.06); }
         .ambassador-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--donor-main); }
-        .ambassador-photo { width: 56px; height: 56px; border-radius: 50%; background: var(--bg-page); display: flex; align-items: center; justify-content: center; color: var(--donor-main); overflow: hidden; font-weight: 600; font-size: 1.2rem; flex-shrink: 0;}
-        .ambassador-info h4 { font-size: 1.1rem; margin-bottom: 2px; color: var(--text-main);}
+        .ambassador-photo { width: 64px; height: 64px; border-radius: 50%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; color: var(--donor-main); overflow: hidden; font-weight: 600; font-size: 1.5rem; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.1);}
+        .ambassador-info h4 { font-size: 1.15rem; margin-bottom: 4px; color: white;}
         .ambassador-info p.amb-role { font-size: 0.85rem; color: var(--donor-main); font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;}
-        .ambassador-info p.amb-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.4; }
+        .ambassador-info p.amb-desc { font-size: 0.9rem; color: rgba(255,255,255,0.7); line-height: 1.5; }
 
         @media (max-width: 900px) {
             .transparency-grid { grid-template-columns: 1fr; gap: 48px; }
             .metrics-grid { max-width: 500px; margin: 0 auto; }
+            .ambassadors-grid { grid-template-columns: 1fr; }
         }
 
         /* === AÇÕES FLAMEDULA (CAROUSEL EDITORIAL) === */
         .acoes-section { padding: 80px 0 0 0; background: var(--bg-page); overflow: hidden; position: relative;}
-        .acoes-header { margin-bottom: 48px; }
+        .acoes-section::before { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.3; background: radial-gradient(circle at 100% 0%, rgba(185, 28, 28, 0.05) 0%, transparent 50%); z-index: 0; }
+        .acoes-header { margin-bottom: 48px; position: relative; z-index: 1;}
+        .carousel-wrapper { position: relative; z-index: 1;}
+        .carousel-nav-btn { position: absolute; top: 40%; transform: translateY(-50%); width: 48px; height: 48px; border-radius: 50%; background: white; box-shadow: var(--shadow-md); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--text-main); cursor: pointer; z-index: 10; transition: transform 0.2s; }
+        .carousel-nav-btn:hover { transform: translateY(-50%) scale(1.1); color: var(--donor-main);}
+        .nav-prev { left: 0px; }
+        .nav-next { right: 0px; }
         
-        .acoes-carousel-container { position: relative; margin: 0 -24px; padding: 0 24px 24px; }
-        .acoes-track { display: flex; gap: 24px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding-bottom: 24px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .acoes-track { display: flex; gap: 24px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding-bottom: 40px; padding-top: 16px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
         .acoes-track::-webkit-scrollbar { display: none; }
         
         .acao-card { flex: 0 0 380px; scroll-snap-align: start; background: var(--bg-surface); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); border: 1px solid var(--border-light); display: flex; flex-direction: column; transition: transform 0.3s, box-shadow 0.3s; }
-        .acao-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
-        
+        .acao-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); border-color: rgba(0,0,0,0.1); }
         .acao-image-area { height: 220px; position: relative; background: #E5E7EB; overflow: hidden; }
         .acao-image-area img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
         .acao-card:hover .acao-image-area img { transform: scale(1.05); }
-        
         .placeholder-graphic { width: 100%; height: 100%; background: linear-gradient(135deg, var(--donor-main), var(--donor-dark)); position: relative; display: flex; align-items: center; justify-content: center; }
         .placeholder-graphic::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 0%, transparent 60%); }
         .placeholder-icon { font-size: 3rem; opacity: 0.5; color: white; }
-        
         .acao-content { padding: 32px 24px; display: flex; flex-direction: column; flex: 1; }
         .acao-meta { display: flex; gap: 12px; font-size: 0.85rem; font-weight: 600; color: var(--donor-main); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; }
         .acao-title { font-size: 1.35rem; font-weight: 700; margin-bottom: 12px; line-height: 1.3; color: var(--text-main); }
@@ -502,27 +359,16 @@
         .acao-cta { font-weight: 600; color: var(--donor-main); display: flex; align-items: center; gap: 8px; transition: gap 0.2s; }
         .acao-card:hover .acao-cta { gap: 12px; }
 
-        .carousel-nav-btn { position: absolute; top: 40%; transform: translateY(-50%); width: 48px; height: 48px; border-radius: 50%; background: white; box-shadow: var(--shadow-md); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--text-main); cursor: pointer; z-index: 10; transition: transform 0.2s; }
-        .carousel-nav-btn:hover { transform: translateY(-50%) scale(1.1); }
-        .nav-prev { left: 0px; }
-        .nav-next { right: 0px; }
-
         @media (max-width: 768px) { .acao-card { flex: 0 0 85%; } .carousel-nav-btn { display: none; } }
 
-        /* === APOIO FINANCEIRO (Connected to Actions) === */
-        .apoio-section {
-            background: linear-gradient(135deg, var(--donor-dark) 0%, #450a0a 100%); color: white;
-            padding: 80px 0 120px; position: relative; overflow: hidden; text-align: center;
-        }
-        /* Top SVG Wave to blend from Ações */
+        /* === APOIO FINANCEIRO (DIRECTLY CONNECTED WITH SVG WAVE) === */
+        .apoio-section { background: linear-gradient(135deg, var(--donor-dark) 0%, #450a0a 100%); color: white; padding: 80px 0 120px; position: relative; overflow: hidden; text-align: center; }
         .apoio-wave { position: absolute; top: 0; left: 0; width: 100%; overflow: hidden; line-height: 0; }
         .apoio-wave svg { position: relative; display: block; width: calc(100% + 1.3px); height: 50px; }
         .apoio-wave .shape-fill { fill: var(--bg-page); }
-
         .apoio-section::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle at 20% -20%, rgba(251,191,36,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 120%, rgba(255,255,255,0.05) 0%, transparent 50%); pointer-events: none; }
         
         .apoio-content { max-width: 900px; margin: 0 auto; position: relative; z-index: 2; margin-top: 40px;}
-        
         .apoio-tag { display: inline-block; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.1em; color: var(--accent-gold); text-transform: uppercase; margin-bottom: 24px; border: 1px solid rgba(251,191,36,0.3); padding: 6px 16px; border-radius: var(--radius-full); background: rgba(251,191,36,0.05);}
         .apoio-title { font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 700; margin-bottom: 24px; line-height: 1.1; text-shadow: 0 4px 12px rgba(0,0,0,0.3); }
         .apoio-copy { font-size: 1.25rem; opacity: 0.9; margin-bottom: 48px; line-height: 1.6; max-width: 700px; margin-inline: auto; }
@@ -534,27 +380,38 @@
         .btn-apoio { background: white; color: var(--donor-dark); font-size: 1.15rem; padding: 20px 48px; box-shadow: 0 12px 32px rgba(0,0,0,0.4), 0 0 15px rgba(251, 191, 36, 0.2); transition: all 0.3s; border-bottom: 3px solid var(--accent-gold); }
         .btn-apoio:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(0,0,0,0.5), 0 0 25px rgba(251, 191, 36, 0.4); background: #fdfbf7;}
 
-        /* === DEPOIMENTOS === */
+        /* === DEPOIMENTOS (QUADRADOS & CAROUSEL MOBILE) === */
         .depoimentos-section { padding: 80px 0; background: var(--bg-surface); }
         .depoimentos-grid { display: flex; gap: 24px; margin-top: 48px; }
-        .depoimento-card { flex: 1; background: var(--bg-page); padding: 32px; border-radius: var(--radius-lg); border: 1px solid var(--border-light); }
+        .depoimento-card {
+            flex: 1; background: var(--bg-page); padding: 32px 24px; border-radius: var(--radius-lg); border: 1px solid var(--border-light);
+            display: flex; flex-direction: column; justify-content: space-between; min-height: 280px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .depoimento-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-sm); }
         .depo-quote { font-size: 1.125rem; font-style: italic; color: var(--text-main); margin-bottom: 24px; line-height: 1.6; }
-        .depo-author { font-weight: 600; color: var(--donor-main); }
+        .depo-author { font-weight: 600; color: var(--donor-main); margin-top: auto;}
         .depo-role { font-size: 0.85rem; color: var(--text-muted); }
 
-        /* === NOVA SEÇÃO REDOME === */
-        .redome-section { padding: 80px 0; background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%); position: relative; overflow: hidden; border-top: 1px solid rgba(234, 88, 12, 0.1); border-bottom: 1px solid rgba(234, 88, 12, 0.1); }
-        .redome-top-logo { width: 140px; margin: 0 auto 32px; object-fit: contain;}
+        /* === NOVA SEÇÃO REDOME (Transição por SVG wave invertida na cor) === */
+        .redome-section {
+            padding: 100px 0 80px; background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%);
+            position: relative; border-bottom: 1px solid rgba(234, 88, 12, 0.1);
+        }
+        .redome-wave { position: absolute; top: 0; left: 0; width: 100%; overflow: hidden; line-height: 0; }
+        .redome-wave svg { position: relative; display: block; width: calc(100% + 1.3px); height: 40px; }
+        .redome-wave .shape-fill { fill: var(--bg-surface); }
         
         .redome-layout { max-width: 700px; margin: 0 auto; text-align: center; position: relative; z-index: 2; }
+        .redome-top-logo { width: 160px; margin: 0 auto 32px; object-fit: contain; filter: drop-shadow(0 4px 12px rgba(234,88,12,0.15));}
         .redome-layout h2 { color: var(--redome-dark); font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; line-height: 1.1; margin-bottom: 16px; }
         .redome-layout h3 { font-size: 1.5rem; color: var(--text-main); margin-bottom: 24px; }
         .redome-layout p { font-size: 1.125rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; }
         .redome-microcopy { font-size: 0.95rem; font-weight: 500; color: var(--redome-dark); margin-bottom: 32px; }
         
-        .redome-checklist { display: flex; justify-content: center; flex-wrap: wrap; gap: 24px; margin-bottom: 40px; }
-        .redome-check-item { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-main); background: rgba(255,255,255,0.6); padding: 8px 16px; border-radius: var(--radius-full); border: 1px solid rgba(234, 88, 12, 0.1);}
-        .check-circle { color: var(--redome-main); font-weight: bold; }
+        .redome-checklist { display: flex; justify-content: center; flex-wrap: wrap; gap: 16px; margin-bottom: 40px; }
+        .redome-check-item { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-main); background: rgba(255,255,255,0.7); padding: 10px 20px; border-radius: var(--radius-full); border: 1px solid rgba(234, 88, 12, 0.15); box-shadow: 0 2px 8px rgba(234,88,12,0.05);}
+        .check-circle { color: var(--redome-main); font-weight: bold; font-size: 1.1rem;}
         
         .redome-aviso { background: rgba(255,255,255,0.6); border-left: 4px solid var(--redome-main); padding: 16px; border-radius: 0 8px 8px 0; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 40px; line-height: 1.5; text-align: left;}
         
@@ -562,10 +419,10 @@
         .btn-redome { background: var(--redome-main); color: white; box-shadow: 0 4px 12px rgba(234, 88, 12, 0.25); }
         .btn-redome:hover { background: var(--redome-dark); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(234, 88, 12, 0.35); }
         .btn-redome-outline { border: 2px solid var(--redome-main); color: var(--redome-dark); }
-        .btn-redome-outline:hover { background: var(--redome-main); color: white; }
+        .btn-redome-outline:hover { background: var(--redome-main); color: white; transform: translateY(-2px);}
 
         /* === FAQ ACCORDION === */
-        .faq-accordion-section { padding: 80px 0; background: var(--bg-surface); }
+        .faq-accordion-section { padding: 80px 0; background: var(--bg-page); }
         .faq-list { max-width: 800px; margin: 0 auto; }
         .faq-item { border-bottom: 1px solid var(--border-light); }
         .faq-q { width: 100%; text-align: left; background: none; border: none; font-weight: 600; font-size: 1.125rem; color: var(--text-main); padding: 24px 0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
@@ -582,13 +439,16 @@
 
         /* === FOOTER INSTITUCIONAL === */
         .footer-section { background: linear-gradient(180deg, #1f2937 0%, #050505 100%); color: rgba(255,255,255,0.7); padding: 80px 0 40px; border-top: 4px solid var(--donor-main); position: relative; overflow: hidden; }
+        .footer-section::before { content: ''; position: absolute; inset: 0; pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E"); }
+        
         .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 48px; margin-bottom: 64px; position: relative; z-index: 2; }
         
-        /* Logo Footer: sem caixa, com glow sutil para leitura em fundo escuro */
+        /* Logo Footer: Original colors floating smoothly */
         .brand-col .footer-logo { max-width: 150px; height: auto; object-fit: contain; margin-bottom: 20px; filter: drop-shadow(0 0 15px rgba(255,255,255,0.15)); }
         
         .footer-tagline { font-weight: 600; color: white; margin-bottom: 8px; font-size: 1.05rem; }
         .footer-microcopy { font-size: 0.9rem; line-height: 1.5; max-width: 280px; }
+
         .footer-title { color: white; font-size: 1.1rem; margin-bottom: 20px; font-weight: 600; }
         .footer-nav { display: flex; flex-direction: column; gap: 12px; }
         .footer-nav a { transition: color 0.2s, transform 0.2s; display: inline-block; font-size: 0.95rem; }
@@ -632,7 +492,6 @@
                 <a href="#acoes">Ações</a>
             </div>
             <div class="nav-actions">
-                <!-- Text elements kept, buttons adapt via CSS for touchable mobile experience -->
                 <a href="#hub-cadastro" class="btn btn-donor btn-glow" onclick="openPanel('donor')"><span class="btn-text">Doador</span> 🩸</a>
                 <a href="#hub-cadastro" class="btn btn-patient btn-glow" onclick="openPanel('patient')"><span class="btn-text">Paciente</span> 💙</a>
             </div>
@@ -646,14 +505,9 @@
                 <div class="carousel-track" id="carouselTrack">
                     <!-- Slides injected by JS -->
                 </div>
-                
                 <div class="carousel-controls">
-                    <div class="carousel-dots" id="carouselDots">
-                        <!-- Dots injected by JS -->
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill"></div>
-                    </div>
+                    <div class="carousel-dots" id="carouselDots"></div>
+                    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
                 </div>
             </div>
         </div>
@@ -671,158 +525,181 @@
     <!-- ACTION HUB -->
     <section id="hub-cadastro" class="hub-section bg-glow-hub">
         <div class="container">
-            <div class="hub-header reveal-up">
+            <div class="hub-header reveal-up" id="hubHeader">
                 <h2 class="title-md">Como você quer ajudar hoje?</h2>
                 <p class="text-large" style="margin-top: 16px;">Escolha um caminho. A FlaMedula orienta, organiza e mobiliza com responsabilidade.</p>
             </div>
 
-            <div class="hub-grid reveal-up" id="hubGrid">
+            <div class="hub-grid mobile-carousel reveal-up" id="hubGrid">
+                <!-- Donor -->
                 <div class="hub-card card-donor" onclick="openPanel('donor')">
-                    <div class="card-icon">🩸</div>
-                    <h3>Cadastrar doador</h3>
-                    <p>Entre para a rede de pessoas disponíveis para receber orientações, campanhas e avisos de mobilização.</p>
-                    <div class="btn card-btn btn-glow">Começar como doador</div>
+                    <div class="card-icon-wrap">🩸</div>
+                    <h3>Quero doar</h3>
+                    <p>Para quem já doa sangue, quer começar a doar ou deseja entender melhor a doação de medula.</p>
+                    <div class="btn card-btn btn-glow">Começar</div>
                 </div>
 
+                <!-- Patient -->
                 <div class="hub-card card-patient" onclick="openPanel('patient')">
-                    <div class="card-icon">💙</div>
-                    <h3>Cadastrar paciente/caso</h3>
-                    <p>Sinalize um caso para análise, orientação e possível mobilização responsável por nossa equipe.</p>
+                    <div class="card-icon-wrap">💙</div>
+                    <h3>Cadastrar paciente</h3>
+                    <p>Sinalize um caso para análise, orientação e possível mobilização responsável.</p>
                     <div class="btn card-btn btn-glow">Cadastrar caso</div>
                 </div>
 
-                <div class="hub-card card-redome" onclick="openPanel('redome')">
-                    <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781283383/logo-redome_wmvgt8.png" alt="REDOME">
-                    <h3>Atualizar cadastro</h3>
-                    <p>Já é cadastrado? Manter telefone, e-mail e cidade atualizados pode ser tão importante quanto se cadastrar.</p>
-                    <div class="btn card-btn btn-glow" style="color:var(--text-main); border: 2px solid var(--redome-main); background: transparent;">Ver orientação</div>
+                <!-- Support (New) -->
+                <div class="hub-card card-support" onclick="openPanel('support')">
+                    <div class="card-icon-wrap">🪙</div>
+                    <h3>Quero apoiar</h3>
+                    <p>Ajude campanhas, comunicação, deslocamento e organização da rede.</p>
+                    <div class="btn card-btn btn-glow">Apoiar a causa</div>
                 </div>
             </div>
 
-            <!-- PANELS (Hidden by default) -->
+            <!-- PANELS -->
             <!-- Donor Panel -->
             <div class="panel-container" id="panel-donor">
                 <div class="panel-header">
-                    <h3 class="title-sm">Cadastro de Doador</h3>
-                    <button class="btn-back" onclick="closePanels()">✕ Fechar</button>
+                    <h3 class="title-sm">Cadastro de doador</h3>
+                    <button class="btn-back" onclick="closePanels()">← Voltar</button>
                 </div>
+                <p class="text-body" style="margin-bottom: 24px;">Responda algumas perguntas rápidas para entendermos como orientar você da melhor forma.</p>
                 <form id="form-donor" onsubmit="handleFormSubmit(event, 'donor')">
                     <div class="form-grid">
-                        <div class="form-group form-col-full">
-                            <label>Nome completo</label>
-                            <input type="text" class="form-control" required placeholder="Digite seu nome">
-                        </div>
-                        <div class="form-group">
-                            <label>WhatsApp</label>
-                            <input type="tel" class="form-control" required placeholder="(00) 00000-0000">
-                        </div>
-                        <div class="form-group">
-                            <label>Cidade / Estado</label>
-                            <input type="text" class="form-control" required placeholder="Ex: Rio de Janeiro / RJ">
-                        </div>
+                        <div class="form-group form-col-full"><label>Nome</label><input type="text" class="form-control" required placeholder="Seu nome"></div>
+                        <div class="form-group"><label>WhatsApp</label><input type="tel" class="form-control" required placeholder="(00) 00000-0000"></div>
+                        <div class="form-group"><label>Cidade / Estado</label><input type="text" class="form-control" required placeholder="Ex: Rio de Janeiro / RJ"></div>
+                        
+                        <!-- Questions -->
                         <div class="form-group form-col-full" style="margin-top: 16px;">
-                            <label>Você já doa sangue?</label>
-                            <div class="radio-group">
-                                <label class="radio-label"><input type="radio" name="sangue" value="sim"> Sim</label>
-                                <label class="radio-label"><input type="radio" name="sangue" value="nao"> Não</label>
+                            <label>1. Você já é doador de sangue?</label>
+                            <div class="options-grid">
+                                <label class="option-label"><input type="radio" name="sangue" value="sim"> Sim, já sou doador de sangue</label>
+                                <label class="option-label"><input type="radio" name="sangue" value="interesse"> Ainda não sou, mas tenho interesse</label>
+                                <label class="option-label"><input type="radio" name="sangue" value="naosei"> Ainda não sei</label>
                             </div>
                         </div>
+                        
                         <div class="form-group form-col-full">
-                            <label>Você já é doador cadastrado de medula?</label>
-                            <div class="radio-group">
-                                <label class="radio-label"><input type="radio" name="medula" value="sim"> Sim</label>
-                                <label class="radio-label"><input type="radio" name="medula" value="nao"> Não</label>
+                            <label>2. Você já é cadastrado como doador de medula?</label>
+                            <div class="options-grid">
+                                <label class="option-label"><input type="radio" name="medula" value="sim"> Sim</label>
+                                <label class="option-label"><input type="radio" name="medula" value="nao"> Não</label>
+                                <label class="option-label"><input type="radio" name="medula" value="incerto"> Não tenho certeza</label>
                             </div>
                         </div>
+                        
                         <div class="form-group form-col-full">
-                            <label>Canal preferido de contato</label>
+                            <label>3. Você tem interesse em se tornar doador de medula ou entender melhor esse processo?</label>
+                            <div class="options-grid">
+                                <label class="option-label"><input type="radio" name="int_medula" value="sim" required> Sim, tenho interesse</label>
+                                <label class="option-label"><input type="radio" name="int_medula" value="entender"> Quero entender melhor antes</label>
+                                <label class="option-label"><input type="radio" name="int_medula" value="nao"> Não neste momento</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group form-col-full">
+                            <label>4. Qual canal você prefere para receber orientação?</label>
                             <select class="form-control">
                                 <option>WhatsApp</option>
-                                <option>E-mail</option>
                                 <option>Ligação</option>
+                                <option>E-mail</option>
                             </select>
                         </div>
+                        
                         <div class="checkbox-group form-col-full">
                             <input type="checkbox" id="lgpd-donor" required>
-                            <label for="lgpd-donor">Autorizo a FlaMedula a armazenar meus dados e entrar em contato para orientações e campanhas, seguindo a LGPD. Entendo que este <b>não</b> é o cadastro oficial do REDOME.</label>
+                            <label for="lgpd-donor">Autorizo a FlaMedula a entrar em contato para orientação, campanhas e mobilizações relacionadas à causa.</label>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-donor btn-glow panel-btn">Simular envio</button>
+                    <button type="submit" class="btn btn-donor btn-glow panel-btn">Enviar cadastro</button>
                 </form>
                 <div class="success-msg" id="success-donor">
-                    <div class="success-icon">✅</div>
-                    <h3 class="title-sm">Simulação de cadastro enviada!</h3>
-                    <p class="text-body" style="margin-top: 8px;">Na versão final, os dados serão salvos com segurança.</p>
-                    <button class="btn btn-outline" style="margin-top: 24px;" onclick="closePanels()">Voltar aos cards</button>
+                    <div class="success-icon">✅</div><h3 class="title-sm">Simulação de envio!</h3>
+                    <p class="text-body" style="margin-top: 8px;">Na versão final, os dados serão salvos de forma segura.</p>
+                    <button class="btn btn-outline" style="margin-top: 24px;" onclick="closePanels()">← Voltar</button>
                 </div>
             </div>
 
             <!-- Patient Panel -->
             <div class="panel-container" id="panel-patient">
                 <div class="panel-header">
-                    <h3 class="title-sm">Sinalizar Caso/Paciente</h3>
-                    <button class="btn-back" onclick="closePanels()">✕ Fechar</button>
+                    <h3 class="title-sm">Cadastro de paciente/caso</h3>
+                    <button class="btn-back" onclick="closePanels()">← Voltar</button>
                 </div>
                 <form id="form-patient" onsubmit="handleFormSubmit(event, 'patient')">
                     <div class="form-grid">
-                        <div class="form-group form-col-full">
-                            <label>Quem está cadastrando?</label>
-                            <select class="form-control">
-                                <option>O próprio paciente</option>
-                                <option>Familiar</option>
-                                <option>Profissional de saúde</option>
-                                <option>Amigo/Apoiador</option>
-                            </select>
-                        </div>
-                        <div class="form-group form-col-full">
-                            <label>Nome ou identificação segura do paciente</label>
-                            <input type="text" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Cidade / Estado onde está</label>
-                            <input type="text" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Hospital de referência (opcional)</label>
-                            <input type="text" class="form-control">
-                        </div>
-                        <div class="form-group form-col-full">
-                            <label>Telefone para contato da equipe FlaMedula</label>
-                            <input type="tel" class="form-control" required placeholder="(00) 00000-0000">
-                        </div>
+                        <div class="form-group"><label>Nome de quem está cadastrando</label><input type="text" class="form-control" required></div>
+                        <div class="form-group"><label>WhatsApp de contato</label><input type="tel" class="form-control" required placeholder="(00) 00000-0000"></div>
+                        
+                        <div class="form-group form-col-full"><label>Relação com o paciente</label><select class="form-control"><option>O próprio paciente</option><option>Familiar</option><option>Profissional de saúde</option><option>Amigo/Apoiador</option></select></div>
+                        
+                        <div class="form-group form-col-full"><label>Nome ou identificação segura do paciente</label><input type="text" class="form-control" required></div>
+                        
+                        <div class="form-group"><label>Cidade</label><input type="text" class="form-control" required></div>
+                        <div class="form-group"><label>Estado</label><input type="text" class="form-control" required></div>
+                        
+                        <div class="form-group form-col-full"><label>Hospital ou unidade de referência</label><input type="text" class="form-control"></div>
+                        <div class="form-group"><label>Tipo de necessidade</label><input type="text" class="form-control" placeholder="Ex: Doação de sangue"></div>
+                        <div class="form-group"><label>Urgência percebida</label><select class="form-control"><option>Alta</option><option>Média</option><option>Rotina</option></select></div>
+
                         <div class="checkbox-group form-col-full">
                             <input type="checkbox" id="lgpd-patient" required>
-                            <label for="lgpd-patient">Autorizo a análise deste caso pela equipe da FlaMedula para possível orientação e mobilização responsável. Entendo que cada caso é avaliado individualmente.</label>
+                            <label for="lgpd-patient">Confirmo que tenho autorização para enviar essas informações para análise e orientação inicial.</label>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-patient btn-glow panel-btn">Simular envio</button>
+                    <button type="submit" class="btn btn-patient btn-glow panel-btn">Enviar caso</button>
                 </form>
                 <div class="success-msg" id="success-patient">
-                    <div class="success-icon">💙</div>
-                    <h3 class="title-sm">Caso recebido para análise (Simulação)</h3>
-                    <p class="text-body" style="margin-top: 8px;">Nossa equipe entraria em contato pelo número informado.</p>
-                    <button class="btn btn-outline" style="margin-top: 24px;" onclick="closePanels()">Voltar aos cards</button>
+                    <div class="success-icon">💙</div><h3 class="title-sm">Simulação de envio!</h3>
+                    <p class="text-body" style="margin-top: 8px;">Nossa equipe analisaria e faria contato.</p>
+                    <button class="btn btn-outline" style="margin-top: 24px;" onclick="closePanels()">← Voltar</button>
                 </div>
             </div>
 
-            <!-- REDOME Panel (Hub) -->
-            <div class="panel-container" id="panel-redome">
+            <!-- Support Panel -->
+            <div class="panel-container" id="panel-support">
                 <div class="panel-header">
-                    <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781283383/logo-redome_wmvgt8.png" alt="REDOME" style="height: 24px;">
-                    <button class="btn-back" onclick="closePanels()">✕ Fechar</button>
+                    <h3 class="title-sm">Apoio financeiro</h3>
+                    <button class="btn-back" onclick="closePanels()">← Voltar</button>
                 </div>
-                <div>
-                    <h3 class="title-sm" style="color: var(--redome-dark);">A importância de atualizar dados</h3>
-                    <p class="text-body" style="margin-top: 8px;">A compatibilidade é rara. Quando ela acontece, o REDOME precisa conseguir falar com você rapidamente. Mantenha em dia:</p>
-                    <ul class="info-list">
-                        <li>📞 Telefone celular e fixo</li>
-                        <li>✉️ E-mail pessoal</li>
-                        <li>📍 Endereço e Cidade</li>
-                    </ul>
-                    <div style="padding: 16px; background: #FEF2F2; border-radius: 8px; border-left: 4px solid var(--donor-main); margin-bottom: 24px;">
-                        <p style="font-size: 0.9rem; color: var(--donor-dark);"><b>Aviso:</b> A FlaMedula orienta, mas a atualização oficial <b>deve</b> ser feita nos canais oficiais do REDOME e Hemocentros.</p>
+                <p class="text-body" style="margin-bottom: 24px;">Cada campanha precisa de comunicação, deslocamento, tecnologia e organização para acontecer.</p>
+                
+                <div class="support-blocks">
+                    <div class="support-mini-card">📣 Comunicação</div>
+                    <div class="support-mini-card">🚗 Deslocamento</div>
+                    <div class="support-mini-card">📲 Tecnologia</div>
+                    <div class="support-mini-card">🧩 Organização</div>
+                </div>
+
+                <form id="form-support" onsubmit="handleFormSubmit(event, 'support')">
+                    <div class="form-grid">
+                        <div class="form-group"><label>Nome (Opcional)</label><input type="text" class="form-control"></div>
+                        <div class="form-group"><label>WhatsApp (Opcional)</label><input type="tel" class="form-control"></div>
+                        
+                        <div class="form-group form-col-full">
+                            <label>Como deseja apoiar?</label>
+                            <div class="options-grid">
+                                <label class="option-label"><input type="radio" name="sup_type" value="link"> Quero receber o link da página de apoio</label>
+                                <label class="option-label"><input type="radio" name="sup_type" value="equipe"> Quero falar com a equipe</label>
+                                <label class="option-label"><input type="radio" name="sup_type" value="campanha"> Quero apoiar uma campanha específica</label>
+                            </div>
+                        </div>
+
+                        <div class="checkbox-group form-col-full">
+                            <input type="checkbox" id="lgpd-support" required>
+                            <label for="lgpd-support">Autorizo a FlaMedula a entrar em contato sobre formas de apoio à causa.</label>
+                        </div>
                     </div>
-                    <button class="btn card-btn btn-glow" style="background: var(--redome-main); color: white;" onclick="closePanels()">Entendi, quero me informar melhor</button>
+                    <div style="display: flex; gap: 16px; margin-top: 32px; flex-wrap: wrap;">
+                        <button type="submit" class="btn btn-outline" style="flex: 1; border-color: var(--accent-gold); color: var(--text-main);">Receber orientação</button>
+                        <a href="/apoie/" class="btn btn-glow" style="flex: 1; background: var(--accent-gold); color: var(--text-main);">Ir para /apoie/</a>
+                    </div>
+                </form>
+                <div class="success-msg" id="success-support">
+                    <div class="success-icon">🪙</div><h3 class="title-sm">Obrigado pelo interesse!</h3>
+                    <p class="text-body" style="margin-top: 8px;">Na versão final isso faria o envio de dados.</p>
+                    <button class="btn btn-outline" style="margin-top: 24px;" onclick="closePanels()">← Voltar</button>
                 </div>
             </div>
         </div>
@@ -840,9 +717,8 @@
     <!-- VÍDEO INFORMATIVO -->
     <section class="video-section pattern-curves" id="video-explicativo">
         <div class="container video-layout">
-            
             <div class="video-wrapper paused reveal-up" id="vidWrapper">
-                <video class="video-element" id="infoVideo" playsinline preload="metadata">
+                <video class="video-element" id="infoVideo" playsinline preload="metadata" disablepictureinpicture controlslist="nodownload nofullscreen noremoteplayback">
                     <source src="https://res.cloudinary.com/dm9mnc97u/video/upload/v1777677171/download_wq1ltu.mp4" type="video/mp4">
                     Seu navegador não suporta vídeos.
                 </video>
@@ -871,7 +747,6 @@
                     <a href="#medula-sem-medo" class="btn btn-outline" style="border-color: var(--text-main); color: var(--text-main);">Tirar dúvidas em Medula sem medo</a>
                 </div>
             </div>
-
         </div>
     </section>
 
@@ -923,19 +798,19 @@
         </div>
     </div>
 
-    <!-- QUEM SOMOS / TRANSPARÊNCIA -->
-    <section id="quem-somos" class="transparency-section pattern-grid">
+    <!-- QUEM SOMOS / TRANSPARÊNCIA (DARK PREMIUM) -->
+    <section id="quem-somos" class="transparency-section pattern-noise">
         <div class="container">
             <div class="transparency-grid">
                 <div class="manifesto-block reveal-up">
                     <h2 class="title-md">Quem somos</h2>
-                    <p class="title-sm" style="color: var(--text-main); margin-bottom: 16px;">Informação, cadastro e mobilização responsável.</p>
+                    <p class="title-sm" style="color: white; margin-bottom: 16px;">Informação, cadastro e mobilização responsável.</p>
                     <p>A FlaMedula existe para transformar <strong>informação</strong> em <strong>movimento</strong>. Organizamos orientação, campanhas e dados para que mais pessoas saibam como ajudar — e para que a <strong>solidariedade</strong> chegue mais rápido a quem precisa.</p>
                     <p>A rede cresce quando cada pessoa entende seu papel: doar, atualizar dados, cadastrar um caso ou apoiar uma campanha.</p>
                 </div>
                 
                 <div class="metrics-block reveal-up" style="transition-delay: 100ms;">
-                    <h3 class="title-sm" style="margin-bottom: 24px;">Transparência da rede</h3>
+                    <h3 class="title-sm" style="margin-bottom: 24px; color: white;">Transparência da rede</h3>
                     <div class="metrics-grid">
                         <div class="metric-card">
                             <div class="metric-value" data-target="328">0</div>
@@ -958,19 +833,23 @@
                 </div>
             </div>
 
-            <!-- Equipe FlaMedula -->
+            <!-- Equipe FlaMedula (Vertical Cards & Mobile Carousel) -->
             <div class="team-container reveal-up">
-                <h3 class="title-sm">Equipe FlaMedula</h3>
-                <!-- Classes added for Mobile Carousel Feature -->
+                <div class="team-header">
+                    <h3 class="title-sm">Equipe FlaMedula</h3>
+                    <p>Quem faz a rede acontecer todos os dias.</p>
+                </div>
                 <div class="team-grid mobile-carousel" id="teamGrid">
                     <!-- Injected by JS -->
                 </div>
             </div>
 
-            <!-- Embaixadores -->
+            <!-- Embaixadores (Compact & Mobile Carousel) -->
             <div class="ambassadors-section reveal-up">
-                <h3 class="title-sm" style="color: var(--donor-main);">Nossos Embaixadores</h3>
-                <!-- Classes added for Mobile Carousel Feature -->
+                <div class="team-header" style="margin-bottom: 24px;">
+                    <h3 class="title-sm" style="color: var(--donor-main);">Nossos Embaixadores</h3>
+                    <p>Vozes que amplificam a nossa causa.</p>
+                </div>
                 <div class="ambassadors-grid mobile-carousel" id="ambassadorsGrid">
                     <!-- Injected by JS -->
                 </div>
@@ -1007,7 +886,7 @@
 
     <!-- APOIO FINANCEIRO (DIRECTLY CONNECTED WITH SVG WAVE) -->
     <section id="apoio" class="apoio-section">
-        <!-- SVG top wave to blend sections smoothly -->
+        <!-- Blend from Actions -->
         <div class="apoio-wave">
             <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
                 <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
@@ -1034,35 +913,48 @@
     </section>
 
     <!-- DEPOIMENTOS -->
-    <section class="depoimentos-section">
+    <section class="depoimentos-section pattern-dots">
         <div class="container">
             <div class="text-center reveal-up">
                 <h2 class="title-md">A força da nossa rede</h2>
                 <p class="text-large" style="margin-top: 12px;">Quem já viveu o processo sabe a importância da informação.</p>
             </div>
-            <!-- Added mobile-carousel feature -->
+            <!-- Mobile Carousel enabled -->
             <div class="depoimentos-grid mobile-carousel reveal-up">
                 <div class="depoimento-card">
                     <p class="depo-quote">"Eu tinha medo porque não entendia. Depois da orientação, ficou muito mais claro."</p>
-                    <p class="depo-author">Voluntária orientada</p>
-                    <p class="depo-role">Rede FlaMedula</p>
+                    <div style="margin-top:auto;">
+                        <p class="depo-author">Voluntária orientada</p>
+                        <p class="depo-role">Rede FlaMedula</p>
+                    </div>
                 </div>
                 <div class="depoimento-card" style="transition-delay: 100ms;">
                     <p class="depo-quote">"Ter alguém explicando o caminho fez diferença em um momento de muita ansiedade."</p>
-                    <p class="depo-author">Familiar de paciente</p>
-                    <p class="depo-role">Campanha acompanhada</p>
+                    <div style="margin-top:auto;">
+                        <p class="depo-author">Familiar de paciente</p>
+                        <p class="depo-role">Campanha acompanhada</p>
+                    </div>
                 </div>
                 <div class="depoimento-card" style="transition-delay: 200ms;">
                     <p class="depo-quote">"A atualização dos dados é simples, mas muita gente esquece. Esse lembrete importa."</p>
-                    <p class="depo-author">Apoiador da causa</p>
-                    <p class="depo-role">Mobilização REDOME</p>
+                    <div style="margin-top:auto;">
+                        <p class="depo-author">Apoiador da causa</p>
+                        <p class="depo-role">Mobilização REDOME</p>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- NOVA SEÇÃO REDOME (Refinada para Mobile) -->
-    <section id="atualiza-redome" class="redome-section pattern-dots">
+    <!-- NOVA SEÇÃO REDOME (Blend from Testimonials) -->
+    <section id="atualiza-redome" class="redome-section">
+        <!-- Blend from Depoimentos -->
+        <div class="redome-wave">
+            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+            </svg>
+        </div>
+
         <div class="container">
             <div class="redome-layout reveal-up">
                 <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781283383/logo-redome_wmvgt8.png" alt="REDOME" class="redome-top-logo">
@@ -1073,10 +965,10 @@
                 <p class="redome-microcopy">Um cadastro desatualizado pode dificultar o contato no momento em que você mais poderia ajudar.</p>
                 
                 <div class="redome-checklist">
-                    <div class="redome-check-item"><span class="check-circle">✓</span> Telefone atualizado</div>
-                    <div class="redome-check-item"><span class="check-circle">✓</span> E-mail atualizado</div>
-                    <div class="redome-check-item"><span class="check-circle">✓</span> Cidade atual</div>
-                    <div class="redome-check-item"><span class="check-circle">✓</span> Endereço correto</div>
+                    <div class="redome-check-item"><span class="check-circle">✓</span> Telefone</div>
+                    <div class="redome-check-item"><span class="check-circle">✓</span> E-mail</div>
+                    <div class="redome-check-item"><span class="check-circle">✓</span> Cidade</div>
+                    <div class="redome-check-item"><span class="check-circle">✓</span> Endereço</div>
                 </div>
 
                 <div class="redome-aviso">
@@ -1086,7 +978,7 @@
                 <div class="redome-ctas">
                     <!-- Link Oficial REDOME vai aqui no futuro -->
                     <a href="#" class="btn btn-redome btn-glow" target="_blank">Atualizar cadastro no REDOME</a>
-                    <a href="#hub-cadastro" class="btn btn-redome-outline">Ainda não sou cadastrado</a>
+                    <a href="#hub-cadastro" class="btn btn-redome-outline" onclick="openPanel('donor')">Ainda não sou cadastrado</a>
                 </div>
             </div>
         </div>
@@ -1170,7 +1062,7 @@
     </div>
 
     <!-- FOOTER INSTITUCIONAL -->
-    <footer class="footer-section pattern-noise">
+    <footer class="footer-section">
         <div class="container">
             <div class="footer-grid">
                 
@@ -1227,11 +1119,10 @@
             const preloader = document.getElementById('flamedula-preloader');
             document.body.classList.add('is-loading');
 
-            // Timeout de Segurança (Máx 2.8s ou sai antes se DOM renderizar liso)
             setTimeout(() => {
                 preloader.classList.add('preloader-hidden');
                 document.body.classList.remove('is-loading');
-                setTimeout(() => { preloader.style.display = 'none'; }, 600); // Wait fadeout
+                setTimeout(() => { preloader.style.display = 'none'; }, 600);
             }, 2400); 
         });
 
@@ -1304,25 +1195,37 @@
         // === ACTION HUB ===
         const hubGrid = document.getElementById('hubGrid');
         const hubHeader = document.querySelector('.hub-header');
-        const panels = ['donor', 'patient', 'redome'];
+        const panels = ['donor', 'patient', 'support']; // Updated panels
 
         function openPanel(type) {
+            // Check if Redome passed to scroll down to Redome section instead
+            if(type === 'redome') {
+                document.getElementById('atualiza-redome').scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+
             hubGrid.style.display = 'none';
             hubHeader.style.display = 'none';
             panels.forEach(p => {
-                document.getElementById(`panel-${p}`).style.display = 'none';
+                const pEl = document.getElementById(`panel-${p}`);
+                if(pEl) pEl.style.display = 'none';
                 const form = document.getElementById(`form-${p}`);
                 const success = document.getElementById(`success-${p}`);
                 if(form) form.style.display = 'grid';
                 if(success) success.style.display = 'none';
             });
             const panel = document.getElementById(`panel-${type}`);
-            panel.style.display = 'block';
-            panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if(panel) {
+                panel.style.display = 'block';
+                panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         }
 
         function closePanels() {
-            panels.forEach(p => document.getElementById(`panel-${p}`).style.display = 'none');
+            panels.forEach(p => {
+                const pEl = document.getElementById(`panel-${p}`);
+                if(pEl) pEl.style.display = 'none';
+            });
             hubGrid.style.display = 'grid';
             hubHeader.style.display = 'block';
             document.getElementById('hub-cadastro').scrollIntoView({ behavior: 'smooth' });
@@ -1366,7 +1269,7 @@
         muteBtn.addEventListener('click', toggleMute);
         video.addEventListener('ended', () => { wrapper.classList.add('paused'); playPauseBtn.textContent = '▶'; progressFillVid.style.width = '100%'; });
 
-        // === METRICS ANIMATION (Easing Math Fix) ===
+        // === METRICS ANIMATION ===
         const metrics = document.querySelectorAll('.metric-value');
         let metricsAnimated = false;
         
@@ -1375,7 +1278,6 @@
             const step = (timestamp) => {
                 if (!startTimestamp) startTimestamp = timestamp;
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                // Ease out quad
                 const easeOutQuad = progress * (2 - progress);
                 obj.innerHTML = Math.floor(easeOutQuad * (end - start) + start);
                 
@@ -1412,14 +1314,13 @@
 
         function renderTeam() {
             const grid = document.getElementById('teamGrid');
+            if(!grid) return;
             teamMembers.forEach(member => {
                 grid.innerHTML += `
-                    <div class="team-member">
-                        <div class="member-photo">${member.initial}</div>
-                        <div class="member-info">
-                            <h4>${member.name}</h4>
-                            <p>${member.role}</p>
-                        </div>
+                    <div class="team-card-v">
+                        <div class="team-avatar-v">${member.initial}</div>
+                        <div class="team-name-v">${member.name}</div>
+                        <div class="team-role-v">${member.role}</div>
                     </div>
                 `;
             });
@@ -1433,6 +1334,7 @@
 
         function renderAmbassadors() {
             const grid = document.getElementById('ambassadorsGrid');
+            if(!grid) return;
             ambassadors.forEach(amb => {
                 grid.innerHTML += `
                     <div class="ambassador-card">
@@ -1457,6 +1359,7 @@
 
         function renderActions() {
             const track = document.getElementById('acoesTrack');
+            if(!track) return;
             const sortedActions = actionsData.filter(a => a.published).sort((a,b) => a.order - b.order);
             
             sortedActions.forEach(action => {
