@@ -4,31 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FlaMedula - Medula sem medo</title>
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;600&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         /* === SYSTEM & VARIABLES === */
         :root {
             --donor-main: #B91C1C;
             --donor-dark: #7F1D1D;
             --donor-light: #DC2626;
+            
             --patient-main: #2563EB;
             --patient-dark: #1D4ED8;
             --patient-bg: #DBEAFE;
+            
             --redome-main: #F97316;
             --redome-dark: #EA580C;
-            --redome-bg: #FFEDD5;
-            --accent-gold: #FBBF24;
+            --redome-bg: #FFF7ED;
+            
             --bg-page: #FAFAF7;
             --bg-surface: #FFFFFF;
+            --bg-dark: #0A0A0A;
             --text-main: #111827;
-            --text-muted: #4B5563;
+            --text-muted: #6B7280;
             --border-light: rgba(0,0,0,0.08);
+            
             --font-main: 'Inter', sans-serif;
             --font-display: 'Oswald', sans-serif;
+            --font-premium: 'Sora', sans-serif;
+            
             --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
             --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
             --shadow-lg: 0 20px 40px rgba(0,0,0,0.12);
@@ -36,14 +40,31 @@
             --radius-lg: 24px;
             --radius-xl: 32px;
             --radius-full: 9999px;
+            
             --container-w: 1200px;
-            --nav-h: 72px;
+            --nav-h: 110px; /* Aumentado para acomodar a logo 100% maior */
         }
 
-        /* === RESET & BASE === */
+        @media (max-width: 900px) {
+            :root { --nav-h: 80px; }
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
-        body { font-family: var(--font-main); background-color: var(--bg-page); color: var(--text-main); line-height: 1.5; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+        
+        body.is-loading {
+            overflow: hidden;
+            height: 100vh;
+        }
+
         img, video { max-width: 100%; height: auto; display: block; }
         a { text-decoration: none; color: inherit; cursor: pointer; }
         button { border: none; background: none; font-family: inherit; cursor: pointer; }
@@ -55,427 +76,653 @@
         .title-sm { font-size: 1.25rem; font-weight: 600; line-height: 1.3; }
         .text-body { font-size: 1rem; color: var(--text-muted); }
         .text-large { font-size: 1.125rem; color: var(--text-muted); }
-        .text-center { text-align: center; }
 
         .container { width: 100%; max-width: var(--container-w); margin: 0 auto; padding: 0 24px; }
 
-        /* === PRELOADER === */
-        #flamedula-preloader { position: fixed; inset: 0; background: #050505; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; transition: opacity 0.6s ease, visibility 0.6s ease; }
-        #flamedula-preloader::before { content: ''; position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E"); pointer-events: none; }
-        body.is-loading { overflow: hidden; height: 100vh; }
-        .preloader-hidden { opacity: 0; visibility: hidden; }
-        .preloader-logo { width: 150px; margin-bottom: 32px; object-fit: contain; animation: pulseLogo 2.5s infinite ease-in-out; filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.15)); background: transparent; padding: 0; border-radius: 0; box-shadow: none; }
-        @keyframes pulseLogo { 0%, 100% { transform: scale(1); filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.15)); } 50% { transform: scale(1.03); filter: drop-shadow(0 0 35px rgba(220, 38, 38, 0.3)); } }
-        .preloader-text { font-family: var(--font-display); font-size: 1.75rem; font-weight: 600; letter-spacing: 0.02em; margin-bottom: 8px; text-transform: uppercase; color: white; position: relative; z-index: 2; text-align: center;}
-        .preloader-subtext { font-size: 1rem; color: rgba(255,255,255,0.7); margin-bottom: 40px; font-weight: 500; position: relative; z-index: 2; text-align: center; }
-        .preloader-bar-container { width: 240px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; position: relative; z-index: 2;}
-        .preloader-bar { position: absolute; top: 0; left: 0; height: 100%; width: 40%; background: var(--donor-light); border-radius: 4px; animation: indeterminateBar 1.2s infinite ease-in-out; box-shadow: 0 0 12px rgba(220, 38, 38, 0.8); }
-        @keyframes indeterminateBar { 0% { left: -40%; } 100% { left: 100%; } }
-
-        /* === GLOBAL UTILITIES & TEXTURES === */
-        .reveal-up { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-        .reveal-up.active { opacity: 1; transform: translateY(0); }
-        .pattern-grid { background-image: radial-gradient(rgba(0,0,0,0.06) 1px, transparent 1px); background-size: 24px 24px; }
-        .pattern-dots { background-image: radial-gradient(rgba(185,28,28,0.05) 2px, transparent 2px); background-size: 32px 32px; }
-        .pattern-curves { background: radial-gradient(circle at 100% 50%, transparent 20%, rgba(37, 99, 235, 0.03) 21%, rgba(37, 99, 235, 0.03) 34%, transparent 35%, transparent), radial-gradient(circle at 0% 50%, transparent 20%, rgba(185, 28, 28, 0.03) 21%, rgba(185, 28, 28, 0.03) 34%, transparent 35%, transparent) 0 -50px; background-size: 100px 100px; }
-        .pattern-noise::before { content: ''; position: absolute; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 0;}
-        
-        .bg-glow-hub { position: relative; }
-        .bg-glow-hub::before { content: ''; position: absolute; top: 10%; left: 50%; transform: translateX(-50%); width: 80%; height: 60%; background: radial-gradient(ellipse at center, rgba(37,99,235,0.05) 0%, rgba(185,28,28,0.03) 50%, transparent 70%); pointer-events: none; z-index: 0; }
-        
-        .heart-divider { display: flex; align-items: center; justify-content: center; gap: 16px; padding: 40px 0; opacity: 0.7; }
-        .heart-divider::before, .heart-divider::after { content: ''; height: 1px; width: 60px; background: linear-gradient(90deg, transparent, var(--donor-main)); }
-        .heart-divider::after { background: linear-gradient(270deg, transparent, var(--donor-main)); }
-        .heart-icon { font-size: 1.2rem; animation: heartbeat 2s infinite; display: inline-block; color: var(--donor-main); }
-        @keyframes heartbeat { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.15); } 30% { transform: scale(1); } 45% { transform: scale(1.15); } 60% { transform: scale(1); } }
-        
-        @media (prefers-reduced-motion: reduce) { .heart-icon, .preloader-logo, .preloader-bar { animation: none; } }
-
-        /* === CAROUSEL MOBILE UTILITY === */
-        @media (max-width: 768px) {
-            .mobile-carousel {
-                display: flex !important; flex-wrap: nowrap !important;
-                overflow-x: auto; scroll-snap-type: x mandatory;
-                gap: 16px; padding-bottom: 24px;
-                margin-inline: -24px; padding-inline: 24px;
-                scrollbar-width: none;
-            }
-            .mobile-carousel::-webkit-scrollbar { display: none; }
-            .mobile-carousel > * { flex: 0 0 85%; scroll-snap-align: center; }
+        /* === TEXTURES & PATTERNS === */
+        .pattern-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+        }
+        .pattern-grid-light {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        }
+        .pattern-dots {
+            background-image: radial-gradient(rgba(0,0,0,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .pattern-noise {
+            position: relative;
+        }
+        .pattern-noise::before {
+            content: ""; position: absolute; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.03; pointer-events: none; z-index: 0;
         }
 
-        /* === BUTTONS === */
-        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 24px; border-radius: var(--radius-full); font-weight: 600; font-size: 0.95rem; transition: all 0.3s ease; text-align: center; position: relative; z-index: 1; overflow: hidden; }
+        /* === BUTTONS & CTAS === */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 14px 28px; border-radius: var(--radius-full);
+            font-weight: 600; font-size: 0.95rem; transition: all 0.3s ease; text-align: center;
+        }
         .btn:active { transform: scale(0.97); }
-        .btn-glow::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: 0 0 15px currentColor; opacity: 0; transition: opacity 0.3s; z-index: -1; }
-        .btn:hover.btn-glow::after { opacity: 0.4; }
-        .btn-donor { background-color: var(--donor-main); color: white; box-shadow: 0 4px 12px rgba(185, 28, 28, 0.25); }
-        .btn-donor:hover { background-color: var(--donor-dark); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(185, 28, 28, 0.35); }
-        .btn-patient { background-color: var(--patient-main); color: white; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25); }
-        .btn-patient:hover { background-color: var(--patient-dark); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35); }
-        .btn-outline { background-color: transparent; border: 2px solid var(--text-main); color: var(--text-main); }
+        .btn-donor { background-color: var(--donor-main); color: white; }
+        .btn-donor:hover { background-color: var(--donor-dark); transform: translateY(-2px); }
+        .btn-patient { background-color: var(--patient-main); color: white; }
+        .btn-patient:hover { background-color: var(--patient-dark); transform: translateY(-2px); }
+        
+        .btn-outline {
+            background-color: transparent; border: 2px solid var(--text-main); color: var(--text-main);
+        }
         .btn-outline:hover { background-color: var(--text-main); color: white; transform: translateY(-2px); }
-        .btn-white { background: white; color: var(--donor-main); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .btn-white:hover { background: #f9fafb; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+        
+        .btn-glow { position: relative; }
+        .btn-glow::after {
+            content: ''; position: absolute; inset: -4px;
+            background: inherit; filter: blur(12px); opacity: 0.4;
+            border-radius: inherit; z-index: -1; transition: opacity 0.3s;
+        }
+        .btn-glow:hover::after { opacity: 0.6; }
+
+        /* === PRELOADER PREMIUM === */
+        #flamedula-preloader {
+            position: fixed; inset: 0; z-index: 9999;
+            background-color: #050505; color: white;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.6s ease;
+        }
+        #flamedula-preloader.preloader-hidden { opacity: 0; pointer-events: none; }
+        
+        .preloader-bg-glow {
+            position: absolute; width: 60vw; height: 60vw; max-width: 600px; max-height: 600px;
+            background: radial-gradient(circle, rgba(185,28,28,0.15) 0%, transparent 70%);
+            top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none;
+        }
+
+        .preloader-logo-wrapper {
+            position: relative; margin-bottom: 40px; z-index: 2;
+            animation: pulse-heartbeat 1.4s infinite cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes pulse-heartbeat {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(185,28,28,0.2)); }
+            50% { transform: scale(1.035); filter: drop-shadow(0 0 25px rgba(185,28,28,0.5)); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .preloader-logo-wrapper { animation: none; filter: drop-shadow(0 0 15px rgba(185,28,28,0.4)); }
+        }
+        .preloader-logo { 
+            height: 96px; /* Aumentado 100% em relação aos 48px anteriores */
+            max-width: 80vw;
+            object-fit: contain; 
+        }
+
+        .preloader-text-box { text-align: center; z-index: 2; font-family: var(--font-premium); }
+        .preloader-title { font-size: 1.4rem; font-weight: 800; margin-bottom: 24px; color: #FFF; line-height: 1.3;}
+        .preloader-bar-container { width: 180px; height: 3px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden; margin: 0 auto; }
+        .preloader-bar-fill { height: 100%; background: var(--donor-light); width: 0%; box-shadow: 0 0 8px rgba(220, 38, 38, 0.6); animation: preloaderFill 2.2s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes preloaderFill { 0% { width: 0%; } 100% { width: 100%; } }
+
+        /* === TELA VÍDEO INTRO DEDECO (OVERLAY) === */
+        #intro-overlay {
+            position: fixed; inset: 0; z-index: 9998;
+            background-color: rgba(10, 10, 10, 0.98);
+            display: none; flex-direction: column; align-items: center; justify-content: flex-start;
+            padding: 24px; opacity: 0; overflow-y: auto; overflow-x: hidden;
+            transition: opacity 0.5s ease;
+        }
+        #intro-overlay.active-slide-up { opacity: 1; }
+        
+        .intro-step {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 100%; min-height: 100%; margin: auto 0; padding-top: 20px; padding-bottom: 20px;
+        }
+
+        .intro-title-premium {
+            font-family: var(--font-premium); font-size: 1.35rem; font-weight: 800;
+            color: #FFF; margin-bottom: 2px; text-align: center;
+        }
+        .intro-subtitle {
+            font-size: 0.85rem; color: var(--donor-main); font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.05em; text-align: center; margin-bottom: 16px; margin-inline: auto;
+        }
+        .intro-highlight-box {
+            background: rgba(185, 28, 28, 0.15); border: 1px solid rgba(185, 28, 28, 0.3);
+            border-radius: 12px; padding: 12px 16px; margin-bottom: 20px; text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+        .highlight-tag {
+            display: inline-block; background: var(--donor-main); color: white;
+            font-size: 0.7rem; font-weight: 700; padding: 4px 8px; border-radius: 20px;
+            margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+
+        /* === CUSTOM VIDEO PLAYERS (REELS STYLE) === */
+        .video-reels-container {
+            position: relative; width: 100%; max-width: 320px; margin: 0 auto;
+            border-radius: var(--radius-lg); overflow: hidden; background: #000;
+            box-shadow: var(--shadow-md); aspect-ratio: 9/16;
+            flex-shrink: 1;
+        }
+        .video-reels-player-wrapper {
+            width: 100%; height: 100%; position: absolute; inset: 0;
+        }
+        .video-reels-player-wrapper video {
+            width: 100%; height: 100%; object-fit: cover; display: block;
+        }
+        /* Mata os controles nativos implacavelmente */
+        .video-reels-player-wrapper video::-webkit-media-controls { display: none !important; }
+        .video-reels-player-wrapper video::-webkit-media-controls-enclosure { display: none !important; }
+        
+        .play-btn-center {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 72px; height: 72px; border-radius: 50%; background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 28px; transition: all 0.2s; cursor: pointer; z-index: 10;
+        }
+        .video-reels-container:not(.paused) .play-btn-center { opacity: 0; pointer-events: none; }
+        
+        .reels-controls-overlay {
+            position: absolute; bottom: 0; left: 0; right: 0; padding: 40px 16px 16px;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+            display: flex; flex-direction: column; gap: 12px; z-index: 10;
+        }
+        .reels-progress-container { width: 100%; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; cursor: pointer; }
+        .reels-progress-filled { height: 100%; background: var(--donor-light); border-radius: 2px; width: 0%; pointer-events: none; }
+        .reels-controls-row { display: flex; justify-content: space-between; align-items: center; }
+        .reels-btn { color: white; font-size: 1.2rem; cursor: pointer; background: none; border: none; padding: 4px; }
+
 
         /* === NAVBAR === */
-        .navbar { position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h); background: rgba(250, 250, 247, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-light); z-index: 1000; display: flex; align-items: center; }
+        .navbar {
+            position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h);
+            background: rgba(250, 250, 247, 0.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-light); z-index: 1000; display: flex; align-items: center;
+            transition: height 0.3s ease;
+        }
         .nav-inner { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-        .nav-logo img { height: 36px; object-fit: contain; }
+        .nav-logo img { 
+            height: 80px; /* Aumentado em 100% */
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05)); 
+        }
         .nav-links { display: flex; gap: 32px; align-items: center; }
         .nav-links a { font-weight: 500; font-size: 0.95rem; color: var(--text-muted); transition: color 0.2s; }
         .nav-links a:hover { color: var(--text-main); }
-        .nav-actions { display: flex; gap: 12px; align-items: center; }
+        .nav-actions { display: flex; gap: 12px; }
+        
         @media (max-width: 900px) {
             .nav-links { display: none; }
-            .nav-logo img { height: 28px; }
             .nav-actions { gap: 8px; }
-            .nav-actions .btn { padding: 8px 14px; font-size: 0.85rem; }
-            .btn-text { display: inline-block; }
+            .nav-actions .btn { padding: 10px 16px; font-size: 0.85rem; }
+            .nav-inner { padding: 0 12px; }
+            .nav-logo img { height: 50px; }
         }
-        @media (max-width: 380px) { .nav-actions .btn { padding: 8px 10px; font-size: 0.8rem; } }
 
         /* === HERO CAROUSEL === */
-        .hero-section { padding-top: calc(var(--nav-h) + 24px); padding-bottom: 24px; }
-        .hero-card { background: linear-gradient(135deg, var(--donor-main) 0%, #450a0a 100%); border-radius: var(--radius-xl); overflow: hidden; position: relative; min-height: 520px; display: flex; flex-direction: column; color: white; box-shadow: var(--shadow-lg); }
-        .hero-card::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 0%, transparent 40%), radial-gradient(circle at 80% 70%, rgba(255,255,255,0.05) 0%, transparent 50%); opacity: 0.8; pointer-events: none; z-index: 1; }
-        .hero-card::after { content: ''; position: absolute; inset: 0; background-image: radial-gradient(rgba(0,0,0,0.15) 1px, transparent 1px); background-size: 20px 20px; pointer-events: none; opacity: 0.5; z-index: 1; }
-        .carousel-track { position: relative; flex: 1; display: flex; z-index: 2; }
-        .carousel-slide { position: absolute; inset: 0; padding: 64px; display: flex; flex-direction: column; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.8s ease, transform 0.8s ease; transform: scale(0.98) translateY(10px); }
-        .carousel-slide.active { opacity: 1; visibility: visible; transform: scale(1) translateY(0); }
-        .slide-tag { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.15); backdrop-filter: blur(8px); padding: 8px 16px; border-radius: var(--radius-full); font-size: 0.9rem; font-weight: 600; margin-bottom: 24px; width: fit-content; border: 1px solid rgba(255,255,255,0.2); }
-        .slide-title { font-size: clamp(2.2rem, 4.5vw, 3.5rem); font-weight: 700; line-height: 1.1; margin-bottom: 16px; max-width: 800px; text-shadow: 0 4px 12px rgba(0,0,0,0.4); }
-        .slide-text { font-size: 1.15rem; opacity: 0.9; margin-bottom: 40px; max-width: 600px; line-height: 1.6; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .slide-btn { background: white; color: var(--donor-main); padding: 16px 32px; border-radius: var(--radius-full); font-weight: 600; font-size: 1.05rem; text-decoration: none; width: fit-content; transition: all 0.3s; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
-        .slide-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.3); }
-        .carousel-controls { padding: 0 64px 40px; display: flex; flex-direction: column; gap: 20px; position: relative; z-index: 10; }
-        .carousel-dots { display: flex; gap: 12px; }
+        .hero-section { padding-top: calc(var(--nav-h) + 24px); padding-bottom: 40px; position: relative;}
+        .hero-section::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 50vh;
+            background: radial-gradient(circle at 50% 0%, rgba(185, 28, 28, 0.05) 0%, transparent 70%); z-index: -1;
+        }
+        .hero-card {
+            background: linear-gradient(135deg, var(--donor-main) 0%, var(--donor-dark) 100%);
+            border-radius: var(--radius-xl); overflow: hidden; position: relative; min-height: 500px;
+            display: flex; flex-direction: column; color: white; box-shadow: var(--shadow-lg);
+        }
+        .hero-card::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 0%, transparent 40%),
+                              radial-gradient(circle at 80% 70%, rgba(255,255,255,0.05) 0%, transparent 50%);
+            opacity: 0.8; pointer-events: none;
+        }
+        
+        .carousel-track { position: relative; flex: 1; display: flex; }
+        .carousel-slide {
+            position: absolute; inset: 0; padding: 48px; display: flex; flex-direction: column; justify-content: center;
+            opacity: 0; visibility: hidden; transition: opacity 0.6s ease, transform 0.6s ease; transform: translateY(20px);
+        }
+        .carousel-slide.active { opacity: 1; visibility: visible; transform: translateY(0); }
+        
+        .slide-tag {
+            display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(8px); padding: 6px 16px; border-radius: var(--radius-full);
+            font-size: 0.85rem; font-weight: 600; margin-bottom: 24px; width: fit-content;
+        }
+        .slide-title { font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; line-height: 1.1; margin-bottom: 16px; max-width: 800px; text-shadow: 0 4px 12px rgba(0,0,0,0.2);}
+        .slide-text { font-size: 1.125rem; opacity: 0.9; margin-bottom: 32px; max-width: 600px; line-height: 1.6;}
+        .slide-btn { background: white; color: var(--donor-main); font-weight: 600; text-shadow: none;}
+        .slide-btn:hover { background: #F3F4F6; }
+
+        .carousel-controls { padding: 0 48px 32px; display: flex; flex-direction: column; gap: 16px; position: relative; z-index: 10; }
+        .carousel-dots { display: flex; gap: 8px; }
         .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.3); cursor: pointer; transition: all 0.3s ease; }
-        .dot.active { background: white; width: 32px; border-radius: 8px; box-shadow: 0 0 10px rgba(255,255,255,0.5); }
-        .progress-bar { height: 4px; background: rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden; width: 240px; }
-        .progress-fill { height: 100%; background: white; width: 0%; transform-origin: left; box-shadow: 0 0 10px rgba(255,255,255,0.5); }
-        @media (max-width: 768px) { .hero-card { min-height: 480px; } .carousel-slide { padding: 40px 24px; } .carousel-controls { padding: 0 24px 32px; } }
+        .dot.active { background: white; width: 24px; border-radius: 8px; }
+        .progress-bar { height: 3px; background: rgba(255,255,255,0.2); border-radius: 3px; overflow: hidden; width: 200px; }
+        .progress-fill { height: 100%; background: white; width: 0%; transform-origin: left; }
+
+        @media (max-width: 768px) {
+            .hero-card { min-height: 450px; border-radius: var(--radius-lg); }
+            .carousel-slide { padding: 32px 24px; }
+            .carousel-controls { padding: 0 24px 24px; }
+        }
 
         /* === ROLLERS === */
-        .roller-wrapper { padding: 16px 0; overflow: hidden; display: flex; border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); }
-        .roller-wine { background: var(--donor-dark); color: white; border-color: rgba(255,255,255,0.1); }
-        .roller-light { background: var(--bg-surface); color: var(--donor-dark); border-color: var(--border-light); }
-        .roller-blue { background: var(--patient-bg); color: var(--donor-dark); border-color: rgba(37,99,235,0.1); }
-        .roller-red-soft { background: #FEF2F2; color: var(--donor-main); border-color: rgba(185,28,28,0.1); }
-        .roller-orange { background: linear-gradient(90deg, #FFF7ED, #FFEDD5); color: var(--redome-dark); border-color: rgba(234, 88, 12, 0.1); }
-        .roller-black { background: #050505; color: white; border-color: rgba(255,255,255,0.1); }
+        .roller-wrapper {
+            padding: 12px 0; overflow: hidden; display: flex;
+            border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light);
+        }
+        .roller-wine { background: var(--donor-dark); color: white; border-color: rgba(0,0,0,0.2); }
+        .roller-light { background: var(--bg-surface); color: var(--donor-dark); }
+        .roller-blue { background: #050505; color: var(--donor-main); border-color: rgba(255,255,255,0.05); }
+        .roller-blue .roller-item span { color: rgba(255,255,255,0.2); }
+        .roller-orange { background: var(--redome-dark); color: white; border-color: rgba(0,0,0,0.1); }
+        .roller-black { background: var(--bg-dark); color: white; border-color: rgba(255,255,255,0.1); }
+        .roller-black .roller-item span { color: var(--donor-light); }
+        
         .roller-track { display: flex; white-space: nowrap; animation: scroll-left 18s linear infinite; }
         .roller-track.reverse { animation-name: scroll-right; }
-        .roller-item { font-family: var(--font-display); font-size: 1.35rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; padding: 0 24px; display: flex; align-items: center; gap: 24px; opacity: 0.9; }
-        .roller-item span { opacity: 0.5; font-size: 1.2rem; }
+        
+        .roller-item {
+            font-family: var(--font-display); font-size: 1.4rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.05em; padding: 0 24px;
+            display: flex; align-items: center; gap: 24px;
+        }
+        .roller-item span { color: inherit; opacity: 0.5; }
+
         @keyframes scroll-left { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         @keyframes scroll-right { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
-        @media (prefers-reduced-motion: reduce) { .roller-track { animation-duration: 90s; } }
+        @media (prefers-reduced-motion: reduce) { .roller-track { animation-duration: 60s; } }
 
-        /* === ACTION HUB (COMPACTO) === */
-        .hub-section { padding: 80px 0; }
-        .hub-header { text-align: center; margin-bottom: 40px; max-width: 600px; margin-inline: auto; position: relative; z-index: 2; }
-        .hub-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; transition: opacity 0.3s; position: relative; z-index: 2; }
+        /* === ACTION HUB === */
+        .hub-section { padding: 80px 0; position: relative;}
+        .bg-glow-hub { position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.03) 0%, transparent 60%); z-index: -1;}
+        .hub-header { text-align: center; margin-bottom: 48px; max-width: 600px; margin-inline: auto; }
+        
+        .hub-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; transition: opacity 0.3s; }
         
         .hub-card {
-            background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border-radius: var(--radius-lg);
-            padding: 32px 24px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-light);
+            background: var(--bg-surface); border-radius: var(--radius-lg); padding: 32px 24px;
+            box-shadow: var(--shadow-sm); border: 1px solid var(--border-light);
             display: flex; flex-direction: column; align-items: flex-start;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; position: relative; overflow: hidden;
+            transition: all 0.3s ease; cursor: pointer; position: relative; overflow: hidden;
         }
         .hub-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
         
-        .card-icon-wrap { width: 56px; height: 56px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 20px; transition: transform 0.3s; }
-        .hub-card:hover .card-icon-wrap { transform: scale(1.1); }
-        .card-donor .card-icon-wrap { background: rgba(185, 28, 28, 0.1); }
-        .card-patient .card-icon-wrap { background: var(--patient-bg); }
-        .card-support .card-icon-wrap { background: rgba(251, 191, 36, 0.2); }
+        .hub-card h3 { font-size: 1.4rem; margin-bottom: 8px; color: var(--text-main); }
+        .hub-card p { color: var(--text-muted); margin-bottom: 24px; font-size: 0.95rem; flex: 1; }
+        .card-btn { width: 100%; padding: 14px; border-radius: var(--radius-md); font-weight: 600; text-align: center; transition: opacity 0.2s; }
         
-        .hub-card h3 { font-size: 1.35rem; margin-bottom: 8px; color: var(--text-main); line-height: 1.2;}
-        .hub-card p { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 24px; flex: 1; line-height: 1.5; }
+        .card-donor .card-btn { background: rgba(185, 28, 28, 0.1); color: var(--donor-dark); }
+        .card-patient .card-btn { background: var(--patient-bg); color: var(--patient-dark); }
+        .card-support .card-btn { background: #FEF3C7; color: #92400E; }
         
-        .card-btn { width: 100%; padding: 12px; border-radius: var(--radius-full); font-weight: 600; text-align: center; transition: all 0.3s; }
-        .card-donor .card-btn { background: var(--donor-main); color: white; }
-        .card-patient .card-btn { background: var(--patient-main); color: white; }
-        .card-support .card-btn { background: var(--accent-gold); color: var(--text-main); }
-        .hub-card:hover .card-btn { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        
-        /* PANELS */
-        .panel-container { display: none; background: var(--bg-surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); border: 1px solid var(--border-light); padding: 40px; max-width: 700px; margin: 0 auto; animation: slideUp 0.4s ease forwards; position: relative; z-index: 2; }
+        .hub-card:hover .card-btn { filter: brightness(0.95); }
+
+        @media (max-width: 900px) { .hub-grid { grid-template-columns: 1fr; } }
+
+        /* === PANELS (Forms) === */
+        .panel-container {
+            display: none; background: var(--bg-surface); border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg); border: 1px solid var(--border-light);
+            padding: 40px; max-width: 700px; margin: 0 auto; animation: slideUp 0.4s ease forwards;
+        }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid var(--border-light); padding-bottom: 16px; }
-        .btn-back { display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-weight: 600; font-size: 0.95rem; background: rgba(0,0,0,0.05); padding: 6px 12px; border-radius: var(--radius-full); transition: background 0.2s;}
-        .btn-back:hover { background: rgba(0,0,0,0.1); color: var(--text-main); }
+        
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; border-bottom: 1px solid var(--border-light); padding-bottom: 16px;}
+        .btn-back { display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-weight: 500; font-size: 0.9rem; padding: 8px; background: #F3F4F6; border-radius: 8px;}
+        .btn-back:hover { color: var(--text-main); background: #E5E7EB;}
         
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .form-col-full { grid-column: 1 / -1; }
         .form-group { display: flex; flex-direction: column; gap: 8px; }
         .form-group label { font-size: 0.9rem; font-weight: 600; color: var(--text-main); }
-        .form-control { padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid #E5E7EB; background: #F9FAFB; font-family: inherit; font-size: 1rem; color: var(--text-main); transition: all 0.2s; }
-        .form-control:focus { outline: none; border-color: var(--donor-main); box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.1); background: white; }
-        
-        /* Options grid for Radio buttons */
-        .options-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
-        .option-label { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 1px solid var(--border-light); border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s; background: white; }
-        .option-label:hover { border-color: var(--donor-main); background: #fef2f2; }
-        .option-label input[type="radio"] { width: 18px; height: 18px; accent-color: var(--donor-main); cursor: pointer;}
-        
-        .checkbox-group { display: flex; align-items: flex-start; gap: 12px; margin-top: 16px; background: #f9fafb; padding: 16px; border-radius: var(--radius-md); }
-        .checkbox-group input { margin-top: 4px; width: 18px; height: 18px; accent-color: var(--donor-main); cursor: pointer; }
+        .form-control {
+            padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid #E5E7EB; background: #F9FAFB;
+            font-family: inherit; font-size: 1rem; color: var(--text-main); transition: all 0.2s;
+        }
+        .form-control:focus { outline: none; border-color: var(--donor-main); box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.1); background: white;}
+        .radio-group { display: flex; flex-direction: column; gap: 12px; }
+        .radio-label { display: flex; align-items: center; gap: 8px; font-size: 0.95rem; cursor: pointer; background: #F9FAFB; padding: 12px; border-radius: 8px; border: 1px solid #E5E7EB;}
+        .checkbox-group { display: flex; align-items: flex-start; gap: 12px; margin-top: 16px; }
+        .checkbox-group input { margin-top: 4px; width: 18px; height: 18px; accent-color: var(--donor-main); cursor: pointer;}
         .checkbox-group label { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; }
         .panel-btn { width: 100%; margin-top: 32px; padding: 16px; font-size: 1.05rem; }
-        
-        /* Support Panel specifics */
-        .support-blocks { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
-        .support-mini-card { background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); padding: 12px; border-radius: var(--radius-md); font-weight: 500; font-size: 0.9rem; text-align: center; color: var(--text-main);}
-        
         .success-msg { display: none; text-align: center; padding: 40px 20px; }
-        .success-icon { font-size: 4rem; margin-bottom: 16px; }
-
-        @media (max-width: 900px) { .hub-grid { grid-template-columns: 1fr; gap: 16px; } }
+        
         @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } .panel-container { padding: 24px; } }
 
-        /* === VIDEO SECTION === */
-        .video-section { padding: 80px 0; background: var(--bg-page); position: relative; }
-        .video-section::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; background: linear-gradient(to bottom, transparent, white); pointer-events: none; }
+        /* === VIDEO SECTION (PAGE CONTENT) === */
+        .video-section { padding: 80px 0; background: var(--bg-page); position: relative;}
+        .video-section::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle at 70% 50%, rgba(185, 28, 28, 0.03) 0%, transparent 50%); pointer-events: none;
+        }
         .video-layout { display: flex; align-items: center; gap: 64px; }
-        .video-wrapper { flex: 0 0 320px; border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-lg); position: relative; aspect-ratio: 9/16; background: #000; }
-        .video-element { width: 100%; height: 100%; object-fit: cover; }
-        .video-wrapper video::-webkit-media-controls { display: none !important; }
-        .custom-controls { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 40%); padding: 24px; opacity: 0; transition: opacity 0.3s; }
-        .video-wrapper:hover .custom-controls, .video-wrapper.paused .custom-controls { opacity: 1; }
-        .play-btn-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 64px; height: 64px; border-radius: 50%; background: rgba(255,255,255,0.2); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; transition: transform 0.2s; cursor: pointer; }
-        .play-btn-center:hover { transform: translate(-50%, -50%) scale(1.1); }
-        .video-wrapper:not(.paused) .play-btn-center { display: none; }
-        .control-bar { display: flex; align-items: center; gap: 16px; width: 100%; }
-        .control-btn { color: white; font-size: 1.2rem; }
-        .vid-progress-container { flex: 1; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; cursor: pointer; position: relative; }
-        .vid-progress-filled { height: 100%; background: var(--donor-main); border-radius: 2px; width: 0%; pointer-events: none; }
         .video-text { flex: 1; }
-        .video-text h2 { margin-bottom: 16px; color: var(--text-main); }
-        .video-text p { font-size: 1.125rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 24px; }
-        .video-bullets-card { background: rgba(255,255,255,0.6); backdrop-filter: blur(8px); border: 1px solid rgba(0,0,0,0.05); border-radius: var(--radius-md); padding: 24px; margin-bottom: 32px; box-shadow: var(--shadow-sm); border-left: 4px solid var(--donor-main); }
-        .video-ctas { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
-        @media (max-width: 900px) { .video-layout { flex-direction: column; text-align: center; gap: 40px; } .video-wrapper { width: 100%; max-width: 320px; margin: 0 auto; } .video-ctas { align-items: stretch; } .video-ctas .btn { width: 100%; text-align: center; justify-content: center; } .video-bullets-card { text-align: left; } }
-
-        /* === MEDULA SEM MEDO (FLIP CARDS) === */
-        .faq-section { padding: 80px 0; background: var(--bg-surface); position: relative; z-index: 1;}
-        .faq-header { text-align: center; margin-bottom: 56px; }
-        .faq-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
-        .flip-card { background-color: transparent; perspective: 1000px; aspect-ratio: 4/3; cursor: pointer; }
-        .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
-        .flip-card:hover .flip-card-inner { transform: rotateY(180deg); }
-        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: var(--radius-lg); padding: 40px; display: flex; flex-direction: column; justify-content: center; }
-        .flip-card-front { background: white; border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); }
-        .flip-card-front h3 { font-size: 1.5rem; color: var(--text-main); line-height: 1.3; }
-        .flip-icon { font-size: 2.5rem; margin-bottom: 16px; opacity: 0.5; }
-        .flip-card-back { background: linear-gradient(135deg, var(--donor-main), var(--donor-dark)); color: white; transform: rotateY(180deg); box-shadow: var(--shadow-md); }
-        .flip-card-back p { font-size: 1.125rem; font-weight: 500; line-height: 1.5; margin-bottom: auto; }
-        .card-logo { width: 80px; opacity: 0.8; margin-top: 24px; filter: brightness(0) invert(1); }
-        @media (max-width: 768px) { .faq-grid { grid-template-columns: 1fr; } .flip-card { aspect-ratio: auto; min-height: 250px; } .flip-card:active .flip-card-inner { transform: rotateY(180deg); } .flip-card-front, .flip-card-back { padding: 32px 24px; } }
-
-        /* === QUEM SOMOS / TRANSPARÊNCIA (DARK PREMIUM) === */
-        .transparency-section { padding: 80px 0; background-color: #0A0A0A; color: white; position: relative; }
-        .transparency-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; position: relative; z-index: 2; }
-        .manifesto-block h2 { margin-bottom: 16px; color: var(--donor-main); }
-        .manifesto-block p { font-size: 1.125rem; color: rgba(255,255,255,0.7); margin-bottom: 24px; line-height: 1.6; }
-        .manifesto-block strong { color: white; font-weight: 600; }
         
-        .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        .metric-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); padding: 24px; text-align: center; transition: transform 0.3s; }
-        .metric-card:hover { transform: translateY(-4px); }
-        .metric-value { font-family: var(--font-display); font-size: 2.5rem; font-weight: 600; color: var(--donor-main); line-height: 1; margin-bottom: 8px; text-shadow: 0 0 15px rgba(185,28,28,0.3);}
-        .metric-label { font-size: 0.85rem; color: rgba(255,255,255,0.7); font-weight: 500; }
-        .metric-demo-label { display: inline-block; margin-top: 16px; font-size: 0.75rem; color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 4px; }
-
-        /* TEAM & AMBASSADORS (DARK MODE & VERTICAL CARDS) */
-        .team-container { margin-top: 64px; position: relative; z-index: 2; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 64px; }
-        .team-header { display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 32px; }
-        .team-header h3 { font-size: 1.5rem; color: white; margin-bottom: 8px; }
-        .team-header p { color: rgba(255,255,255,0.7); }
+        .video-label-top { display: inline-block; font-size: 0.75rem; font-weight: 700; color: var(--donor-main); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 16px; padding: 4px 12px; background: rgba(185, 28, 28, 0.1); border-radius: 20px;}
         
-        .team-grid { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-bottom: 48px; }
-        .team-card-v {
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-lg);
-            padding: 32px 24px; display: flex; flex-direction: column; align-items: center; text-align: center;
-            flex: 0 0 200px; transition: transform 0.2s, background 0.2s;
+        .video-highlight-card {
+            background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-light); border-radius: var(--radius-md);
+            padding: 24px; margin: 32px 0; box-shadow: var(--shadow-sm);
         }
-        .team-card-v:hover { transform: translateY(-4px); background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15);}
-        .team-avatar-v {
-            width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #374151, #1f2937);
-            margin-bottom: 16px; display: flex; align-items: center; justify-content: center;
-            font-weight: 600; color: rgba(255,255,255,0.6); font-size: 1.5rem;
-            border: 2px solid rgba(255,255,255,0.1); box-shadow: 0 4px 12px rgba(0,0,0,0.5); overflow: hidden;
-        }
-        .team-avatar-v img { width: 100%; height: 100%; object-fit: cover; }
-        .team-name-v { font-weight: 600; font-size: 1rem; color: white; line-height: 1.2; margin-bottom: 6px; }
-        .team-role-v { font-size: 0.8rem; color: rgba(255,255,255,0.6); line-height: 1.3; }
-
-        .ambassadors-section { margin-top: 48px; }
-        .ambassadors-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; max-width: 800px; margin: 0 auto; margin-top: 24px; }
+        .video-highlight-card h4 { font-size: 1.1rem; color: var(--donor-dark); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;}
+        .video-highlight-card p { font-size: 0.95rem; color: var(--text-main); line-height: 1.6; margin-bottom: 16px;}
+        .video-highlight-micro { font-size: 0.8rem; color: var(--text-muted); font-style: italic;}
         
-        .ambassador-card {
-            display: flex; align-items: flex-start; gap: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(185, 28, 28, 0.3);
-            padding: 24px; border-radius: var(--radius-md); position: relative; overflow: hidden; transition: transform 0.2s;
+        .bullet-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px;}
+        .bullet-item { display: flex; align-items: flex-start; gap: 12px; font-weight: 500; font-size: 0.95rem; color: var(--text-main);}
+        
+        .video-player-wrapper {
+            position: relative;
         }
-        .ambassador-card:hover { transform: translateY(-2px); background: rgba(255,255,255,0.06); }
-        .ambassador-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--donor-main); }
-        .ambassador-photo { width: 64px; height: 64px; border-radius: 50%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; color: var(--donor-main); overflow: hidden; font-weight: 600; font-size: 1.5rem; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.1);}
-        .ambassador-info h4 { font-size: 1.15rem; margin-bottom: 4px; color: white;}
-        .ambassador-info p.amb-role { font-size: 0.85rem; color: var(--donor-main); font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em;}
-        .ambassador-info p.amb-desc { font-size: 0.9rem; color: rgba(255,255,255,0.7); line-height: 1.5; }
+        .video-player-title {
+            position: absolute; top: 16px; left: 16px; right: 16px; z-index: 20;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); color: white;
+            padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; text-align: center;
+        }
 
         @media (max-width: 900px) {
-            .transparency-grid { grid-template-columns: 1fr; gap: 48px; }
-            .metrics-grid { max-width: 500px; margin: 0 auto; }
-            .ambassadors-grid { grid-template-columns: 1fr; }
+            .video-layout { flex-direction: column-reverse; gap: 40px; }
+            .bullet-item { text-align: left; }
+            .video-text .btn { width: 100%; margin-bottom: 12px;}
         }
 
-        /* === AÇÕES FLAMEDULA (CAROUSEL EDITORIAL) === */
-        .acoes-section { padding: 80px 0 0 0; background: var(--bg-page); overflow: hidden; position: relative;}
-        .acoes-section::before { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.3; background: radial-gradient(circle at 100% 0%, rgba(185, 28, 28, 0.05) 0%, transparent 50%); z-index: 0; }
-        .acoes-header { margin-bottom: 48px; position: relative; z-index: 1;}
-        .carousel-wrapper { position: relative; z-index: 1;}
-        .carousel-nav-btn { position: absolute; top: 40%; transform: translateY(-50%); width: 48px; height: 48px; border-radius: 50%; background: white; box-shadow: var(--shadow-md); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--text-main); cursor: pointer; z-index: 10; transition: transform 0.2s; }
-        .carousel-nav-btn:hover { transform: translateY(-50%) scale(1.1); color: var(--donor-main);}
-        .nav-prev { left: 0px; }
-        .nav-next { right: 0px; }
-        
-        .acoes-track { display: flex; gap: 24px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding-bottom: 40px; padding-top: 16px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-        .acoes-track::-webkit-scrollbar { display: none; }
-        
-        .acao-card { flex: 0 0 380px; scroll-snap-align: start; background: var(--bg-surface); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); border: 1px solid var(--border-light); display: flex; flex-direction: column; transition: transform 0.3s, box-shadow 0.3s; }
-        .acao-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); border-color: rgba(0,0,0,0.1); }
-        .acao-image-area { height: 220px; position: relative; background: #E5E7EB; overflow: hidden; }
-        .acao-image-area img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
-        .acao-card:hover .acao-image-area img { transform: scale(1.05); }
-        .placeholder-graphic { width: 100%; height: 100%; background: linear-gradient(135deg, var(--donor-main), var(--donor-dark)); position: relative; display: flex; align-items: center; justify-content: center; }
-        .placeholder-graphic::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 0%, transparent 60%); }
-        .placeholder-icon { font-size: 3rem; opacity: 0.5; color: white; }
-        .acao-content { padding: 32px 24px; display: flex; flex-direction: column; flex: 1; }
-        .acao-meta { display: flex; gap: 12px; font-size: 0.85rem; font-weight: 600; color: var(--donor-main); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; }
-        .acao-title { font-size: 1.35rem; font-weight: 700; margin-bottom: 12px; line-height: 1.3; color: var(--text-main); }
-        .acao-summary { font-size: 1rem; color: var(--text-muted); margin-bottom: 24px; flex: 1; line-height: 1.6; }
-        .acao-cta { font-weight: 600; color: var(--donor-main); display: flex; align-items: center; gap: 8px; transition: gap 0.2s; }
-        .acao-card:hover .acao-cta { gap: 12px; }
+        /* === ANIMATIONS (Scroll Reveal) === */
+        .reveal-up { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .reveal-up.active { opacity: 1; transform: translateY(0); }
 
-        @media (max-width: 768px) { .acao-card { flex: 0 0 85%; } .carousel-nav-btn { display: none; } }
+        /* === SEPARADORES (HEART DIVIDER) === */
+        .heart-divider { display: flex; align-items: center; justify-content: center; padding: 40px 0; opacity: 0.7; }
+        .heart-line { height: 1px; width: 60px; background: var(--border-light); }
+        .heart-icon { margin: 0 16px; font-size: 1.2rem; animation: heartbeat 2s infinite; display: inline-block; }
+        @keyframes heartbeat { 0%, 100% { transform: scale(1); } 10%, 30% { transform: scale(1.15); } }
 
-        /* === APOIO FINANCEIRO (DIRECTLY CONNECTED WITH SVG WAVE) === */
-        .apoio-section { background: linear-gradient(135deg, var(--donor-dark) 0%, #450a0a 100%); color: white; padding: 80px 0 120px; position: relative; overflow: hidden; text-align: center; }
-        .apoio-wave { position: absolute; top: 0; left: 0; width: 100%; overflow: hidden; line-height: 0; }
-        .apoio-wave svg { position: relative; display: block; width: calc(100% + 1.3px); height: 50px; }
-        .apoio-wave .shape-fill { fill: var(--bg-page); }
-        .apoio-section::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle at 20% -20%, rgba(251,191,36,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 120%, rgba(255,255,255,0.05) 0%, transparent 50%); pointer-events: none; }
-        
-        .apoio-content { max-width: 900px; margin: 0 auto; position: relative; z-index: 2; margin-top: 40px;}
-        .apoio-tag { display: inline-block; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.1em; color: var(--accent-gold); text-transform: uppercase; margin-bottom: 24px; border: 1px solid rgba(251,191,36,0.3); padding: 6px 16px; border-radius: var(--radius-full); background: rgba(251,191,36,0.05);}
-        .apoio-title { font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 700; margin-bottom: 24px; line-height: 1.1; text-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-        .apoio-copy { font-size: 1.25rem; opacity: 0.9; margin-bottom: 48px; line-height: 1.6; max-width: 700px; margin-inline: auto; }
-        
-        .apoio-bullets { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-bottom: 56px; }
-        .apoio-bullet { background: rgba(255,255,255,0.1); backdrop-filter: blur(8px); padding: 16px 24px; border-radius: var(--radius-md); font-weight: 600; font-size: 1rem; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(251,191,36,0.2); transition: transform 0.2s; border-left: 3px solid var(--accent-gold); }
-        .apoio-bullet:hover { transform: translateY(-3px); background: rgba(255,255,255,0.15); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
-        
-        .btn-apoio { background: white; color: var(--donor-dark); font-size: 1.15rem; padding: 20px 48px; box-shadow: 0 12px 32px rgba(0,0,0,0.4), 0 0 15px rgba(251, 191, 36, 0.2); transition: all 0.3s; border-bottom: 3px solid var(--accent-gold); }
-        .btn-apoio:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(0,0,0,0.5), 0 0 25px rgba(251, 191, 36, 0.4); background: #fdfbf7;}
-
-        /* === DEPOIMENTOS (QUADRADOS & CAROUSEL MOBILE) === */
-        .depoimentos-section { padding: 80px 0; background: var(--bg-surface); }
-        .depoimentos-grid { display: flex; gap: 24px; margin-top: 48px; }
-        .depoimento-card {
-            flex: 1; background: var(--bg-page); padding: 32px 24px; border-radius: var(--radius-lg); border: 1px solid var(--border-light);
-            display: flex; flex-direction: column; justify-content: space-between; min-height: 280px;
-            transition: transform 0.3s, box-shadow 0.3s;
+        /* === A CHANCE QUE PODE VIRAR VIDA (Nova Seção Educativa) === */
+        .educational-section {
+            padding: 100px 0;
+            background-color: var(--bg-surface);
+            position: relative;
+            overflow: hidden;
         }
-        .depoimento-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-sm); }
-        .depo-quote { font-size: 1.125rem; font-style: italic; color: var(--text-main); margin-bottom: 24px; line-height: 1.6; }
-        .depo-author { font-weight: 600; color: var(--donor-main); margin-top: auto;}
-        .depo-role { font-size: 0.85rem; color: var(--text-muted); }
-
-        /* === NOVA SEÇÃO REDOME (Transição por SVG wave invertida na cor) === */
-        .redome-section {
-            padding: 100px 0 80px; background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%);
-            position: relative; border-bottom: 1px solid rgba(234, 88, 12, 0.1);
+        .educational-section::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle at 100% 0%, rgba(185, 28, 28, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 0% 100%, rgba(185, 28, 28, 0.03) 0%, transparent 40%);
+            pointer-events: none;
         }
-        .redome-wave { position: absolute; top: 0; left: 0; width: 100%; overflow: hidden; line-height: 0; }
-        .redome-wave svg { position: relative; display: block; width: calc(100% + 1.3px); height: 40px; }
-        .redome-wave .shape-fill { fill: var(--bg-surface); }
         
-        .redome-layout { max-width: 700px; margin: 0 auto; text-align: center; position: relative; z-index: 2; }
-        .redome-top-logo { width: 160px; margin: 0 auto 32px; object-fit: contain; filter: drop-shadow(0 4px 12px rgba(234,88,12,0.15));}
-        .redome-layout h2 { color: var(--redome-dark); font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; line-height: 1.1; margin-bottom: 16px; }
-        .redome-layout h3 { font-size: 1.5rem; color: var(--text-main); margin-bottom: 24px; }
-        .redome-layout p { font-size: 1.125rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; }
-        .redome-microcopy { font-size: 0.95rem; font-weight: 500; color: var(--redome-dark); margin-bottom: 32px; }
+        .edu-header { text-align: center; margin-bottom: 64px; max-width: 800px; margin-inline: auto; position: relative; z-index: 2;}
+        .edu-label { display: inline-block; font-size: 0.75rem; font-weight: 700; color: var(--donor-main); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; padding: 4px 12px; background: rgba(185, 28, 28, 0.1); border-radius: 20px;}
         
-        .redome-checklist { display: flex; justify-content: center; flex-wrap: wrap; gap: 16px; margin-bottom: 40px; }
-        .redome-check-item { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-main); background: rgba(255,255,255,0.7); padding: 10px 20px; border-radius: var(--radius-full); border: 1px solid rgba(234, 88, 12, 0.15); box-shadow: 0 2px 8px rgba(234,88,12,0.05);}
-        .check-circle { color: var(--redome-main); font-weight: bold; font-size: 1.1rem;}
+        .impact-block { text-align: center; margin-bottom: 80px; position: relative; z-index: 2;}
+        .impact-number { font-size: clamp(3rem, 8vw, 6rem); font-family: var(--font-display); font-weight: 700; color: var(--donor-main); line-height: 1; margin-bottom: 16px; text-shadow: 0 10px 30px rgba(185, 28, 28, 0.15);}
+        .impact-text { font-size: 1.25rem; font-weight: 500; max-width: 600px; margin: 0 auto; color: var(--text-main);}
+        .impact-micro { display: block; margin-top: 12px; font-size: 1rem; color: var(--donor-main); font-weight: 600;}
+
+        .edu-timeline { display: flex; gap: 32px; position: relative; z-index: 2; margin-bottom: 80px;}
+        .edu-timeline::before { content: ''; position: absolute; top: 24px; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, rgba(185, 28, 28, 0.1), var(--donor-main), rgba(185, 28, 28, 0.1)); z-index: -1;}
+        .edu-card { flex: 1; background: rgba(255,255,255,0.9); backdrop-filter: blur(12px); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: 32px 24px; box-shadow: var(--shadow-sm); position: relative;}
+        .edu-step { width: 48px; height: 48px; border-radius: 50%; background: var(--donor-main); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; position: absolute; top: -24px; left: 50%; transform: translateX(-50%); box-shadow: 0 4px 12px rgba(185, 28, 28, 0.3);}
+        .edu-card h3 { margin-top: 16px; margin-bottom: 12px; font-size: 1.25rem; color: var(--text-main); text-align: center;}
+        .edu-card p { color: var(--text-muted); font-size: 0.95rem; text-align: center;}
+
+        .affinity-block { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 64px; position: relative; z-index: 2;}
+        .affinity-card { background: #F9FAFB; border-left: 4px solid var(--donor-main); padding: 24px; border-radius: 8px;}
+        .affinity-card p { font-size: 0.95rem; color: var(--text-main); font-weight: 500;}
+
+        .edu-conversion { text-align: center; position: relative; z-index: 2;}
+        .edu-conversion h3 { font-size: 2rem; margin-bottom: 16px;}
+        .edu-conversion p { max-width: 700px; margin: 0 auto 32px; color: var(--text-muted); font-size: 1.1rem;}
         
-        .redome-aviso { background: rgba(255,255,255,0.6); border-left: 4px solid var(--redome-main); padding: 16px; border-radius: 0 8px 8px 0; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 40px; line-height: 1.5; text-align: left;}
+        @media (max-width: 900px) {
+            .edu-timeline { flex-direction: column; gap: 48px; }
+            .edu-timeline::before { top: 0; bottom: 0; left: 24px; width: 2px; height: auto; background: linear-gradient(180deg, rgba(185, 28, 28, 0.1), var(--donor-main), rgba(185, 28, 28, 0.1)); right: auto;}
+            .edu-step { left: -24px; top: 50%; transform: translateY(-50%); }
+            .edu-card { text-align: left; padding-left: 48px;}
+            .edu-card h3, .edu-card p { text-align: left; }
+            .affinity-block { grid-template-columns: 1fr; }
+        }
+
+        /* === MOBILE CAROUSEL UTILITIES === */
+        .mobile-carousel { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 24px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .mobile-carousel::-webkit-scrollbar { display: none; }
+        .mobile-carousel > * { scroll-snap-align: start; flex: 0 0 85%; }
+        @media (min-width: 769px) { .mobile-carousel { overflow-x: visible; scroll-snap-type: none; display: grid; flex-wrap: wrap;} }
+
+        /* === QUEM SOMOS (DARK MODE IMERSIVO) === */
+        .transparency-section { 
+            padding: 100px 0; 
+            background-color: var(--bg-dark); 
+            background-image: url('https://res.cloudinary.com/dm9mnc97u/image/upload/v1781324232/bb202546-fd07-4d71-ba37-e16a618979da_d4bdjo.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white; 
+            position: relative;
+        }
+        .transparency-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.6) 50%, rgba(10,10,10,0.95) 100%);
+            z-index: 0;
+        }
+        .transparency-section .container {
+            position: relative;
+            z-index: 1;
+        }
         
-        .redome-ctas { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-        .btn-redome { background: var(--redome-main); color: white; box-shadow: 0 4px 12px rgba(234, 88, 12, 0.25); }
-        .btn-redome:hover { background: var(--redome-dark); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(234, 88, 12, 0.35); }
-        .btn-redome-outline { border: 2px solid var(--redome-main); color: var(--redome-dark); }
-        .btn-redome-outline:hover { background: var(--redome-main); color: white; transform: translateY(-2px);}
+        .transparency-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 64px;
+            align-items: center;
+            position: relative;
+        }
+        .transparency-connector {
+            position: absolute; left: 50%; top: 10%; bottom: 10%; width: 1px;
+            background: linear-gradient(to bottom, transparent, rgba(185, 28, 28, 0.5), transparent);
+            transform: translateX(-50%);
+        }
+
+        .metrics-header { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+        .demo-badge { display: inline-block; width: fit-content; font-size: 0.75rem; background: rgba(185, 28, 28, 0.2); color: #ffb3b3; padding: 4px 12px; border-radius: 12px; border: 1px solid rgba(185, 28, 28, 0.3); }
+
+        .metrics-grid-2x2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .metric-card-premium {
+            background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(185, 28, 28, 0.3); border-radius: var(--radius-md); padding: 24px;
+            text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.2); transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+        .metric-card-premium:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(185, 28, 28, 0.15); border-color: rgba(185,28,28,0.5); }
+        .metric-number { font-size: 2.5rem; font-weight: 700; color: var(--donor-main); font-family: var(--font-display); line-height: 1; margin-bottom: 8px; text-shadow: 0 0 15px rgba(185, 28, 28, 0.4);}
+        
+        /* Equipe Vertical Cards */
+        .team-ambassadors-wrapper { margin-top: 64px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 64px; }
+        .team-grid.mobile-carousel { @media(min-width: 769px){ grid-template-columns: repeat(5, 1fr); } }
+        .team-card-v { background: rgba(255,255,255,0.05); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); padding: 24px 16px; text-align: center; transition: transform 0.2s;}
+        .team-card-v:hover { transform: translateY(-4px); background: rgba(255,255,255,0.1); }
+        .team-avatar-v { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 16px; background: linear-gradient(135deg, var(--donor-main), var(--donor-dark)); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: white;}
+        .team-name-v { font-weight: 600; font-size: 1rem; margin-bottom: 4px; }
+        .team-role-v { font-size: 0.85rem; color: rgba(255,255,255,0.7); }
+
+        /* Embaixadores */
+        .ambassadors-section { margin-top: 64px; }
+        .ambassadors-grid.mobile-carousel { @media(min-width: 769px){ grid-template-columns: repeat(2, 1fr); } }
+        .ambassador-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(8px); border: 1px solid rgba(185, 28, 28, 0.4); border-radius: var(--radius-md); padding: 24px; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative;}
+        .ambassador-badge { position: absolute; top: 12px; right: 12px; background: var(--donor-main); font-size: 0.7rem; padding: 4px 8px; border-radius: 12px; font-weight: 600;}
+        .ambassador-avatar { width: 72px; height: 72px; border-radius: 50%; margin-bottom: 16px; background: #FFF; display: flex; align-items: center; justify-content: center; color: var(--donor-main); font-weight: 700; font-size: 1.5rem;}
+        .ambassador-desc { font-size: 0.9rem; color: rgba(255,255,255,0.8); margin-top: 12px; font-style: italic;}
+
+        @media (max-width: 900px) { 
+            .transparency-layout { grid-template-columns: 1fr; gap: 48px; }
+            .transparency-connector { display: none; }
+        }
+
+        /* === AÇÕES FLAMEDULA === */
+        .actions-section { padding: 80px 0; background: var(--bg-surface); overflow: hidden; }
+        .actions-carousel { display: flex; gap: 24px; overflow-x: auto; padding: 16px 0 32px; scroll-snap-type: x mandatory; scrollbar-width: none; }
+        .actions-carousel::-webkit-scrollbar { display: none; }
+        
+        .action-card { flex: 0 0 350px; scroll-snap-align: start; background: white; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-md); border: 1px solid var(--border-light); display: flex; flex-direction: column; transition: transform 0.2s;}
+        .action-card:hover { transform: translateY(-4px); }
+        .action-graphic { width: 100%; height: 200px; background: radial-gradient(circle at bottom right, rgba(185,28,28,0.1), transparent), linear-gradient(135deg, #F9FAFB, #E5E7EB); display: flex; align-items: center; justify-content: center; font-size: 3rem; color: rgba(0,0,0,0.1); }
+        .action-content { padding: 24px; flex: 1; display: flex; flex-direction: column; }
+        .action-meta { display: flex; gap: 12px; font-size: 0.85rem; font-weight: 600; color: var(--donor-main); margin-bottom: 12px; }
+        .action-title { font-size: 1.25rem; margin-bottom: 12px; line-height: 1.3; }
+        .action-summary { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px; flex: 1; }
+        
+        @media (max-width: 768px) { .action-card { flex: 0 0 85%; } }
+
+        /* === DIVISOR CURVO ONDA === */
+        .wave-divider { line-height: 0; background: var(--bg-surface); }
+        .wave-divider svg { display: block; width: 100%; height: 40px; }
+
+        /* === APOIO FINANCEIRO === */
+        .support-section { padding: 60px 0 100px; background-color: var(--donor-dark); color: white; position: relative;}
+        .support-section::before { content:''; position: absolute; inset:0; background: radial-gradient(circle at top right, rgba(251, 191, 36, 0.15), transparent 50%); pointer-events: none;}
+        .support-headline { font-size: clamp(2.5rem, 6vw, 4.5rem); font-family: var(--font-display); line-height: 1; text-transform: uppercase; margin-bottom: 24px; text-shadow: 0 4px 20px rgba(0,0,0,0.4);}
+        .support-badge { display: inline-flex; align-items: center; gap: 8px; background: #FBBF24; color: #92400E; padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; margin-bottom: 24px;}
+        
+        .support-pillars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 48px 0; }
+        .pillar-card { background: rgba(255,255,255,0.1); backdrop-filter: blur(8px); border-top: 2px solid #FBBF24; padding: 20px; border-radius: 8px; font-weight: 600;}
+        
+        @media (max-width: 900px) { .support-pillars { grid-template-columns: 1fr 1fr; } }
+
+        /* === DEPOIMENTOS CAROUSEL === */
+        .testimonials-section { padding: 80px 0; background: var(--bg-page); }
+        .testimonials-carousel-wrapper { position: relative; width: 100%; overflow: hidden; }
+        .testimonials-track {
+            display: flex; gap: 24px; overflow-x: auto; scroll-snap-type: x mandatory;
+            scrollbar-width: none; -webkit-overflow-scrolling: touch; padding: 10px 0 30px;
+        }
+        .testimonials-track::-webkit-scrollbar { display: none; }
+        
+        .testimonial-card {
+            flex: 0 0 85%; max-width: 350px; scroll-snap-align: center;
+            background: white; padding: 32px; border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm); border: 1px solid var(--border-light);
+            display: flex; flex-direction: column; justify-content: space-between;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .testimonial-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+        
+        @media (min-width: 768px) {
+            .testimonial-card { flex: 0 0 calc(33.333% - 16px); scroll-snap-align: start; }
+        }
+        
+        .testimonial-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+        .testimonial-avatar { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--donor-light), var(--donor-main)); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.4rem; box-shadow: 0 4px 10px rgba(185,28,28,0.2); }
+        .quote-mark { font-size: 4rem; color: var(--border-light); line-height: 0.5; font-family: serif; font-weight: 800; }
+        .testimonial-text { font-size: 1.05rem; font-style: italic; color: var(--text-main); margin-bottom: 24px; line-height: 1.6; flex: 1; }
+        .testimonial-author-info { border-top: 1px solid var(--border-light); padding-top: 16px; }
+        .testimonial-author { font-weight: 700; font-size: 1rem; color: var(--text-main); }
+        .testimonial-role { font-size: 0.85rem; color: var(--donor-main); font-weight: 600; margin-top: 4px; }
+
+        /* === REDOME DEDICADO === */
+        .redome-wave { line-height: 0; background: var(--bg-page); }
+        .redome-wave svg { display: block; width: 100%; height: 40px; }
+        
+        .redome-section { padding: 60px 0 80px; background-color: var(--redome-bg); position: relative;}
+        .redome-section::before { content:''; position: absolute; inset:0; background-image: radial-gradient(rgba(234, 88, 12, 0.1) 1px, transparent 1px); background-size: 20px 20px; pointer-events: none;}
+        
+        .redome-box { background: white; border-radius: var(--radius-xl); padding: 48px; box-shadow: 0 10px 40px rgba(234, 88, 12, 0.1); border: 1px solid rgba(234, 88, 12, 0.2); max-width: 800px; margin: 0 auto; text-align: center; position: relative;}
+        .redome-logo-top { 
+            height: 80px; /* Aumentado 100% */
+            object-fit: contain; margin: 0 auto 32px; display: block; 
+        }
+        .redome-checklist { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin: 32px 0; }
+        .redome-check-item { display: flex; align-items: center; gap: 8px; background: var(--redome-bg); color: var(--redome-dark); padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 0.9rem;}
+        
+        @media (max-width: 600px) { .redome-box { padding: 32px 24px; } }
 
         /* === FAQ ACCORDION === */
-        .faq-accordion-section { padding: 80px 0; background: var(--bg-page); }
-        .faq-list { max-width: 800px; margin: 0 auto; }
-        .faq-item { border-bottom: 1px solid var(--border-light); }
-        .faq-q { width: 100%; text-align: left; background: none; border: none; font-weight: 600; font-size: 1.125rem; color: var(--text-main); padding: 24px 0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .faq-icon { font-size: 1.5rem; color: var(--donor-main); transition: transform 0.3s ease; font-weight: 400; }
-        .faq-q.active .faq-icon { transform: rotate(45deg); }
-        .faq-a-wrapper { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
-        .faq-a { padding-bottom: 24px; color: var(--text-muted); line-height: 1.6; }
+        .faq-accordion-section { padding: 80px 0; background: var(--bg-surface); }
+        .accordion-item { border-bottom: 1px solid var(--border-light); }
+        .accordion-header { width: 100%; text-align: left; padding: 24px 0; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 1.1rem; color: var(--text-main); cursor: pointer; }
+        .accordion-icon { font-size: 1.5rem; color: var(--donor-main); transition: transform 0.3s; }
+        .accordion-item.active .accordion-icon { transform: rotate(45deg); }
+        .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .accordion-content { padding-bottom: 24px; color: var(--text-muted); line-height: 1.6; }
 
         /* === CTA FINAL === */
-        .cta-final-section { padding: 100px 0; background: linear-gradient(135deg, var(--donor-main) 0%, var(--donor-dark) 100%); color: white; text-align: center; position: relative; overflow: hidden; }
-        .cta-final-section::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 60%); pointer-events: none; }
-        .cta-buttons { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; margin-top: 32px; position: relative; z-index: 2;}
-        .cta-buttons .btn { padding: 16px 32px; font-size: 1.05rem; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+        .cta-final-section { padding: 100px 0; background: linear-gradient(135deg, var(--donor-main), var(--donor-dark)); color: white; text-align: center; position: relative;}
+        .cta-final-section::before { content:''; position:absolute; inset:0; background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 0%, transparent 60%); pointer-events: none;}
+        .cta-buttons { display: flex; gap: 16px; justify-content: center; margin-top: 40px; flex-wrap: wrap;}
 
-        /* === FOOTER INSTITUCIONAL === */
-        .footer-section { background: linear-gradient(180deg, #1f2937 0%, #050505 100%); color: rgba(255,255,255,0.7); padding: 80px 0 40px; border-top: 4px solid var(--donor-main); position: relative; overflow: hidden; }
-        .footer-section::before { content: ''; position: absolute; inset: 0; pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E"); }
+        /* === FOOTER === */
+        .footer-section { background-color: var(--bg-dark); color: white; padding: 80px 0 40px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.9rem;}
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 48px; margin-bottom: 64px; }
+        .footer-logo { 
+            height: 48px; 
+            filter: brightness(0) invert(1) drop-shadow(0 0 10px rgba(255,255,255,0.2)); 
+            margin-bottom: 16px; 
+            object-fit: contain;
+        }
+        .footer-col h4 { font-size: 1rem; margin-bottom: 24px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.05em;}
+        .footer-links { display: flex; flex-direction: column; gap: 12px; }
+        .footer-links a { color: rgba(255,255,255,0.8); transition: color 0.2s; }
+        .footer-links a:hover { color: white; }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px; display: flex; justify-content: space-between; color: rgba(255,255,255,0.5); font-size: 0.85rem;}
         
-        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 48px; margin-bottom: 64px; position: relative; z-index: 2; }
-        
-        /* Logo Footer: Original colors floating smoothly */
-        .brand-col .footer-logo { max-width: 150px; height: auto; object-fit: contain; margin-bottom: 20px; filter: drop-shadow(0 0 15px rgba(255,255,255,0.15)); }
-        
-        .footer-tagline { font-weight: 600; color: white; margin-bottom: 8px; font-size: 1.05rem; }
-        .footer-microcopy { font-size: 0.9rem; line-height: 1.5; max-width: 280px; }
-
-        .footer-title { color: white; font-size: 1.1rem; margin-bottom: 20px; font-weight: 600; }
-        .footer-nav { display: flex; flex-direction: column; gap: 12px; }
-        .footer-nav a { transition: color 0.2s, transform 0.2s; display: inline-block; font-size: 0.95rem; }
-        .footer-nav a:hover { color: white; transform: translateX(4px); }
-        .apoio-link { color: var(--accent-gold) !important; font-weight: 500; }
-        .apoio-link:hover { color: white !important; text-shadow: 0 0 10px rgba(251,191,36,0.5); }
-
-        .warning-box { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: var(--radius-md); }
-        .warning-icon { display: inline-block; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--donor-main); background: rgba(185, 28, 28, 0.2); padding: 4px 12px; border-radius: var(--radius-full); margin-bottom: 12px; border: 1px solid rgba(185, 28, 28, 0.3); }
-        .warning-box p { font-size: 0.85rem; line-height: 1.5; color: rgba(255,255,255,0.6); }
-
-        .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.85rem; position: relative; z-index: 2; }
-        .demo-badge { background: rgba(255,255,255,0.1); padding: 4px 12px; border-radius: var(--radius-full); }
-
-        @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; } }
-        @media (max-width: 600px) { .footer-grid { grid-template-columns: 1fr; gap: 32px; } .footer-bottom { flex-direction: column; gap: 16px; text-align: center; } }
+        @media (max-width: 900px) { .footer-grid { grid-template-columns: 1fr; gap: 40px;} .footer-bottom { flex-direction: column; gap: 16px; text-align: center;} }
     </style>
 </head>
-<body>
+<body class="is-loading">
 
-    <!-- PRELOADER -->
+    <!-- PRELOADER PREMIUM ULTRA-CLEAN -->
     <div id="flamedula-preloader" class="pattern-noise">
-        <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781279524/Untitled_design_17_1_x7qbdx.webp" alt="FlaMedula Logo" class="preloader-logo">
-        <h1 class="preloader-text">Solidariedade que salva vidas</h1>
-        <p class="preloader-subtext">Conectando pessoas, informação e esperança.</p>
-        <div class="preloader-bar-container">
-            <div class="preloader-bar"></div>
+        <div class="preloader-bg-glow"></div>
+        <div class="preloader-logo-wrapper">
+            <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781279524/Untitled_design_17_1_x7qbdx.webp" alt="FlaMedula" class="preloader-logo">
+        </div>
+        <div class="preloader-text-box">
+            <div class="preloader-title">Sua atitude salva vidas.</div>
+            <div class="preloader-bar-container"><div class="preloader-bar-fill"></div></div>
+        </div>
+    </div>
+
+    <!-- TELA VÍDEO DEDECO (OVERLAY) -->
+    <div id="intro-overlay" class="pattern-noise">
+        
+        <div class="intro-step reveal-up active" style="gap: 16px;">
+            
+            <div class="video-reels-container" id="containerIntroVideo" style="max-height: 55vh; max-width: calc(55vh * 0.5625); width: 100%; margin-bottom: 16px;">
+                <div class="video-reels-player-wrapper" style="box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
+                    <video id="introVideo" playsinline preload="metadata">
+                        <source src="https://res.cloudinary.com/dm9mnc97u/video/upload/v1780677944/WhatsApp-Video-2026-06-05-at-13.40.33_xxhh84.webm" type="video/webm">
+                    </video>
+                    
+                    <div class="play-btn-center" style="display:none;">▶</div>
+                    
+                    <div class="reels-controls-overlay">
+                        <div class="reels-progress-container"><div class="reels-progress-filled"></div></div>
+                        <div class="reels-controls-row">
+                            <button class="reels-btn reels-play-btn">⏸</button>
+                            <button class="reels-btn reels-mute-btn">🔊</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="width: 100%; max-width: 340px; text-align: center;">
+                <h2 class="intro-title-premium" style="font-size: 1.35rem; margin-bottom: 2px;">André Matos "Dedeco"</h2>
+                <p class="intro-subtitle" style="font-size: 0.85rem; margin-bottom: 16px; color: var(--donor-main); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-inline: auto;">Fundador da FlaMedula</p>
+                
+                <div class="intro-highlight-box" style="padding: 12px 16px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.4);">
+                    <span class="highlight-tag" style="font-size: 0.7rem; padding: 4px 8px; margin-bottom: 6px;">💡 VOCÊ SABIA?</span>
+                    <p style="font-size: 0.8rem; line-height: 1.4; margin-bottom: 0; color: rgba(255,255,255,0.8);">A coleta de medula pode ser por <b>aférese (pela veia)</b> ou <b>punção</b>. A decisão é sempre segura e feita pela equipe médica.</p>
+                </div>
+
+                <button class="btn btn-donor btn-glow" id="btn-enter-site" style="width: 100%; font-size: 1rem; padding: 14px;">Entrar direto no site</button>
+            </div>
+
         </div>
     </div>
 
@@ -486,35 +733,40 @@
                 <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781279524/Untitled_design_17_1_x7qbdx.webp" alt="FlaMedula Logo">
             </a>
             <div class="nav-links">
-                <a href="#">Início</a>
                 <a href="#hub-cadastro">Cadastro</a>
-                <a href="#medula-sem-medo">Medula sem medo</a>
+                <a href="#educacional">Medula sem medo</a>
                 <a href="#acoes">Ações</a>
+                <a href="#apoio">Apoiar</a>
             </div>
             <div class="nav-actions">
-                <a href="#hub-cadastro" class="btn btn-donor btn-glow" onclick="openPanel('donor')"><span class="btn-text">Doador</span> 🩸</a>
-                <a href="#hub-cadastro" class="btn btn-patient btn-glow" onclick="openPanel('patient')"><span class="btn-text">Paciente</span> 💙</a>
+                <a href="#hub-cadastro" class="btn btn-donor" onclick="openPanel('donor')">Doador</a>
+                <a href="#hub-cadastro" class="btn btn-patient" onclick="openPanel('patient')">Paciente</a>
             </div>
         </div>
     </nav>
 
     <!-- HERO CAROUSEL -->
-    <section class="hero-section">
+    <section class="hero-section pattern-grid-light">
         <div class="container reveal-up">
             <div class="hero-card">
                 <div class="carousel-track" id="carouselTrack">
                     <!-- Slides injected by JS -->
                 </div>
+                
                 <div class="carousel-controls">
-                    <div class="carousel-dots" id="carouselDots"></div>
-                    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+                    <div class="carousel-dots" id="carouselDots">
+                        <!-- Dots injected by JS -->
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ROLLER 1: Após Hero (Vinho/Vermelho) -->
-    <div class="roller-wrapper roller-wine reveal-up">
+    <!-- ROLLER 1 -->
+    <div class="roller-wrapper roller-wine">
         <div class="roller-track">
             <div class="roller-item">INFORMAÇÃO <span>•</span> MEDULA SEM MEDO <span>•</span> CAMPANHA VIVA <span>•</span> MOBILIZAÇÃO <span>•</span></div>
             <div class="roller-item">INFORMAÇÃO <span>•</span> MEDULA SEM MEDO <span>•</span> CAMPANHA VIVA <span>•</span> MOBILIZAÇÃO <span>•</span></div>
@@ -523,105 +775,105 @@
     </div>
 
     <!-- ACTION HUB -->
-    <section id="hub-cadastro" class="hub-section bg-glow-hub">
-        <div class="container">
-            <div class="hub-header reveal-up" id="hubHeader">
+    <section id="hub-cadastro" class="hub-section">
+        <div class="bg-glow-hub"></div>
+        <div class="container reveal-up">
+            <div class="hub-header" id="hubHeader">
                 <h2 class="title-md">Como você quer ajudar hoje?</h2>
                 <p class="text-large" style="margin-top: 16px;">Escolha um caminho. A FlaMedula orienta, organiza e mobiliza com responsabilidade.</p>
             </div>
 
-            <div class="hub-grid mobile-carousel reveal-up" id="hubGrid">
-                <!-- Donor -->
+            <div class="hub-grid" id="hubGrid">
                 <div class="hub-card card-donor" onclick="openPanel('donor')">
-                    <div class="card-icon-wrap">🩸</div>
                     <h3>Quero doar</h3>
                     <p>Para quem já doa sangue, quer começar a doar ou deseja entender melhor a doação de medula.</p>
-                    <div class="btn card-btn btn-glow">Começar</div>
+                    <div class="btn card-btn">Começar</div>
                 </div>
 
-                <!-- Patient -->
                 <div class="hub-card card-patient" onclick="openPanel('patient')">
-                    <div class="card-icon-wrap">💙</div>
                     <h3>Cadastrar paciente</h3>
                     <p>Sinalize um caso para análise, orientação e possível mobilização responsável.</p>
-                    <div class="btn card-btn btn-glow">Cadastrar caso</div>
+                    <div class="btn card-btn">Cadastrar caso</div>
                 </div>
 
-                <!-- Support (New) -->
                 <div class="hub-card card-support" onclick="openPanel('support')">
-                    <div class="card-icon-wrap">🪙</div>
                     <h3>Quero apoiar</h3>
                     <p>Ajude campanhas, comunicação, deslocamento e organização da rede.</p>
-                    <div class="btn card-btn btn-glow">Apoiar a causa</div>
+                    <div class="btn card-btn">Apoiar a causa</div>
                 </div>
             </div>
 
             <!-- PANELS -->
-            <!-- Donor Panel -->
             <div class="panel-container" id="panel-donor">
                 <div class="panel-header">
-                    <h3 class="title-sm">Cadastro de doador</h3>
+                    <h3 class="title-sm">Cadastro de Doador</h3>
                     <button class="btn-back" onclick="closePanels()">← Voltar</button>
                 </div>
-                <p class="text-body" style="margin-bottom: 24px;">Responda algumas perguntas rápidas para entendermos como orientar você da melhor forma.</p>
                 <form id="form-donor" onsubmit="handleFormSubmit(event, 'donor')">
                     <div class="form-grid">
-                        <div class="form-group form-col-full"><label>Nome</label><input type="text" class="form-control" required placeholder="Seu nome"></div>
-                        <div class="form-group"><label>WhatsApp</label><input type="tel" class="form-control" required placeholder="(00) 00000-0000"></div>
-                        <div class="form-group"><label>Cidade / Estado</label><input type="text" class="form-control" required placeholder="Ex: Rio de Janeiro / RJ"></div>
+                        <div class="form-group form-col-full">
+                            <label>Nome completo</label>
+                            <input type="text" class="form-control" required placeholder="Digite seu nome">
+                        </div>
+                        <div class="form-group">
+                            <label>WhatsApp</label>
+                            <input type="tel" class="form-control" required placeholder="(00) 00000-0000">
+                        </div>
+                        <div class="form-group">
+                            <label>Cidade / Estado</label>
+                            <input type="text" class="form-control" required placeholder="Ex: Rio de Janeiro / RJ">
+                        </div>
                         
-                        <!-- Questions -->
                         <div class="form-group form-col-full" style="margin-top: 16px;">
-                            <label>1. Você já é doador de sangue?</label>
-                            <div class="options-grid">
-                                <label class="option-label"><input type="radio" name="sangue" value="sim"> Sim, já sou doador de sangue</label>
-                                <label class="option-label"><input type="radio" name="sangue" value="interesse"> Ainda não sou, mas tenho interesse</label>
-                                <label class="option-label"><input type="radio" name="sangue" value="naosei"> Ainda não sei</label>
+                            <label>Você já é doador de sangue?</label>
+                            <div class="radio-group">
+                                <label class="radio-label"><input type="radio" name="sangue" value="sim"> Sim, já sou doador de sangue</label>
+                                <label class="radio-label"><input type="radio" name="sangue" value="interesse"> Ainda não sou, mas tenho interesse</label>
+                                <label class="radio-label"><input type="radio" name="sangue" value="naosei"> Ainda não sei</label>
                             </div>
                         </div>
                         
                         <div class="form-group form-col-full">
-                            <label>2. Você já é cadastrado como doador de medula?</label>
-                            <div class="options-grid">
-                                <label class="option-label"><input type="radio" name="medula" value="sim"> Sim</label>
-                                <label class="option-label"><input type="radio" name="medula" value="nao"> Não</label>
-                                <label class="option-label"><input type="radio" name="medula" value="incerto"> Não tenho certeza</label>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group form-col-full">
-                            <label>3. Você tem interesse em se tornar doador de medula ou entender melhor esse processo?</label>
-                            <div class="options-grid">
-                                <label class="option-label"><input type="radio" name="int_medula" value="sim" required> Sim, tenho interesse</label>
-                                <label class="option-label"><input type="radio" name="int_medula" value="entender"> Quero entender melhor antes</label>
-                                <label class="option-label"><input type="radio" name="int_medula" value="nao"> Não neste momento</label>
+                            <label>Você já é cadastrado como doador de medula?</label>
+                            <div class="radio-group">
+                                <label class="radio-label"><input type="radio" name="medula" value="sim"> Sim</label>
+                                <label class="radio-label"><input type="radio" name="medula" value="nao"> Não</label>
+                                <label class="radio-label"><input type="radio" name="medula" value="incerto"> Não tenho certeza</label>
                             </div>
                         </div>
 
                         <div class="form-group form-col-full">
-                            <label>4. Qual canal você prefere para receber orientação?</label>
+                            <label>Você tem interesse em se tornar doador de medula ou entender melhor esse processo?</label>
+                            <div class="radio-group">
+                                <label class="radio-label"><input type="radio" name="int_medula" value="sim" required> Sim, tenho interesse</label>
+                                <label class="radio-label"><input type="radio" name="int_medula" value="entender"> Quero entender melhor antes</label>
+                                <label class="radio-label"><input type="radio" name="int_medula" value="nao"> Não neste momento</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group form-col-full">
+                            <label>Qual canal você prefere para receber orientação?</label>
                             <select class="form-control">
                                 <option>WhatsApp</option>
                                 <option>Ligação</option>
                                 <option>E-mail</option>
                             </select>
                         </div>
-                        
+
                         <div class="checkbox-group form-col-full">
                             <input type="checkbox" id="lgpd-donor" required>
                             <label for="lgpd-donor">Autorizo a FlaMedula a entrar em contato para orientação, campanhas e mobilizações relacionadas à causa.</label>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-donor btn-glow panel-btn">Enviar cadastro</button>
+                    <button type="submit" class="btn btn-donor panel-btn btn-glow">Enviar cadastro</button>
                 </form>
                 <div class="success-msg" id="success-donor">
-                    <div class="success-icon">✅</div><h3 class="title-sm">Simulação de envio!</h3>
-                    <p class="text-body" style="margin-top: 8px;">Na versão final, os dados serão salvos de forma segura.</p>
+                    <h3 class="title-sm">Simulação enviada!</h3>
+                    <p class="text-body" style="margin-top: 8px;">Na versão final, a equipe receberá estes dados.</p>
                     <button class="btn btn-outline" style="margin-top: 24px;" onclick="closePanels()">← Voltar</button>
                 </div>
             </div>
 
-            <!-- Patient Panel -->
             <div class="panel-container" id="panel-patient">
                 <div class="panel-header">
                     <h3 class="title-sm">Cadastro de paciente/caso</h3>
@@ -629,84 +881,82 @@
                 </div>
                 <form id="form-patient" onsubmit="handleFormSubmit(event, 'patient')">
                     <div class="form-grid">
-                        <div class="form-group"><label>Nome de quem está cadastrando</label><input type="text" class="form-control" required></div>
-                        <div class="form-group"><label>WhatsApp de contato</label><input type="tel" class="form-control" required placeholder="(00) 00000-0000"></div>
-                        
-                        <div class="form-group form-col-full"><label>Relação com o paciente</label><select class="form-control"><option>O próprio paciente</option><option>Familiar</option><option>Profissional de saúde</option><option>Amigo/Apoiador</option></select></div>
-                        
-                        <div class="form-group form-col-full"><label>Nome ou identificação segura do paciente</label><input type="text" class="form-control" required></div>
-                        
-                        <div class="form-group"><label>Cidade</label><input type="text" class="form-control" required></div>
-                        <div class="form-group"><label>Estado</label><input type="text" class="form-control" required></div>
-                        
-                        <div class="form-group form-col-full"><label>Hospital ou unidade de referência</label><input type="text" class="form-control"></div>
-                        <div class="form-group"><label>Tipo de necessidade</label><input type="text" class="form-control" placeholder="Ex: Doação de sangue"></div>
-                        <div class="form-group"><label>Urgência percebida</label><select class="form-control"><option>Alta</option><option>Média</option><option>Rotina</option></select></div>
-
+                        <div class="form-group">
+                            <label>Seu nome</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Seu WhatsApp</label>
+                            <input type="tel" class="form-control" required>
+                        </div>
+                        <div class="form-group form-col-full">
+                            <label>Nome ou identificação segura do paciente</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Relação com paciente</label>
+                            <input type="text" class="form-control" placeholder="Ex: Familiar, Amigo...">
+                        </div>
+                        <div class="form-group">
+                            <label>Urgência percebida</label>
+                            <select class="form-control">
+                                <option>Alta</option>
+                                <option>Média</option>
+                                <option>Baixa / Preventivo</option>
+                            </select>
+                        </div>
+                        <div class="form-group form-col-full">
+                            <label>Hospital ou unidade de referência</label>
+                            <input type="text" class="form-control">
+                        </div>
                         <div class="checkbox-group form-col-full">
                             <input type="checkbox" id="lgpd-patient" required>
                             <label for="lgpd-patient">Confirmo que tenho autorização para enviar essas informações para análise e orientação inicial.</label>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-patient btn-glow panel-btn">Enviar caso</button>
+                    <button type="submit" class="btn btn-patient panel-btn btn-glow">Enviar caso</button>
                 </form>
                 <div class="success-msg" id="success-patient">
-                    <div class="success-icon">💙</div><h3 class="title-sm">Simulação de envio!</h3>
-                    <p class="text-body" style="margin-top: 8px;">Nossa equipe analisaria e faria contato.</p>
+                    <h3 class="title-sm">Caso recebido (Simulação)</h3>
                     <button class="btn btn-outline" style="margin-top: 24px;" onclick="closePanels()">← Voltar</button>
                 </div>
             </div>
 
-            <!-- Support Panel -->
             <div class="panel-container" id="panel-support">
                 <div class="panel-header">
                     <h3 class="title-sm">Apoio financeiro</h3>
                     <button class="btn-back" onclick="closePanels()">← Voltar</button>
                 </div>
-                <p class="text-body" style="margin-bottom: 24px;">Cada campanha precisa de comunicação, deslocamento, tecnologia e organização para acontecer.</p>
-                
-                <div class="support-blocks">
-                    <div class="support-mini-card">📣 Comunicação</div>
-                    <div class="support-mini-card">🚗 Deslocamento</div>
-                    <div class="support-mini-card">📲 Tecnologia</div>
-                    <div class="support-mini-card">🧩 Organização</div>
-                </div>
-
-                <form id="form-support" onsubmit="handleFormSubmit(event, 'support')">
-                    <div class="form-grid">
-                        <div class="form-group"><label>Nome (Opcional)</label><input type="text" class="form-control"></div>
-                        <div class="form-group"><label>WhatsApp (Opcional)</label><input type="tel" class="form-control"></div>
-                        
+                <div>
+                    <p class="text-body" style="margin-bottom: 24px;">Cada campanha precisa de comunicação, deslocamento, tecnologia e organização para acontecer.</p>
+                    
+                    <div class="form-grid" style="margin-bottom: 32px;">
                         <div class="form-group form-col-full">
                             <label>Como deseja apoiar?</label>
-                            <div class="options-grid">
-                                <label class="option-label"><input type="radio" name="sup_type" value="link"> Quero receber o link da página de apoio</label>
-                                <label class="option-label"><input type="radio" name="sup_type" value="equipe"> Quero falar com a equipe</label>
-                                <label class="option-label"><input type="radio" name="sup_type" value="campanha"> Quero apoiar uma campanha específica</label>
+                            <div class="radio-group">
+                                <label class="radio-label"><input type="radio" name="apoio" checked> Quero receber o link da página de apoio</label>
+                                <label class="radio-label"><input type="radio" name="apoio"> Quero falar com a equipe</label>
+                                <label class="radio-label"><input type="radio" name="apoio"> Quero apoiar uma campanha específica</label>
                             </div>
                         </div>
-
-                        <div class="checkbox-group form-col-full">
-                            <input type="checkbox" id="lgpd-support" required>
-                            <label for="lgpd-support">Autorizo a FlaMedula a entrar em contato sobre formas de apoio à causa.</label>
-                        </div>
                     </div>
-                    <div style="display: flex; gap: 16px; margin-top: 32px; flex-wrap: wrap;">
-                        <button type="submit" class="btn btn-outline" style="flex: 1; border-color: var(--accent-gold); color: var(--text-main);">Receber orientação</button>
-                        <a href="/apoie/" class="btn btn-glow" style="flex: 1; background: var(--accent-gold); color: var(--text-main);">Ir para /apoie/</a>
+                    
+                    <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                        <a href="/apoie/" class="btn panel-btn" style="background: #FBBF24; color: #92400E; flex: 1; margin-top: 0;">Ir para /apoie/</a>
+                        <button class="btn btn-outline panel-btn" style="flex: 1; margin-top: 0;" onclick="handleFormSubmit(event, 'support')">Receber orientação</button>
                     </div>
-                </form>
+                </div>
                 <div class="success-msg" id="success-support">
-                    <div class="success-icon">🪙</div><h3 class="title-sm">Obrigado pelo interesse!</h3>
-                    <p class="text-body" style="margin-top: 8px;">Na versão final isso faria o envio de dados.</p>
+                    <h3 class="title-sm">Obrigado pelo interesse!</h3>
                     <button class="btn btn-outline" style="margin-top: 24px;" onclick="closePanels()">← Voltar</button>
                 </div>
             </div>
+
         </div>
     </section>
 
-    <!-- ROLLER 2: Após Hub (Off-white / Reverse) -->
-    <div class="roller-wrapper roller-light reveal-up">
+    <!-- ROLLER 2 -->
+    <div class="roller-wrapper roller-light">
         <div class="roller-track reverse">
             <div class="roller-item">CADASTRO <span>•</span> REGIÃO <span>•</span> CONTATO <span>•</span> DOADORES <span>•</span> PACIENTES <span>•</span></div>
             <div class="roller-item">CADASTRO <span>•</span> REGIÃO <span>•</span> CONTATO <span>•</span> DOADORES <span>•</span> PACIENTES <span>•</span></div>
@@ -714,83 +964,58 @@
         </div>
     </div>
 
-    <!-- VÍDEO INFORMATIVO -->
-    <section class="video-section pattern-curves" id="video-explicativo">
-        <div class="container video-layout">
-            <div class="video-wrapper paused reveal-up" id="vidWrapper">
-                <video class="video-element" id="infoVideo" playsinline preload="metadata" disablepictureinpicture controlslist="nodownload nofullscreen noremoteplayback">
-                    <source src="https://res.cloudinary.com/dm9mnc97u/video/upload/v1777677171/download_wq1ltu.mp4" type="video/mp4">
-                    Seu navegador não suporta vídeos.
-                </video>
-                <div class="play-btn-center" id="playCenterBtn">▶</div>
-                <div class="custom-controls">
-                    <div class="control-bar">
-                        <button class="control-btn" id="playPauseBtn">▶</button>
-                        <div class="vid-progress-container" id="vidProgressContainer">
-                            <div class="vid-progress-filled" id="vidProgressFilled"></div>
+    <!-- INFO VIDEO SECTION -->
+    <section class="video-section pattern-dots">
+        <div class="container video-layout reveal-up">
+            
+            <div class="video-reels-container" id="vidWrapperInfo">
+                <div class="video-player-title">Entenda a doação de medula</div>
+                <div class="video-reels-player-wrapper">
+                    <video id="infoVideo" playsinline preload="metadata">
+                        <source src="https://res.cloudinary.com/dm9mnc97u/video/upload/v1777677171/download_wq1ltu.mp4" type="video/mp4">
+                    </video>
+                    
+                    <div class="play-btn-center" id="playCenterBtnInfo">▶</div>
+                    
+                    <div class="reels-controls-overlay">
+                        <div class="reels-progress-container" id="vidProgressContainerInfo"><div class="reels-progress-filled" id="vidProgressFilledInfo"></div></div>
+                        <div class="reels-controls-row">
+                            <button class="reels-btn reels-play-btn" id="playPauseBtnInfo">▶</button>
+                            <button class="reels-btn reels-mute-btn" id="muteBtnInfo">🔊</button>
                         </div>
-                        <button class="control-btn" id="muteBtn">🔊</button>
                     </div>
                 </div>
             </div>
 
-            <div class="video-text reveal-up" style="transition-delay: 100ms;">
-                <h2 class="title-md">Você sabe como funciona a doação de medula?</h2>
-                <p>Muita gente tem medo porque confunde medula óssea com medula espinhal. Assista ao vídeo e entenda, de forma simples, por que informação correta aproxima mais pessoas da causa.</p>
+            <!-- Text Content -->
+            <div class="video-text">
+                <span class="video-label-top">VÍDEO EXPLICATIVO</span>
+                <h2 class="title-md">Antes do medo, entenda como funciona.</h2>
+                <p class="text-large" style="margin-top: 16px;">Muita gente deixa de se cadastrar porque confunde medula óssea com medula espinhal. Assista ao vídeo e entenda, de forma simples, o que muda quando a informação chega antes do medo.</p>
                 
-                <div class="video-bullets-card">
-                    <p style="font-weight: 500; color: var(--text-main); line-height: 1.6; margin:0;">Em alguns casos, a coleta pode acontecer pelo sangue periférico, por aférese. Em outros casos, pode ser por punção da medula óssea. <b>A definição é sempre conduzida pela equipe médica.</b></p>
+                <div class="video-highlight-card">
+                    <h4>Você sabia?</h4>
+                    <p>Em alguns casos, a coleta pode acontecer pelo sangue periférico, por aférese. Em outros casos, pode ser por punção da medula óssea. A definição do método é conduzida pela equipe médica.</p>
+                    <span class="video-highlight-micro">A FlaMedula orienta e mobiliza. O cadastro oficial, a triagem e a doação seguem pelos canais oficiais de saúde.</span>
                 </div>
 
-                <div class="video-ctas">
-                    <a href="#hub-cadastro" class="btn btn-donor btn-glow">▶ Assistir e começar meu cadastro</a>
-                    <a href="#medula-sem-medo" class="btn btn-outline" style="border-color: var(--text-main); color: var(--text-main);">Tirar dúvidas em Medula sem medo</a>
+                <div class="bullet-list">
+                    <div class="bullet-item"><span class="bullet-icon">✅</span><span>Medula óssea não é medula espinhal.</span></div>
+                    <div class="bullet-item"><span class="bullet-icon">✅</span><span>Cadastro não é doação imediata.</span></div>
+                    <div class="bullet-item"><span class="bullet-icon">✅</span><span>A forma de coleta é definida pela equipe médica.</span></div>
+                </div>
+
+                <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                    <button class="btn btn-donor btn-glow" onclick="document.getElementById('hub-cadastro').scrollIntoView({behavior: 'smooth'})">Assistir e começar meu cadastro</button>
+                    <button class="btn btn-outline" onclick="document.getElementById('educacional').scrollIntoView({behavior: 'smooth'})">Tirar dúvidas</button>
                 </div>
             </div>
+
         </div>
     </section>
 
-    <!-- HEART DIVIDER -->
-    <div class="container reveal-up"><div class="heart-divider"><span class="heart-icon">❤️</span></div></div>
-
-    <!-- MEDULA SEM MEDO (FLIP CARDS) -->
-    <section id="medula-sem-medo" class="faq-section pattern-dots">
-        <div class="container">
-            <div class="faq-header reveal-up">
-                <h2 class="title-md">Medula sem medo</h2>
-                <p class="text-large" style="margin-top: 12px;">Dúvidas comuns respondidas de forma direta.</p>
-            </div>
-            <div class="faq-grid">
-                <div class="flip-card reveal-up">
-                    <div class="flip-card-inner">
-                        <div class="flip-card-front"><div class="flip-icon">🤔</div><h3>É sempre pela coluna?</h3></div>
-                        <div class="flip-card-back"><p>Não. A coleta pode acontecer por métodos diferentes. A definição é feita pela equipe médica de acordo com cada caso.</p><img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781279524/Untitled_design_17_1_x7qbdx.webp" class="card-logo" alt="Logo"></div>
-                    </div>
-                </div>
-                <div class="flip-card reveal-up" style="transition-delay: 100ms;">
-                    <div class="flip-card-inner">
-                        <div class="flip-card-front"><div class="flip-icon">📝</div><h3>Cadastro já é doação?</h3></div>
-                        <div class="flip-card-back"><p>Não. Cadastro é o primeiro passo para ser encontrado e orientado quando houver compatibilidade com algum paciente.</p><img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781279524/Untitled_design_17_1_x7qbdx.webp" class="card-logo" alt="Logo"></div>
-                    </div>
-                </div>
-                <div class="flip-card reveal-up" style="transition-delay: 200ms;">
-                    <div class="flip-card-inner">
-                        <div class="flip-card-front"><div class="flip-icon">🧬</div><h3>Medula óssea é medula espinhal?</h3></div>
-                        <div class="flip-card-back"><p>Não. São coisas diferentes. Essa confusão aumenta o medo sem necessidade. A medula óssea fica dentro dos ossos.</p><img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781279524/Untitled_design_17_1_x7qbdx.webp" class="card-logo" alt="Logo"></div>
-                    </div>
-                </div>
-                <div class="flip-card reveal-up" style="transition-delay: 300ms;">
-                    <div class="flip-card-inner">
-                        <div class="flip-card-front"><div class="flip-icon">🔄</div><h3>Por que atualizar meus dados importa?</h3></div>
-                        <div class="flip-card-back"><p>Porque telefone, e-mail e cidade corretos ajudam os canais oficiais a encontrarem você caso seja compatível com alguém.</p><img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781279524/Untitled_design_17_1_x7qbdx.webp" class="card-logo" alt="Logo"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ROLLER 3: Após Medula Sem Medo (Azul Claro) -->
-    <div class="roller-wrapper roller-blue reveal-up">
+    <!-- ROLLER 3 -->
+    <div class="roller-wrapper roller-blue">
         <div class="roller-track">
             <div class="roller-item">MENOS MEDO <span>•</span> MAIS ORIENTAÇÃO <span>•</span> MAIS CLAREZA <span>•</span> MAIS AÇÃO <span>•</span></div>
             <div class="roller-item">MENOS MEDO <span>•</span> MAIS ORIENTAÇÃO <span>•</span> MAIS CLAREZA <span>•</span> MAIS AÇÃO <span>•</span></div>
@@ -798,67 +1023,123 @@
         </div>
     </div>
 
-    <!-- QUEM SOMOS / TRANSPARÊNCIA (DARK PREMIUM) -->
-    <section id="quem-somos" class="transparency-section pattern-noise">
-        <div class="container">
-            <div class="transparency-grid">
-                <div class="manifesto-block reveal-up">
-                    <h2 class="title-md">Quem somos</h2>
-                    <p class="title-sm" style="color: white; margin-bottom: 16px;">Informação, cadastro e mobilização responsável.</p>
-                    <p>A FlaMedula existe para transformar <strong>informação</strong> em <strong>movimento</strong>. Organizamos orientação, campanhas e dados para que mais pessoas saibam como ajudar — e para que a <strong>solidariedade</strong> chegue mais rápido a quem precisa.</p>
-                    <p>A rede cresce quando cada pessoa entende seu papel: doar, atualizar dados, cadastrar um caso ou apoiar uma campanha.</p>
+    <!-- NOVA SEÇÃO EDUCATIVA -->
+    <section id="educacional" class="educational-section">
+        <div class="container reveal-up">
+            
+            <div class="edu-header">
+                <span class="edu-label">DOAÇÃO DE MEDULA</span>
+                <h2 class="title-md">A chance que pode virar vida</h2>
+                <p class="text-large" style="margin-top: 16px;">Para muitos pacientes, encontrar um doador compatível fora da família é raro. Mas cada novo cadastro no REDOME aumenta a possibilidade de uma combinação acontecer. Você não está apenas preenchendo um cadastro. Você está aumentando a chance de alguém encontrar uma vida compatível.</p>
+            </div>
+
+            <div class="impact-block">
+                <div class="impact-number">1 em 100 mil</div>
+                <p class="impact-text">Essa pode ser a chance média de encontrar um doador compatível entre pessoas não aparentadas.</p>
+                <span class="impact-micro">É por isso que cada novo cadastro importa.</span>
+            </div>
+
+            <div class="edu-timeline">
+                <div class="edu-card">
+                    <div class="edu-step">1</div>
+                    <h3>Compatibilidade pode ser rara</h3>
+                    <p>Fora da família, encontrar alguém compatível pode ser difícil. Mais pessoas cadastradas aumentam as possibilidades de busca.</p>
                 </div>
+                <div class="edu-card">
+                    <div class="edu-step">2</div>
+                    <h3>O cadastro começa com uma amostra</h3>
+                    <p>Nos canais oficiais, a pessoa informa seus dados, assina o consentimento e realiza a coleta de uma pequena amostra de sangue para tipagem HLA.</p>
+                </div>
+                <div class="edu-card">
+                    <div class="edu-step">3</div>
+                    <h3>Um dia, você pode ser encontrado</h3>
+                    <p>Se houver possível compatibilidade com um paciente, os canais oficiais entram em contato para novas etapas de confirmação e exames de saúde detalhados.</p>
+                </div>
+            </div>
+
+            <div class="affinity-block">
+                <div class="affinity-card">
+                    <p>💉 <b>Se você já doa sangue</b>, talvez o próximo passo seja entender como entrar também na rede de doadores de medula.</p>
+                </div>
+                <div class="affinity-card">
+                    <p>🤝 <b>Se você ainda não doa sangue</b>, a FlaMedula pode te orientar sobre formas responsáveis de começar a ajudar a causa.</p>
+                </div>
+            </div>
+
+            <div class="edu-conversion">
+                <h3 class="title-md" style="font-size: 2rem;">Talvez você seja a combinação que alguém espera.</h3>
+                <p>Seja para começar do zero ou para avançar na sua jornada de doação, a FlaMedula orienta e organiza o caminho com responsabilidade.</p>
                 
-                <div class="metrics-block reveal-up" style="transition-delay: 100ms;">
-                    <h3 class="title-sm" style="margin-bottom: 24px; color: white;">Transparência da rede</h3>
-                    <div class="metrics-grid">
-                        <div class="metric-card">
-                            <div class="metric-value" data-target="328">0</div>
-                            <div class="metric-label">Doadores cadastrados</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-value" data-target="146">0</div>
-                            <div class="metric-label">Interessados em medula</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-value" data-target="89">0</div>
-                            <div class="metric-label">Atualizações REDOME</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-value" data-target="24">0</div>
-                            <div class="metric-label">Casos recebidos</div>
-                        </div>
-                    </div>
-                    <div class="metric-demo-label">Dados demonstrativos do protótipo</div>
+                <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn btn-donor btn-glow" onclick="document.getElementById('hub-cadastro').scrollIntoView({behavior: 'smooth'})">Quero orientação para me cadastrar</button>
+                    <button class="btn btn-outline" style="border-color: var(--redome-main); color: var(--redome-dark);" onclick="document.getElementById('atualiza-redome').scrollIntoView({behavior: 'smooth'})">Já sou cadastrado no REDOME</button>
                 </div>
             </div>
 
-            <!-- Equipe FlaMedula (Vertical Cards & Mobile Carousel) -->
-            <div class="team-container reveal-up">
-                <div class="team-header">
-                    <h3 class="title-sm">Equipe FlaMedula</h3>
-                    <p>Quem faz a rede acontecer todos os dias.</p>
-                </div>
-                <div class="team-grid mobile-carousel" id="teamGrid">
-                    <!-- Injected by JS -->
-                </div>
-            </div>
-
-            <!-- Embaixadores (Compact & Mobile Carousel) -->
-            <div class="ambassadors-section reveal-up">
-                <div class="team-header" style="margin-bottom: 24px;">
-                    <h3 class="title-sm" style="color: var(--donor-main);">Nossos Embaixadores</h3>
-                    <p>Vozes que amplificam a nossa causa.</p>
-                </div>
-                <div class="ambassadors-grid mobile-carousel" id="ambassadorsGrid">
-                    <!-- Injected by JS -->
-                </div>
-            </div>
         </div>
     </section>
-    
-    <!-- ROLLER 4: Antes das Ações (Red Soft / Reverse) -->
-    <div class="roller-wrapper roller-red-soft reveal-up">
+
+    <div class="heart-divider">
+        <div class="heart-line"></div>
+        <div class="heart-icon">❤️</div>
+        <div class="heart-line"></div>
+    </div>
+
+    <!-- QUEM SOMOS (DARK & PREMIUM) -->
+    <section id="quem-somos" class="transparency-section">
+        <div class="container reveal-up">
+            <div class="transparency-layout">
+                
+                <!-- Left: Manifesto -->
+                <div class="transparency-content">
+                    <span class="edu-label" style="background: rgba(185,28,28,0.2); color: #ff8a8a;">QUEM SOMOS</span>
+                    <h2 class="title-md">Informação que vira mobilização</h2>
+                    <p class="text-large" style="margin-top: 16px; font-weight: 500; color: white;">A FlaMedula conecta orientação, cadastro e campanhas para aproximar quem pode ajudar de quem precisa.</p>
+                    
+                    <p class="text-large" style="margin-top: 24px; line-height: 1.6; color: rgba(255,255,255,0.85);">A FlaMedula existe para transformar <b>informação</b> em <b>movimento</b>. Organizamos orientação, campanhas e dados para que mais pessoas saibam como ajudar — e para que a <b>solidariedade</b> chegue mais rápido a quem precisa.</p>
+                    
+                    <p class="text-large" style="margin-top: 16px; line-height: 1.6; color: rgba(255,255,255,0.85);">A rede cresce quando cada pessoa entende seu papel: doar, atualizar dados, cadastrar um caso ou apoiar uma campanha.</p>
+                </div>
+
+                <div class="transparency-connector"></div>
+
+                <!-- Right: Transparency/Metrics -->
+                <div class="transparency-metrics-wrapper">
+                    <div class="metrics-header">
+                        <h3 class="title-sm">Transparência da rede</h3>
+                        <span class="demo-badge">Dados demonstrativos do protótipo</span>
+                    </div>
+                    
+                    <div class="metrics-grid-2x2" id="metricsGrid">
+                        <!-- JS Injected -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Equipe & Embaixadores Wrap -->
+            <div class="team-ambassadors-wrapper">
+                <!-- Equipe FlaMedula -->
+                <div class="team-section">
+                    <h3 class="title-sm" style="margin-bottom: 24px;">Equipe FlaMedula</h3>
+                    <div class="team-grid mobile-carousel" id="teamGrid">
+                        <!-- JS Injected -->
+                    </div>
+                </div>
+
+                <!-- Embaixadores -->
+                <div class="ambassadors-section">
+                    <h3 class="title-sm" style="margin-bottom: 24px;">Embaixadores</h3>
+                    <div class="ambassadors-grid mobile-carousel" id="ambassadorsGrid">
+                        <!-- JS Injected -->
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- ROLLER 4 -->
+    <div class="roller-wrapper roller-light">
         <div class="roller-track reverse">
             <div class="roller-item">CAMPANHAS ATIVAS <span>•</span> COMUNICAÇÃO <span>•</span> ORGANIZAÇÃO <span>•</span> MOVIMENTO <span>•</span></div>
             <div class="roller-item">CAMPANHAS ATIVAS <span>•</span> COMUNICAÇÃO <span>•</span> ORGANIZAÇÃO <span>•</span> MOVIMENTO <span>•</span></div>
@@ -867,194 +1148,176 @@
     </div>
 
     <!-- AÇÕES FLAMEDULA -->
-    <section id="acoes" class="acoes-section">
-        <div class="container">
-            <div class="acoes-header reveal-up">
+    <section id="acoes" class="actions-section pattern-grid">
+        <div class="container reveal-up">
+            <div style="max-width: 600px;">
                 <h2 class="title-md">Ações FlaMedula</h2>
-                <p class="text-large" style="margin-top: 12px;">Campanhas, encontros e mobilizações que transformam informação em movimento.</p>
+                <p class="text-large" style="margin-top: 16px;">Campanhas, encontros e mobilizações que transformam informação em movimento.</p>
             </div>
+
+            <div class="actions-carousel" id="actionsCarousel">
+                <!-- JS Injected -->
+            </div>
+        </div>
+    </section>
+
+    <!-- BLEND ACTIONS TO SUPPORT -->
+    <div class="wave-divider">
+        <svg viewBox="0 0 1200 40" preserveAspectRatio="none">
+            <path d="M0,0 Q600,40 1200,0 L1200,40 L0,40 Z" fill="var(--donor-dark)"></path>
+        </svg>
+    </div>
+
+    <!-- APOIO FINANCEIRO -->
+    <section id="apoio" class="support-section">
+        <div class="container reveal-up">
+            <div class="support-badge">🪙 APOIO FINANCEIRO</div>
+            <h2 class="support-headline">Cada ação precisa de estrutura para acontecer.</h2>
             
-            <div class="acoes-carousel-container reveal-up" style="transition-delay: 100ms;">
-                <button class="carousel-nav-btn nav-prev" onclick="scrollActions(-1)">❮</button>
-                <div class="acoes-track" id="acoesTrack">
-                    <!-- Actions injected by JS -->
-                </div>
-                <button class="carousel-nav-btn nav-next" onclick="scrollActions(1)">❯</button>
+            <p style="font-size: 1.25rem; max-width: 800px; line-height: 1.6; color: rgba(255,255,255,0.9);">
+                Comunicação, deslocamento, tecnologia, organização e pessoas em movimento fazem a rede chegar mais longe. Seu apoio ajuda a FlaMedula a transformar intenção em ação.
+            </p>
+
+            <div class="support-pillars">
+                <div class="pillar-card">📣 Comunicação</div>
+                <div class="pillar-card">🚗 Deslocamento</div>
+                <div class="pillar-card">💻 Tecnologia</div>
+                <div class="pillar-card">🧩 Organização</div>
             </div>
+
+            <a href="/apoie/" class="btn btn-glow" style="background: #FBBF24; color: #92400E; font-size: 1.1rem; padding: 18px 36px;">Quero apoiar a FlaMedula</a>
         </div>
     </section>
 
-    <!-- APOIO FINANCEIRO (DIRECTLY CONNECTED WITH SVG WAVE) -->
-    <section id="apoio" class="apoio-section">
-        <!-- Blend from Actions -->
-        <div class="apoio-wave">
-            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
-            </svg>
-        </div>
-
-        <div class="container">
-            <div class="apoio-content reveal-up">
-                <div class="apoio-tag">🪙 APOIO FINANCEIRO</div>
-                <h2 class="apoio-title">Cada ação precisa de estrutura para acontecer.</h2>
-                <p class="apoio-copy">Comunicação, deslocamento, tecnologia, organização e pessoas em movimento fazem a rede chegar mais longe. Seu apoio ajuda a FlaMedula a transformar intenção em ação.</p>
-                
-                <div class="apoio-bullets">
-                    <div class="apoio-bullet">Comunicação</div>
-                    <div class="apoio-bullet">Deslocamento</div>
-                    <div class="apoio-bullet">Tecnologia</div>
-                    <div class="apoio-bullet">Organização</div>
-                </div>
-                
-                <p style="font-weight: 500; color: rgba(255,255,255,0.8); margin-bottom: 32px;">Seu apoio ajuda campanhas, orientações e mobilizações a continuarem acontecendo com responsabilidade.</p>
-                <a href="/apoie/" class="btn btn-apoio btn-glow">Quero apoiar a FlaMedula</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- DEPOIMENTOS -->
-    <section class="depoimentos-section pattern-dots">
-        <div class="container">
-            <div class="text-center reveal-up">
-                <h2 class="title-md">A força da nossa rede</h2>
-                <p class="text-large" style="margin-top: 12px;">Quem já viveu o processo sabe a importância da informação.</p>
-            </div>
-            <!-- Mobile Carousel enabled -->
-            <div class="depoimentos-grid mobile-carousel reveal-up">
-                <div class="depoimento-card">
-                    <p class="depo-quote">"Eu tinha medo porque não entendia. Depois da orientação, ficou muito mais claro."</p>
-                    <div style="margin-top:auto;">
-                        <p class="depo-author">Voluntária orientada</p>
-                        <p class="depo-role">Rede FlaMedula</p>
-                    </div>
-                </div>
-                <div class="depoimento-card" style="transition-delay: 100ms;">
-                    <p class="depo-quote">"Ter alguém explicando o caminho fez diferença em um momento de muita ansiedade."</p>
-                    <div style="margin-top:auto;">
-                        <p class="depo-author">Familiar de paciente</p>
-                        <p class="depo-role">Campanha acompanhada</p>
-                    </div>
-                </div>
-                <div class="depoimento-card" style="transition-delay: 200ms;">
-                    <p class="depo-quote">"A atualização dos dados é simples, mas muita gente esquece. Esse lembrete importa."</p>
-                    <div style="margin-top:auto;">
-                        <p class="depo-author">Apoiador da causa</p>
-                        <p class="depo-role">Mobilização REDOME</p>
-                    </div>
+    <!-- DEPOIMENTOS CAROUSEL -->
+    <section class="testimonials-section pattern-dots">
+        <div class="container reveal-up">
+            <h2 class="title-md" style="text-align: center; margin-bottom: 48px;">Quem vive a rede</h2>
+            
+            <div class="testimonials-carousel-wrapper">
+                <div class="testimonials-track" id="testimonialsTrack">
+                    <!-- JS Injected Carousel -->
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- NOVA SEÇÃO REDOME (Blend from Testimonials) -->
-    <section id="atualiza-redome" class="redome-section">
-        <!-- Blend from Depoimentos -->
-        <div class="redome-wave">
-            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
-            </svg>
-        </div>
+    <!-- BLEND TO REDOME -->
+    <div class="redome-wave">
+        <svg viewBox="0 0 1200 40" preserveAspectRatio="none">
+            <path d="M0,0 Q600,40 1200,0 L1200,40 L0,40 Z" fill="var(--redome-bg)"></path>
+        </svg>
+    </div>
 
-        <div class="container">
-            <div class="redome-layout reveal-up">
-                <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781283383/logo-redome_wmvgt8.png" alt="REDOME" class="redome-top-logo">
+    <!-- SEÇÃO DEDICADA REDOME -->
+    <section class="redome-section" id="atualiza-redome">
+        <div class="container reveal-up">
+            <div class="redome-box">
+                <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781283383/logo-redome_wmvgt8.png" alt="REDOME" class="redome-logo-top">
+                <h2 class="title-md" style="color: var(--redome-dark);">Já é doador de medula?</h2>
+                <h3 class="title-sm" style="margin-top: 8px;">Atualize seu cadastro no REDOME.</h3>
                 
-                <h2>Já é doador de medula?</h2>
-                <h3>Atualize seu cadastro no REDOME.</h3>
-                <p>A compatibilidade pode aparecer anos depois do cadastro. Se seu telefone, e-mail, cidade ou endereço mudou, manter seus dados atualizados ajuda os canais oficiais a encontrarem você.</p>
-                <p class="redome-microcopy">Um cadastro desatualizado pode dificultar o contato no momento em que você mais poderia ajudar.</p>
+                <p class="text-body" style="margin-top: 24px; font-size: 1.1rem;">A compatibilidade pode aparecer anos depois do cadastro. Se seu telefone, e-mail, cidade ou endereço mudou, manter seus dados atualizados ajuda os canais oficiais a encontrarem você.</p>
                 
                 <div class="redome-checklist">
-                    <div class="redome-check-item"><span class="check-circle">✓</span> Telefone</div>
-                    <div class="redome-check-item"><span class="check-circle">✓</span> E-mail</div>
-                    <div class="redome-check-item"><span class="check-circle">✓</span> Cidade</div>
-                    <div class="redome-check-item"><span class="check-circle">✓</span> Endereço</div>
+                    <div class="redome-check-item">✓ Telefone atualizado</div>
+                    <div class="redome-check-item">✓ E-mail atualizado</div>
+                    <div class="redome-check-item">✓ Cidade atual</div>
+                    <div class="redome-check-item">✓ Endereço correto</div>
                 </div>
 
-                <div class="redome-aviso">
-                    <b>Aviso de Responsabilidade:</b> A FlaMedula orienta e lembra. A atualização oficial deve ser feita nos canais do REDOME, hemocentros ou canais oficiais indicados.
+                <div style="background: rgba(234, 88, 12, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 32px;">
+                    <p style="font-size: 0.85rem; font-weight: 600; color: var(--redome-dark);">A FlaMedula orienta e lembra. A atualização oficial deve ser feita nos canais do REDOME, hemocentros ou canais oficiais indicados.</p>
                 </div>
 
-                <div class="redome-ctas">
-                    <!-- Link Oficial REDOME vai aqui no futuro -->
-                    <a href="#" class="btn btn-redome btn-glow" target="_blank">Atualizar cadastro no REDOME</a>
-                    <a href="#hub-cadastro" class="btn btn-redome-outline" onclick="openPanel('donor')">Ainda não sou cadastrado</a>
+                <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                    <a href="#" class="btn btn-glow" style="background: var(--redome-main); color: white;">Atualizar cadastro no REDOME</a>
+                    <button class="btn btn-outline" style="border-color: var(--redome-main); color: var(--redome-dark);" onclick="document.getElementById('hub-cadastro').scrollIntoView({behavior: 'smooth'})">Ainda não sou cadastrado</button>
                 </div>
             </div>
         </div>
     </section>
-    
-    <!-- ROLLER 5: Entre REDOME e FAQ (Laranja / Reverse) -->
-    <div class="roller-wrapper roller-orange reveal-up">
-        <div class="roller-track reverse">
-            <div class="roller-item">ATUALIZE SEUS DADOS <span>•</span> REDOME <span>•</span> CONTATO ATIVO <span>•</span> ORIENTAÇÃO <span>•</span></div>
-            <div class="roller-item">ATUALIZE SEUS DADOS <span>•</span> REDOME <span>•</span> CONTATO ATIVO <span>•</span> ORIENTAÇÃO <span>•</span></div>
-            <div class="roller-item">ATUALIZE SEUS DADOS <span>•</span> REDOME <span>•</span> CONTATO ATIVO <span>•</span> ORIENTAÇÃO <span>•</span></div>
+
+    <!-- ROLLER 5 -->
+    <div class="roller-wrapper roller-orange">
+        <div class="roller-track">
+            <div class="roller-item">ATUALIZE SEUS DADOS <span>•</span> MANTENHA O CONTATO ATIVO <span>•</span> REDOME <span>•</span> INFORMAÇÃO RESPONSÁVEL <span>•</span></div>
+            <div class="roller-item">ATUALIZE SEUS DADOS <span>•</span> MANTENHA O CONTATO ATIVO <span>•</span> REDOME <span>•</span> INFORMAÇÃO RESPONSÁVEL <span>•</span></div>
+            <div class="roller-item">ATUALIZE SEUS DADOS <span>•</span> MANTENHA O CONTATO ATIVO <span>•</span> REDOME <span>•</span> INFORMAÇÃO RESPONSÁVEL <span>•</span></div>
         </div>
     </div>
 
-    <!-- FAQ ACCORDION -->
-    <section id="faq" class="faq-accordion-section">
-        <div class="container">
-            <div class="text-center reveal-up" style="margin-bottom: 48px;">
-                <h2 class="title-md">Dúvidas Frequentes</h2>
-            </div>
-            <div class="faq-list reveal-up">
-                <div class="faq-item">
-                    <button class="faq-q">A FlaMedula faz cadastro oficial no REDOME? <span class="faq-icon">+</span></button>
-                    <div class="faq-a-wrapper">
-                        <div class="faq-a">Não. A FlaMedula orienta e mobiliza. O cadastro oficial, a triagem e os processos de doação seguem pelos canais oficiais, como REDOME, hemocentros e equipes de saúde.</div>
+    <!-- FAQ -->
+    <section id="faq" class="faq-accordion-section pattern-grid-light">
+        <div class="container reveal-up" style="max-width: 800px;">
+            <h2 class="title-md" style="text-align: center; margin-bottom: 48px;">Perguntas Frequentes</h2>
+            
+            <div class="accordion-list">
+                <div class="accordion-item" onclick="toggleAccordion(this)">
+                    <div class="accordion-header">
+                        A FlaMedula faz cadastro oficial no REDOME?
+                        <span class="accordion-icon">+</span>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="accordion-content">Não. A FlaMedula orienta e mobiliza. O cadastro oficial, a triagem e os processos de doação seguem pelos canais oficiais, como REDOME, hemocentros e equipes de saúde.</div>
                     </div>
                 </div>
-                <div class="faq-item">
-                    <button class="faq-q">Medula óssea é medula espinhal? <span class="faq-icon">+</span></button>
-                    <div class="faq-a-wrapper">
-                        <div class="faq-a">Não. São coisas diferentes. Essa confusão aumenta o medo sem necessidade. A medula óssea é um tecido líquido que fica no interior dos ossos.</div>
+                <div class="accordion-item" onclick="toggleAccordion(this)">
+                    <div class="accordion-header">
+                        Medula óssea é medula espinhal?
+                        <span class="accordion-icon">+</span>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="accordion-content">Não. São coisas diferentes. Essa confusão aumenta o medo sem necessidade. A medula óssea fica dentro dos ossos.</div>
                     </div>
                 </div>
-                <div class="faq-item">
-                    <button class="faq-q">Cadastro na FlaMedula já é doação? <span class="faq-icon">+</span></button>
-                    <div class="faq-a-wrapper">
-                        <div class="faq-a">Não. O cadastro na rede ajuda a organizar orientação, contato e campanhas. A doação em si depende dos canais oficiais e de compatibilidade genética confirmada por etapas médicas.</div>
+                <div class="accordion-item" onclick="toggleAccordion(this)">
+                    <div class="accordion-header">
+                        Cadastro na FlaMedula já é doação?
+                        <span class="accordion-icon">+</span>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="accordion-content">Não. O cadastro na rede ajuda a organizar orientação, contato e campanhas. A doação depende dos canais oficiais e das etapas médicas.</div>
                     </div>
                 </div>
-                <div class="faq-item">
-                    <button class="faq-q">Como meus dados serão usados? <span class="faq-icon">+</span></button>
-                    <div class="faq-a-wrapper">
-                        <div class="faq-a">Os dados ajudam a FlaMedula a orientar, organizar contatos e mobilizar campanhas com responsabilidade, conforme sua autorização. Respeitamos totalmente a sua privacidade.</div>
+                <div class="accordion-item" onclick="toggleAccordion(this)">
+                    <div class="accordion-header">
+                        Posso cadastrar um paciente?
+                        <span class="accordion-icon">+</span>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="accordion-content">Sim. Familiares, responsáveis, profissionais de saúde ou apoiadores podem sinalizar um caso para análise e possível orientação responsável.</div>
                     </div>
                 </div>
-                <div class="faq-item">
-                    <button class="faq-q">Posso cadastrar um paciente? <span class="faq-icon">+</span></button>
-                    <div class="faq-a-wrapper">
-                        <div class="faq-a">Sim. Familiares, responsáveis, profissionais de saúde ou apoiadores podem sinalizar um caso na seção 'Paciente' para análise e possível orientação de nossa equipe técnica.</div>
+                <div class="accordion-item" onclick="toggleAccordion(this)">
+                    <div class="accordion-header">
+                        Como posso apoiar financeiramente?
+                        <span class="accordion-icon">+</span>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="accordion-content">A landing principal apenas direciona para a página futura de apoio. Não há Pix, checkout ou pagamento direto nesta página.</div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-
-    <!-- HEART DIVIDER -->
-    <div class="container reveal-up"><div class="heart-divider"><span class="heart-icon">❤️</span></div></div>
 
     <!-- CTA FINAL -->
-    <section class="cta-final-section" id="cta-final">
+    <section class="cta-final-section">
         <div class="container reveal-up">
-            <h2 class="title-lg" style="margin-bottom: 16px;">A rede cresce quando mais pessoas sabem como ajudar.</h2>
-            <p class="text-large" style="color: rgba(255,255,255,0.9); max-width: 600px; margin: 0 auto; margin-bottom: 16px;">Escolha um caminho e ajude a FlaMedula a transformar informação em mobilização responsável.</p>
-            <p style="font-weight: 500; color: #fecaca; margin-bottom: 32px;">Sua decisão pode fortalecer uma campanha hoje. Comece agora.</p>
+            <h2 class="title-lg" style="margin-bottom: 24px;">A rede cresce quando mais pessoas sabem como ajudar.</h2>
+            <p style="font-size: 1.25rem; opacity: 0.9; max-width: 600px; margin: 0 auto;">Escolha um caminho e ajude a FlaMedula a transformar informação em mobilização responsável. Comece agora.</p>
             
             <div class="cta-buttons">
-                <a href="#hub-cadastro" class="btn btn-white btn-glow" onclick="openPanel('donor')">🩸 Cadastrar doador</a>
-                <a href="#hub-cadastro" class="btn btn-white btn-glow" style="color: var(--patient-main);" onclick="openPanel('patient')">💙 Cadastrar paciente</a>
-                <a href="#atualiza-redome" class="btn btn-white btn-glow" style="color: var(--redome-main);">🔄 Atualizar REDOME</a>
+                <button class="btn btn-donor btn-glow" onclick="document.getElementById('hub-cadastro').scrollIntoView({behavior: 'smooth'})" style="background: white; color: var(--donor-dark);">Cadastrar doador</button>
+                <button class="btn btn-patient btn-glow" onclick="document.getElementById('hub-cadastro').scrollIntoView({behavior: 'smooth'})" style="background: var(--patient-main); color: white;">Cadastrar paciente</button>
             </div>
         </div>
     </section>
-    
-    <!-- ROLLER 6: Entre CTA Final e Footer (Preto/Vinho) -->
-    <div class="roller-wrapper roller-black reveal-up">
-        <div class="roller-track">
+
+    <!-- ROLLER 6 -->
+    <div class="roller-wrapper roller-black">
+        <div class="roller-track reverse">
             <div class="roller-item">SOLIDARIEDADE <span>•</span> INFORMAÇÃO <span>•</span> CADASTRO <span>•</span> MOBILIZAÇÃO <span>•</span> ESPERANÇA <span>•</span></div>
             <div class="roller-item">SOLIDARIEDADE <span>•</span> INFORMAÇÃO <span>•</span> CADASTRO <span>•</span> MOBILIZAÇÃO <span>•</span> ESPERANÇA <span>•</span></div>
             <div class="roller-item">SOLIDARIEDADE <span>•</span> INFORMAÇÃO <span>•</span> CADASTRO <span>•</span> MOBILIZAÇÃO <span>•</span> ESPERANÇA <span>•</span></div>
@@ -1062,107 +1325,182 @@
     </div>
 
     <!-- FOOTER INSTITUCIONAL -->
-    <footer class="footer-section">
+    <footer class="footer-section pattern-noise">
         <div class="container">
             <div class="footer-grid">
-                
-                <!-- Coluna 1: Marca -->
-                <div class="footer-col brand-col">
+                <div class="footer-col" style="padding-right: 24px;">
                     <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781279524/Untitled_design_17_1_x7qbdx.webp" alt="FlaMedula Logo" class="footer-logo">
-                    <p class="footer-tagline">Informação, cadastro e mobilização responsável.</p>
-                    <p class="footer-microcopy">Uma rede para orientar, organizar e aproximar pessoas da causa do sangue e da medula.</p>
+                    <p style="font-weight: 600; margin-bottom: 8px;">Informação, cadastro e mobilização responsável.</p>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 0.85rem;">Uma rede para orientar, organizar e aproximar pessoas da causa do sangue e da medula.</p>
                 </div>
-
-                <!-- Coluna 2: Caminhos Rápidos -->
                 <div class="footer-col">
-                    <h4 class="footer-title">Caminhos Rápidos</h4>
-                    <ul class="footer-nav">
-                        <li><a href="#hub-cadastro" onclick="openPanel('donor')">Cadastrar doador</a></li>
-                        <li><a href="#hub-cadastro" onclick="openPanel('patient')">Cadastrar paciente/caso</a></li>
-                        <li><a href="#atualiza-redome">Atualizar REDOME</a></li>
-                        <li><a href="/apoie/" class="apoio-link">🪙 Apoiar a FlaMedula</a></li>
-                    </ul>
-                </div>
-
-                <!-- Coluna 3: Navegação -->
-                <div class="footer-col">
-                    <h4 class="footer-title">Navegação</h4>
-                    <ul class="footer-nav">
-                        <li><a href="#medula-sem-medo">Medula sem medo</a></li>
-                        <li><a href="#quem-somos">Quem somos</a></li>
-                        <li><a href="#acoes">Ações FlaMedula</a></li>
-                        <li><a href="#faq">Dúvidas Frequentes</a></li>
-                    </ul>
-                </div>
-
-                <!-- Coluna 4: Aviso Institucional -->
-                <div class="footer-col warning-col">
-                    <div class="warning-box">
-                        <span class="warning-icon">🛡️ Orientação responsável</span>
-                        <p>A FlaMedula orienta e mobiliza, mas não substitui REDOME, hemocentros, hospitais ou canais oficiais de saúde.</p>
+                    <h4>Caminhos</h4>
+                    <div class="footer-links">
+                        <a href="#hub-cadastro" onclick="openPanel('donor')">Cadastrar doador</a>
+                        <a href="#hub-cadastro" onclick="openPanel('patient')">Cadastrar paciente/caso</a>
+                        <a href="#atualiza-redome">Atualizar REDOME</a>
+                        <a href="#apoio">Apoiar a FlaMedula</a>
                     </div>
                 </div>
-
+                <div class="footer-col">
+                    <h4>Navegação</h4>
+                    <div class="footer-links">
+                        <a href="#educacional">Medula sem medo</a>
+                        <a href="#quem-somos">Quem somos</a>
+                        <a href="#acoes">Ações</a>
+                        <a href="#faq">FAQ</a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Orientação Responsável</h4>
+                    <div style="background: rgba(255,255,255,0.05); padding: 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+                        <p style="font-size: 0.8rem; color: rgba(255,255,255,0.7); line-height: 1.5;">A FlaMedula orienta e mobiliza, mas não substitui REDOME, hemocentros, hospitais ou canais oficiais de saúde.</p>
+                    </div>
+                </div>
             </div>
-
+            
             <div class="footer-bottom">
-                <p>&copy; 2026 FlaMedula. Todos os direitos reservados.</p>
-                <p class="demo-badge">Dados demonstrativos no protótipo.</p>
+                <div>© FlaMedula. Todos os direitos reservados.</div>
+                <div>Dados demonstrativos no protótipo.</div>
             </div>
         </div>
     </footer>
 
-    <!-- SCRIPTS -->
     <script>
-        // === PRELOADER LOGIC ===
+        // === MOCK DATA ===
+        const heroNewsItems = [
+            { categoria: "Mobilização", titulo: "Informação clara aproxima mais doadores", texto: "A FlaMedula organiza orientação, cadastro e campanhas para fortalecer a rede.", cta: "Começar cadastro", path: "donor" },
+            { categoria: "Rede ativa", titulo: "Atualizar dados também salva oportunidades", texto: "Quem já está no REDOME precisa manter telefone, e-mail e cidade atualizados.", cta: "Atualizar REDOME", path: "redome" },
+            { categoria: "Pacientes", titulo: "Cada caso precisa de orientação responsável", texto: "Famílias, profissionais de saúde e apoiadores podem sinalizar casos para análise.", cta: "Cadastrar paciente", path: "patient" }
+        ];
+
+        const metricsData = [
+            { label: "Doadores cadastrados", value: 328, suffix: "pessoas adicionadas à rede" },
+            { label: "Interessados em medula", value: 146, suffix: "querem receber orientação" },
+            { label: "Atualizações REDOME", value: 89, suffix: "pessoas orientadas" },
+            { label: "Casos recebidos", value: 24, suffix: "análise inicial" }
+        ];
+
+        const teamMembers = [
+            { name: "André Matos \"Dedeco\"", role: "Fundador e Diretor Geral" },
+            { name: "Danielli Oliveira", role: "Parceira Técnica" },
+            { name: "Elaine Reixach", role: "Coordenação de Ações" },
+            { name: "Tio Maiko Castro", role: "Acolhimento e Mobilização" },
+            { name: "Artur Santos", role: "Logística de Campanhas" }
+        ];
+
+        const ambassadors = [
+            { name: "Zico", role: "Embaixador Oficial", desc: "Lenda do Flamengo, ajuda a dar voz e alcance à causa da FlaMedula." },
+            { name: "Tânia Bastos", role: "Madrinha Institucional", desc: "Vereadora e apoiadora da causa, fortalece a mobilização e a presença institucional." }
+        ];
+
+        const actionsData = [
+            { date: "12 JUN", location: "Rio de Janeiro", title: "Campanha em comunidade", summary: "Informação sobre sangue, medula e atualização de cadastro.", cta: "Ver ação" },
+            { date: "28 JUN", location: "Baixada Fluminense", title: "Mobilização de doadores", summary: "Encontro para fortalecer a rede de cadastro e orientação.", cta: "Ver ação" },
+            { date: "05 JUL", location: "Online", title: "Roda de conversa", summary: "Momento para tirar dúvidas e reduzir mitos.", cta: "Ver ação" },
+            { date: "18 JUL", location: "Hospital parceiro", title: "Apoio a paciente", summary: "Organização de mobilização responsável.", cta: "Ver ação" }
+        ];
+        
+        const testimonialsData = [
+            { text: "Eu tinha medo porque não entendia. Depois da orientação, ficou muito mais claro e decidi me cadastrar.", name: "Mariana S.", role: "Doadora", avatar: "M", case: "Voluntária orientada" },
+            { text: "Ter alguém explicando o caminho fez diferença em um momento de muita ansiedade para nossa família.", name: "Carlos E.", role: "Familiar", avatar: "C", case: "Campanha acompanhada" },
+            { text: "A atualização dos dados é simples, mas muita gente esquece. Esse lembrete da FlaMedula importa muito.", name: "Ana Beatriz", role: "Apoiadora", avatar: "A", case: "Mobilização REDOME" },
+            { text: "Achei que doação era só pela coluna. O vídeo abriu minha mente para começar a ajudar sem medo.", name: "Roberto A.", role: "Doador", avatar: "R", case: "Doador de Sangue" }
+        ];
+
+        // === INITIALIZATION ===
+        document.addEventListener('DOMContentLoaded', () => {
+            initCarousel();
+            renderMetrics();
+            renderTeam();
+            renderAmbassadors();
+            renderActions();
+            renderTestimonials();
+            setupScrollReveal();
+            setupVideoReelsPlayer('vidWrapperInfo', 'infoVideo', 'playCenterBtnInfo', 'playPauseBtnInfo', 'muteBtnInfo', 'vidProgressContainerInfo', 'vidProgressFilledInfo');
+        });
+
+        // === PRELOADER & INTRO OVERLAY LOGIC ===
         window.addEventListener('load', () => {
             const preloader = document.getElementById('flamedula-preloader');
-            document.body.classList.add('is-loading');
+            const introOverlay = document.getElementById('intro-overlay');
+            const introVideo = document.getElementById('introVideo');
 
             setTimeout(() => {
                 preloader.classList.add('preloader-hidden');
-                document.body.classList.remove('is-loading');
-                setTimeout(() => { preloader.style.display = 'none'; }, 600);
-            }, 2400); 
+                
+                setTimeout(() => { 
+                    preloader.style.display = 'none'; 
+                    
+                    const introSeen = sessionStorage.getItem('flamedula_intro_seen');
+
+                    if (!introSeen) {
+                        introOverlay.style.display = 'flex';
+                        void introOverlay.offsetWidth; // Force reflow
+                        introOverlay.classList.add('active-slide-up');
+
+                        if(introVideo) {
+                            introVideo.muted = false;
+                            const playPromise = introVideo.play();
+                            
+                            if (playPromise !== undefined) {
+                                playPromise.catch(error => {
+                                    console.log('Autoplay com áudio bloqueado. Tentando fallback mutado...', error);
+                                    introVideo.muted = true;
+                                    const muteBtn = document.querySelector('#containerIntroVideo .reels-mute-btn');
+                                    if(muteBtn) muteBtn.textContent = '🔇';
+                                    
+                                    introVideo.play().catch(e => {
+                                        // Total block fallback
+                                        const playCenter = document.querySelector('#containerIntroVideo .play-btn-center');
+                                        const playBtn = document.querySelector('#containerIntroVideo .reels-play-btn');
+                                        if(playCenter) { playCenter.style.display = 'flex'; playCenter.style.opacity = '1'; playCenter.style.pointerEvents = 'auto'; }
+                                        if(playBtn) playBtn.textContent = '▶';
+                                        document.getElementById('containerIntroVideo').classList.add('paused');
+                                    });
+                                });
+                            }
+                            
+                            const playCenter = document.querySelector('#containerIntroVideo .play-btn-center');
+                            const playBtn = document.querySelector('#containerIntroVideo .reels-play-btn');
+                            if(playCenter) playCenter.style.display = 'none';
+                            if(playBtn) playBtn.textContent = '⏸';
+                            
+                            setupVideoReelsPlayer('containerIntroVideo', 'introVideo', null, document.querySelector('#containerIntroVideo .reels-play-btn').id, document.querySelector('#containerIntroVideo .reels-mute-btn').id, null, null, true);
+                        }
+                    } else {
+                        document.body.classList.remove('is-loading');
+                    }
+                }, 600);
+            }, 2200); 
         });
 
-        // === REVEAL ON SCROLL ===
-        const revealElements = document.querySelectorAll('.reveal-up');
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if(entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                    revealObserver.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
-        revealElements.forEach(el => revealObserver.observe(el));
+        const introOverlayEl = document.getElementById('intro-overlay');
+        const btnEnterSite = document.getElementById('btn-enter-site');
+        const introVidEl = document.getElementById('introVideo');
 
-        // === MOCK DATA FOR HERO ===
-        const heroNewsItems = [
-            { categoria: "Mobilização", emoji: "🩸", titulo: "Informação clara aproxima mais doadores", texto: "A FlaMedula organiza orientação, cadastro e campanhas para fortalecer a rede de sangue e medula.", cta: "Começar cadastro", path: "donor" },
-            { categoria: "Rede ativa", emoji: "🔄", titulo: "Atualizar dados também salva oportunidades", texto: "Quem já está no REDOME precisa manter telefone, e-mail e cidade atualizados para continuar encontrável.", cta: "Atualizar REDOME", path: "redome" },
-            { categoria: "Pacientes", emoji: "💙", titulo: "Cada caso precisa de orientação responsável", texto: "Famílias, profissionais de saúde e apoiadores podem sinalizar casos para análise e mobilização cuidadosa.", cta: "Cadastrar paciente", path: "patient" }
-        ];
+        function fecharIntroOverlay() {
+            introOverlayEl.style.opacity = '0';
+            setTimeout(() => {
+                introOverlayEl.style.display = 'none';
+                document.body.classList.remove('is-loading'); 
+                sessionStorage.setItem('flamedula_intro_seen', 'true');
+                if(introVidEl) introVidEl.pause();
+            }, 500);
+        }
+
+        if(btnEnterSite) btnEnterSite.addEventListener('click', fecharIntroOverlay);
 
         // === HERO CAROUSEL ===
-        const track = document.getElementById('carouselTrack');
-        const dotsContainer = document.getElementById('carouselDots');
-        const progressFill = document.getElementById('progressFill');
-        let currentSlide = 0;
-        const slideDuration = 6000;
-        let slideInterval;
-
+        let currentSlide = 0, slideDuration = 6000, slideInterval;
         function initCarousel() {
+            const track = document.getElementById('carouselTrack');
+            const dotsContainer = document.getElementById('carouselDots');
+            
             heroNewsItems.forEach((item, index) => {
                 const slide = document.createElement('div');
                 slide.className = `carousel-slide ${index === 0 ? 'active' : ''}`;
-                slide.innerHTML = `
-                    <div class="slide-tag"><span>${item.emoji}</span> ${item.categoria}</div>
-                    <h2 class="slide-title">${item.titulo}</h2>
-                    <p class="slide-text">${item.texto}</p>
-                    <a href="#hub-cadastro" class="slide-btn btn-glow" onclick="openPanel('${item.path}')">${item.cta}</a>
-                `;
+                slide.innerHTML = `<div class="slide-tag">${item.categoria}</div><h2 class="slide-title">${item.titulo}</h2><p class="slide-text">${item.texto}</p><button class="btn slide-btn" onclick="document.getElementById('hub-cadastro').scrollIntoView({behavior:'smooth'}); setTimeout(()=>openPanel('${item.path}'), 500);">${item.cta}</button>`;
                 track.appendChild(slide);
 
                 const dot = document.createElement('div');
@@ -1172,252 +1510,194 @@
             });
             startAutoplay();
         }
-
         function goToSlide(index) {
-            const slides = document.querySelectorAll('.carousel-slide');
-            const dots = document.querySelectorAll('.dot');
-            slides[currentSlide].classList.remove('active');
-            dots[currentSlide].classList.remove('active');
+            document.querySelectorAll('.carousel-slide')[currentSlide].classList.remove('active');
+            document.querySelectorAll('.dot')[currentSlide].classList.remove('active');
             currentSlide = index;
-            slides[currentSlide].classList.add('active');
-            dots[currentSlide].classList.add('active');
+            document.querySelectorAll('.carousel-slide')[currentSlide].classList.add('active');
+            document.querySelectorAll('.dot')[currentSlide].classList.add('active');
             resetAutoplay();
         }
-        function nextSlide() { goToSlide((currentSlide + 1) % heroNewsItems.length); }
         function startAutoplay() {
-            progressFill.style.transition = 'none';
-            progressFill.style.width = '0%';
+            const progressFill = document.getElementById('progressFill');
+            progressFill.style.transition = 'none'; progressFill.style.width = '0%';
             setTimeout(() => { progressFill.style.transition = `width ${slideDuration}ms linear`; progressFill.style.width = '100%'; }, 50);
-            slideInterval = setInterval(nextSlide, slideDuration);
+            slideInterval = setInterval(() => goToSlide((currentSlide + 1) % heroNewsItems.length), slideDuration);
         }
         function resetAutoplay() { clearInterval(slideInterval); startAutoplay(); }
 
-        // === ACTION HUB ===
-        const hubGrid = document.getElementById('hubGrid');
-        const hubHeader = document.querySelector('.hub-header');
-        const panels = ['donor', 'patient', 'support']; // Updated panels
-
+        // === HUB PANELS ===
         function openPanel(type) {
-            // Check if Redome passed to scroll down to Redome section instead
-            if(type === 'redome') {
-                document.getElementById('atualiza-redome').scrollIntoView({ behavior: 'smooth' });
-                return;
-            }
-
-            hubGrid.style.display = 'none';
-            hubHeader.style.display = 'none';
-            panels.forEach(p => {
-                const pEl = document.getElementById(`panel-${p}`);
-                if(pEl) pEl.style.display = 'none';
-                const form = document.getElementById(`form-${p}`);
-                const success = document.getElementById(`success-${p}`);
-                if(form) form.style.display = 'grid';
-                if(success) success.style.display = 'none';
-            });
-            const panel = document.getElementById(`panel-${type}`);
-            if(panel) {
-                panel.style.display = 'block';
-                panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
+            if(type === 'redome') { document.getElementById('atualiza-redome').scrollIntoView({behavior: 'smooth'}); return; }
+            document.getElementById('hubGrid').style.display = 'none';
+            ['donor', 'patient', 'support'].forEach(p => document.getElementById(`panel-${p}`).style.display = 'none');
+            document.getElementById(`panel-${type}`).style.display = 'block';
+            document.getElementById(`form-${type}`) && (document.getElementById(`form-${type}`).style.display = 'block');
+            document.getElementById(`success-${type}`) && (document.getElementById(`success-${type}`).style.display = 'none');
         }
-
         function closePanels() {
-            panels.forEach(p => {
-                const pEl = document.getElementById(`panel-${p}`);
-                if(pEl) pEl.style.display = 'none';
-            });
-            hubGrid.style.display = 'grid';
-            hubHeader.style.display = 'block';
-            document.getElementById('hub-cadastro').scrollIntoView({ behavior: 'smooth' });
+            ['donor', 'patient', 'support'].forEach(p => document.getElementById(`panel-${p}`).style.display = 'none');
+            document.getElementById('hubGrid').style.display = 'grid';
+            document.getElementById('hub-cadastro').scrollIntoView({behavior: 'smooth'});
         }
-
         function handleFormSubmit(e, type) {
             e.preventDefault();
-            document.getElementById(`form-${type}`).style.display = 'none';
+            document.getElementById(`form-${type}`) && (document.getElementById(`form-${type}`).style.display = 'none');
+            document.getElementById(`panel-${type}`).querySelector('div:not(.panel-header):not(.success-msg)').style.display = 'none';
             document.getElementById(`success-${type}`).style.display = 'block';
         }
 
-        // === VIDEO PLAYER LOGIC ===
-        const video = document.getElementById('infoVideo');
-        const wrapper = document.getElementById('vidWrapper');
-        const playPauseBtn = document.getElementById('playPauseBtn');
-        const playCenterBtn = document.getElementById('playCenterBtn');
-        const muteBtn = document.getElementById('muteBtn');
-        const progressCont = document.getElementById('vidProgressContainer');
-        const progressFillVid = document.getElementById('vidProgressFilled');
-
-        function togglePlay() {
-            if (video.paused) { video.play(); wrapper.classList.remove('paused'); playPauseBtn.textContent = '⏸'; } 
-            else { video.pause(); wrapper.classList.add('paused'); playPauseBtn.textContent = '▶'; }
+        // === RENDER HELPERS ===
+        function renderMetrics() {
+            const grid = document.getElementById('metricsGrid');
+            metricsData.forEach(m => {
+                grid.innerHTML += `<div class="metric-card-premium"><div class="metric-number" data-target="${m.value}">0</div><h4 style="font-size:1rem; font-weight:600; color:white; margin-bottom:4px;">${m.label}</h4><span style="font-size:0.8rem; color:rgba(255,255,255,0.6); line-height:1.2;">${m.suffix}</span></div>`;
+            });
         }
-        function toggleMute() { video.muted = !video.muted; muteBtn.textContent = video.muted ? '🔇' : '🔊'; }
-
-        video.addEventListener('timeupdate', () => {
-            if(!video.duration) return;
-            const percent = (video.currentTime / video.duration) * 100;
-            progressFillVid.style.width = `${percent}%`;
-        });
-        progressCont.addEventListener('click', (e) => {
-            const rect = progressCont.getBoundingClientRect();
-            const pos = (e.clientX - rect.left) / rect.width;
-            video.currentTime = pos * video.duration;
-        });
-
-        playPauseBtn.addEventListener('click', togglePlay);
-        playCenterBtn.addEventListener('click', togglePlay);
-        video.addEventListener('click', togglePlay);
-        muteBtn.addEventListener('click', toggleMute);
-        video.addEventListener('ended', () => { wrapper.classList.add('paused'); playPauseBtn.textContent = '▶'; progressFillVid.style.width = '100%'; });
-
-        // === METRICS ANIMATION ===
-        const metrics = document.querySelectorAll('.metric-value');
-        let metricsAnimated = false;
-        
-        function animateValue(obj, start, end, duration) {
-            let startTimestamp = null;
-            const step = (timestamp) => {
-                if (!startTimestamp) startTimestamp = timestamp;
-                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                const easeOutQuad = progress * (2 - progress);
-                obj.innerHTML = Math.floor(easeOutQuad * (end - start) + start);
-                
-                if (progress < 1) { 
-                    window.requestAnimationFrame(step); 
-                } else { 
-                    obj.innerHTML = end; 
-                }
-            };
-            window.requestAnimationFrame(step);
-        }
-
-        const metricsObserver = new IntersectionObserver((entries) => {
-            if(entries[0].isIntersecting && !metricsAnimated) {
-                metricsAnimated = true;
-                metrics.forEach(metric => {
-                    const target = parseInt(metric.getAttribute('data-target'));
-                    animateValue(metric, 0, target, 2000);
-                });
-            }
-        }, { threshold: 0.5 });
-        
-        const metricsBlock = document.querySelector('.metrics-grid');
-        if(metricsBlock) metricsObserver.observe(metricsBlock);
-
-        // === TEAM DATA ===
-        const teamMembers = [
-            { name: 'André Matos "Dedeco"', role: 'Fundador e Diretor Geral', initial: 'A' },
-            { name: 'Danielli Oliveira', role: 'Parceira Técnica', initial: 'D' },
-            { name: 'Elaine Reixach', role: 'Coordenação de Ações', initial: 'E' },
-            { name: 'Tio Maiko Castro', role: 'Acolhimento e Mobilização', initial: 'T' },
-            { name: 'Artur Santos', role: 'Logística de Campanhas', initial: 'A' }
-        ];
-
         function renderTeam() {
             const grid = document.getElementById('teamGrid');
-            if(!grid) return;
-            teamMembers.forEach(member => {
-                grid.innerHTML += `
-                    <div class="team-card-v">
-                        <div class="team-avatar-v">${member.initial}</div>
-                        <div class="team-name-v">${member.name}</div>
-                        <div class="team-role-v">${member.role}</div>
-                    </div>
-                `;
+            teamMembers.forEach(m => {
+                const initial = m.name.charAt(0);
+                grid.innerHTML += `<div class="team-card-v"><div class="team-avatar-v">${initial}</div><div class="team-name-v">${m.name}</div><div class="team-role-v">${m.role}</div></div>`;
             });
         }
-
-        // === AMBASSADORS DATA ===
-        const ambassadors = [
-            { name: 'Zico', role: 'Embaixador Oficial', desc: 'Lenda do Flamengo, ajuda a dar voz e alcance à causa da FlaMedula.', initial: 'Z' },
-            { name: 'Tânia Bastos', role: 'Madrinha Institucional', desc: 'Vereadora e apoiadora da causa, fortalece a mobilização e a presença institucional.', initial: 'T' }
-        ];
-
         function renderAmbassadors() {
             const grid = document.getElementById('ambassadorsGrid');
-            if(!grid) return;
-            ambassadors.forEach(amb => {
-                grid.innerHTML += `
-                    <div class="ambassador-card">
-                        <div class="ambassador-photo">${amb.initial}</div>
-                        <div class="ambassador-info">
-                            <h4>${amb.name}</h4>
-                            <p class="amb-role">🌟 ${amb.role}</p>
-                            <p class="amb-desc">${amb.desc}</p>
-                        </div>
-                    </div>
-                `;
+            ambassadors.forEach(m => {
+                const initial = m.name.charAt(0);
+                grid.innerHTML += `<div class="ambassador-card"><div class="ambassador-badge">${m.role}</div><div class="ambassador-avatar">${initial}</div><h3 style="font-size:1.1rem; font-weight:700;">${m.name}</h3><p class="ambassador-desc">"${m.desc}"</p></div>`;
             });
         }
-
-        // === ACTIONS DATA ===
-        const actionsData = [
-            { id: 1, published: true, order: 1, date: "12 JUN", location: "Rio de Janeiro", title: "Campanha de orientação em comunidade", summary: "Uma ação para levar informação sobre sangue, medula e atualização de cadastro a novos voluntários.", image_url: "", cta_label: "Ver ação", cta_url: "#" },
-            { id: 2, published: true, order: 2, date: "28 JUN", location: "Baixada Fluminense", title: "Mobilização para novos doadores", summary: "Encontro com moradores, famílias e apoiadores para fortalecer a rede de cadastro e orientação.", image_url: "", cta_label: "Ver ação", cta_url: "#" },
-            { id: 3, published: true, order: 3, date: "05 JUL", location: "Online", title: "Roda de conversa: medula sem medo", summary: "Um momento para tirar dúvidas, reduzir mitos e explicar a importância de manter dados atualizados.", image_url: "", cta_label: "Ver ação", cta_url: "#" },
-            { id: 4, published: true, order: 4, date: "18 JUL", location: "Hospital parceiro", title: "Apoio a campanha de paciente", summary: "Organização de comunicação e mobilização responsável para ampliar o alcance de um caso.", image_url: "", cta_label: "Ver ação", cta_url: "#" }
-        ];
-
         function renderActions() {
-            const track = document.getElementById('acoesTrack');
-            if(!track) return;
-            const sortedActions = actionsData.filter(a => a.published).sort((a,b) => a.order - b.order);
-            
-            sortedActions.forEach(action => {
-                let imageHtml = action.image_url 
-                    ? `<img src="${action.image_url}" alt="${action.title}">`
-                    : `<div class="placeholder-graphic"><div class="placeholder-icon">📢</div></div>`;
-                
-                track.innerHTML += `
-                    <div class="acao-card">
-                        <div class="acao-image-area">${imageHtml}</div>
-                        <div class="acao-content">
-                            <div class="acao-meta"><span>🗓️ ${action.date}</span> <span>📍 ${action.location}</span></div>
-                            <h3 class="acao-title">${action.title}</h3>
-                            <p class="acao-summary">${action.summary}</p>
-                            <a href="${action.cta_url}" class="acao-cta">${action.cta_label} <span>→</span></a>
-                        </div>
-                    </div>
-                `;
+            const grid = document.getElementById('actionsCarousel');
+            actionsData.forEach(a => {
+                grid.innerHTML += `<div class="action-card"><div class="action-graphic">FLA</div><div class="action-content"><div class="action-meta"><span>${a.date}</span><span>•</span><span>${a.location}</span></div><h3 class="action-title">${a.title}</h3><p class="action-summary">${a.summary}</p><button class="btn btn-outline" style="width:100%">${a.cta}</button></div></div>`;
             });
-        }
-
-        function scrollActions(direction) {
-            const track = document.getElementById('acoesTrack');
-            const scrollAmount = 400; 
-            track.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
         }
         
-        // === FAQ ACCORDION LOGIC ===
-        function initFAQ() {
-            const faqQuestions = document.querySelectorAll('.faq-q');
-            faqQuestions.forEach(q => {
-                q.addEventListener('click', () => {
-                    const isActive = q.classList.contains('active');
-                    
-                    // Close all open FAQs
-                    faqQuestions.forEach(btn => {
-                        btn.classList.remove('active');
-                        btn.nextElementSibling.style.maxHeight = null;
-                    });
-                    
-                    // Open clicked FAQ if it wasn't active
-                    if (!isActive) {
-                        q.classList.add('active');
-                        const wrapper = q.nextElementSibling;
-                        wrapper.style.maxHeight = wrapper.scrollHeight + "px";
+        function renderTestimonials() {
+            const track = document.getElementById('testimonialsTrack');
+            if(!track) return;
+            
+            testimonialsData.forEach(t => {
+                track.innerHTML += `
+                    <div class="testimonial-card">
+                        <div class="testimonial-header">
+                            <div class="testimonial-avatar">${t.avatar}</div>
+                            <div class="quote-mark">"</div>
+                        </div>
+                        <p class="testimonial-text">"${t.text}"</p>
+                        <div class="testimonial-author-info">
+                            <p class="testimonial-author">${t.name}</p>
+                            <p class="testimonial-role">${t.role} • ${t.case}</p>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Start auto scroll
+            setInterval(() => {
+                const card = track.querySelector('.testimonial-card');
+                if(!card) return;
+                const cardWidth = card.offsetWidth + 24; // + gap
+                if (track.scrollLeft + track.clientWidth >= track.scrollWidth - 10) {
+                    track.scrollTo({left: 0, behavior: 'smooth'});
+                } else {
+                    track.scrollBy({left: cardWidth, behavior: 'smooth'});
+                }
+            }, 3500);
+        }
+
+        // === SCROLL REVEAL & METRIC COUNT ===
+        function setupScrollReveal() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        if (entry.target.querySelector('.metric-number')) animateMetrics(entry.target);
                     }
                 });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.reveal-up').forEach(el => observer.observe(el));
+        }
+
+        function animateMetrics(container) {
+            container.querySelectorAll('.metric-number').forEach(el => {
+                if(el.classList.contains('counted')) return;
+                el.classList.add('counted');
+                const target = +el.getAttribute('data-target');
+                const duration = 2000;
+                const start = performance.now();
+                
+                function update(currentTime) {
+                    const elapsed = currentTime - start;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                    el.innerText = Math.floor(easeOutQuart * target);
+                    if (progress < 1) requestAnimationFrame(update);
+                    else el.innerText = target;
+                }
+                requestAnimationFrame(update);
             });
         }
 
-        // === INITIALIZE ===
-        document.addEventListener('DOMContentLoaded', () => {
-            initCarousel();
-            renderTeam();
-            renderAmbassadors();
-            renderActions();
-            initFAQ();
-        });
+        // === FAQ ACCORDION ===
+        function toggleAccordion(el) {
+            const body = el.querySelector('.accordion-body');
+            const isActive = el.classList.contains('active');
+            document.querySelectorAll('.accordion-item').forEach(item => { item.classList.remove('active'); item.querySelector('.accordion-body').style.maxHeight = null; });
+            if (!isActive) { el.classList.add('active'); body.style.maxHeight = body.scrollHeight + "px"; }
+        }
+
+        // === REELS PLAYER LOGIC ===
+        function setupVideoReelsPlayer(wrapperId, videoId, centerBtnId, playBtnId, muteBtnId, progressContId, progressFillId, isIntro = false) {
+            const wrapper = document.getElementById(wrapperId);
+            const video = document.getElementById(videoId);
+            if(!wrapper || !video) return;
+
+            let centerBtn, playBtn, muteBtn, progCont, progFill;
+            if(!isIntro) {
+                centerBtn = document.getElementById(centerBtnId);
+                playBtn = document.getElementById(playBtnId);
+                muteBtn = document.getElementById(muteBtnId);
+                progCont = document.getElementById(progressContId);
+                progFill = document.getElementById(progressFillId);
+            } else {
+                playBtn = wrapper.querySelector('.reels-play-btn');
+                muteBtn = wrapper.querySelector('.reels-mute-btn');
+                progCont = wrapper.querySelector('.reels-progress-container');
+                progFill = wrapper.querySelector('.reels-progress-filled');
+                centerBtn = wrapper.querySelector('.play-btn-center');
+            }
+
+            function togglePlay() {
+                if (video.paused) { video.play(); wrapper.classList.remove('paused'); if(playBtn) playBtn.textContent = '⏸'; }
+                else { video.pause(); wrapper.classList.add('paused'); if(playBtn) playBtn.textContent = '▶'; }
+            }
+            function toggleMute() { video.muted = !video.muted; if(muteBtn) muteBtn.textContent = video.muted ? '🔇' : '🔊'; }
+
+            video.addEventListener('timeupdate', () => {
+                if(!video.duration || !progFill) return;
+                progFill.style.width = `${(video.currentTime / video.duration) * 100}%`;
+            });
+            if(progCont) {
+                progCont.addEventListener('click', (e) => {
+                    const rect = progCont.getBoundingClientRect();
+                    video.currentTime = ((e.clientX - rect.left) / rect.width) * video.duration;
+                });
+            }
+
+            if(playBtn) playBtn.addEventListener('click', togglePlay);
+            if(centerBtn) centerBtn.addEventListener('click', togglePlay);
+            video.addEventListener('click', togglePlay);
+            if(muteBtn) muteBtn.addEventListener('click', toggleMute);
+            
+            video.addEventListener('ended', () => {
+                wrapper.classList.add('paused');
+                if(playBtn) playBtn.textContent = '▶';
+                if(progFill) progFill.style.width = '100%';
+            });
+        }
     </script>
 </body>
 </html>
