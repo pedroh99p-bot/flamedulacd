@@ -100,12 +100,16 @@
 @media (min-width: 769px) { .mobile-carousel { overflow-x: visible; scroll-snap-type: none; display: grid; flex-wrap: wrap;} }
 
 @media (max-width: 900px) { 
-    .transparency-layout { grid-template-columns: 1fr; gap: 48px; }
+    .transparency-layout { max-width: 100%; }
     .transparency-connector { display: none; }
     .transparency-section { background-attachment: scroll; }
     .network-purpose { padding: 22px; margin-top: 40px; }
     .purpose-grid { grid-template-columns: 1fr; gap: 12px; }
     .purpose-card { padding: 18px; }
+    .transparency-metrics-wrapper { margin-top: 36px; }
+    .metrics-header { align-items: flex-start; flex-direction: column; gap: 10px; }
+    .metrics-grid-2x2 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .metric-card-premium { padding: 18px 12px; }
 }
 
 @media (max-width: 768px) { .action-card { flex: 0 0 85%; } }
