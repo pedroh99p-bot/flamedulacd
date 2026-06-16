@@ -82,14 +82,14 @@
     </nav>
 
     <!-- HERO CAROUSEL -->
-    <section class="hero-section pattern-grid-light">
-        <div class="container reveal-up">
-            <div class="hero-card">
-                <div class="carousel-track" id="carouselTrack">
-                    <!-- Slides injected by JS -->
-                </div>
-                
-                <div class="carousel-controls">
+    <section class="hero-section">
+        <div class="hero-card" id="heroCarousel" aria-roledescription="carousel" aria-label="Novidades FlaMedula">
+            <div class="carousel-track" id="carouselTrack" aria-live="polite">
+                <!-- Slides injected by JS -->
+            </div>
+
+            <div class="carousel-controls">
+                <div class="container hero-controls-inner">
                     <div class="carousel-dots" id="carouselDots">
                         <!-- Dots injected by JS -->
                     </div>
@@ -99,6 +99,7 @@
                 </div>
             </div>
         </div>
+        <div class="hero-blend" aria-hidden="true"></div>
     </section>
 
     <!-- ROLLER 1 -->
@@ -517,8 +518,28 @@
         </div>
     </section>
 
-    <!-- BLEND ACTIONS TO SUPPORT -->
-    <div class="wave-divider">
+    <!-- FLAMEDULA NA MÍDIA -->
+    <section id="midias" class="media-section section-blend-top section-blend-bottom">
+        <div class="container reveal-up">
+            <div class="media-header">
+                <span class="section-kicker">FLAMEDULA NA MÍDIA</span>
+                <h2>Assista, conheça e compartilhe a causa</h2>
+                <p>Vídeos, entrevistas e conteúdos que ajudam a espalhar informação sobre sangue, medula e solidariedade.</p>
+                <span class="media-microcopy">Cada conteúdo compartilhado pode aproximar mais alguém da decisão de ajudar.</span>
+            </div>
+
+            <div class="media-featured"></div>
+
+            <div class="media-carousel-wrap">
+                <button class="media-arrow media-arrow-prev" type="button" aria-label="Voltar mídia"></button>
+                <div class="media-carousel" aria-label="Vídeos da FlaMedula na mídia"></div>
+                <button class="media-arrow media-arrow-next" type="button" aria-label="Avançar mídia"></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- BLEND MEDIA TO SUPPORT -->
+    <div class="wave-divider media-to-support">
         <svg viewBox="0 0 1200 30" preserveAspectRatio="none">
             <path d="M0,0 Q600,30 1200,0 L1200,30 L0,30 Z" fill="var(--donor-dark)"></path>
         </svg>

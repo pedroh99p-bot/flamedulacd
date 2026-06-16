@@ -1,61 +1,167 @@
-import { actionsData, heroNewsItems } from '../data/actions.js';
+import { actionsData } from '../data/actions.js';
 import { ambassadors } from '../data/ambassadors.js';
+import { heroNewsItems } from '../data/heroNews.js';
 import { teamMembers } from '../data/team.js';
 import { testimonialsData } from '../data/testimonials.js';
 
 let currentSlide = 0;
 const slideDuration = 6000;
 let slideInterval;
+let publishedHeroItems = [];
+
+function isValidImageUrl(value) {
+  if (!value) return false;
+
+  try {
+    const url = new URL(value, window.location.origin);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+function createHeroSlide(item, index) {
+  const slide = document.createElement('article');
+  slide.className = `carousel-slide ${index === 0 ? 'active' : ''}`;
+  slide.dataset.slideId = item.id;
+  slide.setAttribute('aria-hidden', index === 0 ? 'false' : 'true');
+
+  if (isValidImageUrl(item.image_url)) {
+    slide.classList.add('has-image');
+    slide.style.setProperty('--hero-image', `url("${item.image_url}")`);
+  }
+
+  const content = document.createElement('div');
+  content.className = 'container hero-slide-content';
+
+  const editorialCard = document.createElement('div');
+  editorialCard.className = 'hero-editorial-card';
+
+  const category = document.createElement('span');
+  category.className = 'slide-tag';
+  category.textContent = item.category;
+
+  const title = document.createElement('h1');
+  title.className = 'slide-title';
+  title.textContent = item.title;
+
+  const description = document.createElement('p');
+  description.className = 'slide-text';
+  description.textContent = item.description;
+
+  const cta = document.createElement('a');
+  cta.className = 'btn slide-btn btn-glow';
+  cta.href = item.cta_url;
+  cta.textContent = item.cta_label;
+
+  editorialCard.append(category, title, description, cta);
+  content.appendChild(editorialCard);
+  slide.appendChild(content);
+
+  return slide;
+}
 
 export function initHeroCarousel() {
   const track = document.getElementById('carouselTrack');
   const dotsContainer = document.getElementById('carouselDots');
-  if (!track || !dotsContainer) return;
+  const carousel = document.getElementById('heroCarousel');
+  if (!track || !dotsContainer || !carousel) return;
 
-  heroNewsItems.forEach((item, index) => {
-    const slide = document.createElement('div');
-    slide.className = `carousel-slide ${index === 0 ? 'active' : ''}`;
-    slide.innerHTML = `<div class="slide-tag">${item.categoria}</div><h2 class="slide-title">${item.titulo}</h2><p class="slide-text">${item.texto}</p><button class="btn slide-btn" onclick="document.getElementById('hub-cadastro').scrollIntoView({behavior:'smooth'}); setTimeout(()=>openPanel('${item.path}'), 500);">${item.cta}</button>`;
-    track.appendChild(slide);
+  publishedHeroItems = heroNewsItems
+    .filter((item) => item.published)
+    .sort((first, second) => first.order - second.order);
 
-    const dot = document.createElement('div');
+  if (!publishedHeroItems.length) {
+    carousel.classList.add('hero-empty');
+    return;
+  }
+
+  publishedHeroItems.forEach((item, index) => {
+    track.appendChild(createHeroSlide(item, index));
+
+    const dot = document.createElement('button');
+    dot.type = 'button';
     dot.className = `dot ${index === 0 ? 'active' : ''}`;
-    dot.onclick = () => goToSlide(index);
+    dot.setAttribute('aria-label', `Ir para novidade ${index + 1}`);
+    dot.setAttribute('aria-current', index === 0 ? 'true' : 'false');
+    dot.addEventListener('click', () => {
+      goToSlide(index);
+      pauseAutoplay();
+      resetProgress();
+    });
     dotsContainer.appendChild(dot);
+  });
+
+  if (publishedHeroItems.length === 1) {
+    carousel.classList.add('single-slide');
+    return;
+  }
+
+  carousel.addEventListener('pointerenter', pauseAutoplay);
+  carousel.addEventListener('pointerleave', startAutoplay);
+  carousel.addEventListener('focusin', pauseAutoplay);
+  carousel.addEventListener('focusout', (event) => {
+    if (!carousel.contains(event.relatedTarget)) startAutoplay();
   });
 
   startAutoplay();
 }
 
 function goToSlide(index) {
-  const slides = document.querySelectorAll('.carousel-slide');
-  const dots = document.querySelectorAll('.dot');
-  if (!slides.length || !dots.length) return;
+  const slides = document.querySelectorAll('#carouselTrack .carousel-slide');
+  const dots = document.querySelectorAll('#carouselDots .dot');
+  if (!slides.length || !dots.length || !slides[index]) return;
 
   slides[currentSlide]?.classList.remove('active');
+  slides[currentSlide]?.setAttribute('aria-hidden', 'true');
   dots[currentSlide]?.classList.remove('active');
+  dots[currentSlide]?.setAttribute('aria-current', 'false');
+
   currentSlide = index;
-  slides[currentSlide]?.classList.add('active');
+  slides[currentSlide].classList.add('active');
+  slides[currentSlide].setAttribute('aria-hidden', 'false');
   dots[currentSlide]?.classList.add('active');
-  resetAutoplay();
+  dots[currentSlide]?.setAttribute('aria-current', 'true');
+
 }
 
 function startAutoplay() {
   const progressFill = document.getElementById('progressFill');
-  if (!progressFill || !heroNewsItems.length) return;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!progressFill || publishedHeroItems.length <= 1 || reduceMotion || slideInterval) return;
+
+  restartProgress();
+  slideInterval = window.setInterval(() => {
+    goToSlide((currentSlide + 1) % publishedHeroItems.length);
+    restartProgress();
+  }, slideDuration);
+}
+
+function restartProgress() {
+  const progressFill = document.getElementById('progressFill');
+  if (!progressFill) return;
 
   progressFill.style.transition = 'none';
   progressFill.style.width = '0%';
-  setTimeout(() => {
-    progressFill.style.transition = `width ${slideDuration}ms linear`;
-    progressFill.style.width = '100%';
-  }, 50);
-  slideInterval = setInterval(() => goToSlide((currentSlide + 1) % heroNewsItems.length), slideDuration);
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      progressFill.style.transition = `width ${slideDuration}ms linear`;
+      progressFill.style.width = '100%';
+    });
+  });
 }
 
-function resetAutoplay() {
-  clearInterval(slideInterval);
-  startAutoplay();
+function pauseAutoplay() {
+  window.clearInterval(slideInterval);
+  slideInterval = undefined;
+}
+
+function resetProgress() {
+  const progressFill = document.getElementById('progressFill');
+  if (!progressFill) return;
+
+  progressFill.style.transition = 'none';
+  progressFill.style.width = '0%';
 }
 
 export function renderTeam() {
@@ -107,7 +213,7 @@ export function renderTestimonials() {
     `;
   });
 
-  setInterval(() => {
+  window.setInterval(() => {
     const card = track.querySelector('.testimonial-card');
     if (!card) return;
 

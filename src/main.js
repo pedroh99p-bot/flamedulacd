@@ -13,6 +13,7 @@ import { initInfoVideoCtas, setupVideoReelsPlayer } from './scripts/videoPlayer.
 import { initHeroCarousel, renderActions, renderAmbassadors, renderTeam, renderTestimonials } from './scripts/carousels.js';
 import { renderMetrics, setupScrollReveal } from './scripts/counters.js';
 import { initFaq } from './scripts/faq.js';
+import { renderMediaSection } from './scripts/mediaCarousel.js';
 import { initSmoothScroll } from './scripts/smoothScroll.js';
 
 initHubCadastro();
@@ -27,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderTeam();
   renderAmbassadors();
   renderActions();
+  renderMediaSection();
   renderTestimonials();
   setupScrollReveal();
   setupVideoReelsPlayer('vidWrapperInfo', 'infoVideo', null, 'playPauseBtnInfo', 'muteBtnInfo', 'vidProgressContainerInfo', 'vidProgressFilledInfo');
