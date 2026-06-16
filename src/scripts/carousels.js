@@ -7,6 +7,7 @@ import { testimonialsData } from '../data/testimonials.js';
 let currentSlide = 0;
 const slideDuration = 6000;
 let slideInterval;
+let slideResumeTimeout;
 let publishedHeroItems = [];
 
 function isValidImageUrl(value) {
@@ -25,6 +26,7 @@ function createHeroSlide(item, index) {
   slide.className = `carousel-slide ${index === 0 ? 'active' : ''}`;
   slide.dataset.slideId = item.id;
   slide.setAttribute('aria-hidden', index === 0 ? 'false' : 'true');
+  if (item.image_alt) slide.setAttribute('aria-label', item.image_alt);
 
   if (isValidImageUrl(item.image_url)) {
     slide.classList.add('has-image');
@@ -47,7 +49,7 @@ function createHeroSlide(item, index) {
 
   const description = document.createElement('p');
   description.className = 'slide-text';
-  description.textContent = item.description;
+  description.textContent = item.subtitle || item.description || '';
 
   const cta = document.createElement('a');
   cta.className = 'btn slide-btn btn-glow';
@@ -65,6 +67,8 @@ export function initHeroCarousel() {
   const track = document.getElementById('carouselTrack');
   const dotsContainer = document.getElementById('carouselDots');
   const carousel = document.getElementById('heroCarousel');
+  const prevButton = carousel?.querySelector('.hero-arrow-prev');
+  const nextButton = carousel?.querySelector('.hero-arrow-next');
   if (!track || !dotsContainer || !carousel) return;
 
   publishedHeroItems = heroNewsItems
@@ -86,8 +90,7 @@ export function initHeroCarousel() {
     dot.setAttribute('aria-current', index === 0 ? 'true' : 'false');
     dot.addEventListener('click', () => {
       goToSlide(index);
-      pauseAutoplay();
-      resetProgress();
+      pauseAutoplayTemporarily();
     });
     dotsContainer.appendChild(dot);
   });
@@ -96,6 +99,16 @@ export function initHeroCarousel() {
     carousel.classList.add('single-slide');
     return;
   }
+
+  prevButton?.addEventListener('click', () => {
+    goToSlide(currentSlide - 1);
+    pauseAutoplayTemporarily();
+  });
+
+  nextButton?.addEventListener('click', () => {
+    goToSlide(currentSlide + 1);
+    pauseAutoplayTemporarily();
+  });
 
   carousel.addEventListener('pointerenter', pauseAutoplay);
   carousel.addEventListener('pointerleave', startAutoplay);
@@ -110,19 +123,21 @@ export function initHeroCarousel() {
 function goToSlide(index) {
   const slides = document.querySelectorAll('#carouselTrack .carousel-slide');
   const dots = document.querySelectorAll('#carouselDots .dot');
-  if (!slides.length || !dots.length || !slides[index]) return;
+  if (!slides.length || !dots.length) return;
+
+  const nextIndex = (index + slides.length) % slides.length;
+  if (!slides[nextIndex]) return;
 
   slides[currentSlide]?.classList.remove('active');
   slides[currentSlide]?.setAttribute('aria-hidden', 'true');
   dots[currentSlide]?.classList.remove('active');
   dots[currentSlide]?.setAttribute('aria-current', 'false');
 
-  currentSlide = index;
+  currentSlide = nextIndex;
   slides[currentSlide].classList.add('active');
   slides[currentSlide].setAttribute('aria-hidden', 'false');
   dots[currentSlide]?.classList.add('active');
   dots[currentSlide]?.setAttribute('aria-current', 'true');
-
 }
 
 function startAutoplay() {
@@ -153,7 +168,22 @@ function restartProgress() {
 
 function pauseAutoplay() {
   window.clearInterval(slideInterval);
+  window.clearTimeout(slideResumeTimeout);
   slideInterval = undefined;
+  slideResumeTimeout = undefined;
+}
+
+function pauseAutoplayTemporarily() {
+  pauseAutoplay();
+  resetProgress();
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion || publishedHeroItems.length <= 1) return;
+
+  slideResumeTimeout = window.setTimeout(() => {
+    slideResumeTimeout = undefined;
+    startAutoplay();
+  }, slideDuration);
 }
 
 function resetProgress() {

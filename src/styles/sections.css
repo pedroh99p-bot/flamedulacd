@@ -2,7 +2,7 @@
 .hero-section {
     min-height: 100vh;
     min-height: 100svh;
-    padding-top: var(--nav-h);
+    min-height: 100dvh;
     position: relative;
     overflow: hidden;
     background: var(--donor-dark);
@@ -19,8 +19,9 @@
     pointer-events: none;
 }
 .hero-card {
-    min-height: calc(100vh - var(--nav-h));
-    min-height: calc(100svh - var(--nav-h));
+    min-height: 100vh;
+    min-height: 100svh;
+    min-height: 100dvh;
     position: relative;
     z-index: 1;
     display: flex;
@@ -56,6 +57,7 @@
     transform: scale(1.025);
     transition: opacity 0.7s ease, transform 0.9s ease, visibility 0.7s;
     background:
+        linear-gradient(90deg, rgba(92, 9, 16, 0.86), rgba(12, 12, 12, 0.48) 58%, rgba(12, 12, 12, 0.72)),
         radial-gradient(circle at 82% 28%, rgba(239, 68, 68, 0.26), transparent 30%),
         radial-gradient(circle at 18% 78%, rgba(127, 29, 29, 0.38), transparent 34%),
         linear-gradient(125deg, #160607, #4a0c12 48%, #090909);
@@ -70,7 +72,9 @@
     pointer-events: none;
 }
 .carousel-slide.has-image {
-    background-image: var(--hero-image);
+    background-image:
+        linear-gradient(90deg, rgba(92, 9, 16, 0.9), rgba(12, 12, 12, 0.46) 58%, rgba(12, 12, 12, 0.72)),
+        var(--hero-image);
     background-position: center;
     background-size: cover;
 }
@@ -98,7 +102,7 @@
     min-height: 100%;
     display: flex;
     align-items: center;
-    padding-top: 36px;
+    padding-top: calc(var(--nav-h) + 36px);
     padding-bottom: 116px;
     position: relative;
     z-index: 2;
@@ -160,6 +164,57 @@
     transform: translateY(-2px);
 }
 
+.hero-arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 14;
+    width: 52px;
+    height: 52px;
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    box-shadow: 0 16px 42px rgba(0,0,0,0.24);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transform: translateY(-50%);
+    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.hero-arrow::before {
+    content: '';
+    position: absolute;
+    top: 18px;
+    width: 14px;
+    height: 14px;
+    border-top: 2px solid white;
+    border-right: 2px solid white;
+}
+.hero-arrow-prev {
+    left: max(24px, calc((100vw - var(--container-w)) / 2 + 8px));
+}
+.hero-arrow-next {
+    right: max(24px, calc((100vw - var(--container-w)) / 2 + 8px));
+}
+.hero-arrow-prev::before {
+    left: 21px;
+    transform: rotate(-135deg);
+}
+.hero-arrow-next::before {
+    left: 16px;
+    transform: rotate(45deg);
+}
+.hero-arrow:hover {
+    background: rgba(185, 28, 28, 0.34);
+    border-color: rgba(255,255,255,0.36);
+    box-shadow: 0 0 0 6px rgba(185, 28, 28, 0.16), 0 18px 46px rgba(0,0,0,0.3);
+    transform: translateY(-50%) scale(1.04);
+}
+.hero-arrow:focus-visible,
+.dot:focus-visible,
+.slide-btn:focus-visible {
+    outline: 3px solid #FBBF24;
+    outline-offset: 4px;
+}
+
 .carousel-controls {
     position: absolute;
     left: 0;
@@ -185,7 +240,8 @@
 .dot.active { width: 28px; border-radius: 8px; background: white; }
 .progress-bar { width: min(220px, 34vw); height: 3px; overflow: hidden; border-radius: 3px; background: rgba(255,255,255,0.22); }
 .progress-fill { height: 100%; background: white; width: 0%; transform-origin: left; }
-.single-slide .carousel-controls { display: none; }
+.single-slide .carousel-controls,
+.single-slide .hero-arrow { display: none; }
 .hero-empty::after {
     content: 'Nenhuma novidade publicada.';
     position: absolute;
