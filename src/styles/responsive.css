@@ -123,8 +123,8 @@
         width: 100%;
     }
     .video-info-player {
-        width: min(86vw, 330px);
-        max-height: 58vh;
+        width: min(82vw, 340px);
+        max-height: 62vh;
     }
     .video-highlight-card {
         margin: 24px 0;
@@ -162,10 +162,10 @@
     .educational-section .container { padding-left: 22px; padding-right: 22px; }
     .edu-header { margin-bottom: 28px; }
     .impact-block { margin-bottom: 38px; }
-    .edu-timeline { gap: 18px; margin-bottom: 48px; padding-left: 58px; }
+    .edu-timeline { gap: 18px; margin-bottom: 48px; padding-left: 66px; }
     .edu-timeline::before,
-    .edu-timeline::after { left: 22px; }
-    .edu-step { left: -58px; top: 22px; }
+    .edu-timeline::after { left: 24px; }
+    .edu-step { left: -66px; top: 20px; }
     .edu-card { padding: 22px 20px; }
     .affinity-block { grid-template-columns: 1fr; }
 }

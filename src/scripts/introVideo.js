@@ -57,7 +57,11 @@ async function playIntro({ withAudio }) {
 export function initIntroVideo() {
   const { continueButton, introVideo } = getIntroElements();
   if (continueButton) continueButton.addEventListener('click', closeIntroOverlay);
-  if (introVideo) introVideo.addEventListener('volumechange', updateIntroAudioUi);
+  if (introVideo) {
+    introVideo.muted = true;
+    introVideo.defaultMuted = true;
+    introVideo.addEventListener('volumechange', updateIntroAudioUi);
+  }
 }
 
 export function showIntroVideoOverlay() {
@@ -84,24 +88,20 @@ export function showIntroVideoOverlay() {
     introPlayerInitialized = true;
   }
 
-  playIntro({ withAudio: true }).then((playedWithAudio) => {
-    if (playedWithAudio) return;
+  playIntro({ withAudio: false }).then((playedMuted) => {
+    if (playedMuted) return;
 
     const muteBtn = document.querySelector('#containerIntroVideo .reels-mute-btn');
     if (muteBtn) muteBtn.textContent = '\ud83d\udd07';
 
-    playIntro({ withAudio: false }).then((playedMuted) => {
-      if (playedMuted) return;
-
-      if (playCenter) {
-        playCenter.style.display = 'flex';
-        playCenter.style.opacity = '1';
-        playCenter.style.pointerEvents = 'auto';
-      }
-      if (playBtn) playBtn.textContent = '\u25b6';
-      if (introContainer) introContainer.classList.add('paused');
-      updateIntroAudioUi();
-    });
+    if (playCenter) {
+      playCenter.style.display = 'flex';
+      playCenter.style.opacity = '1';
+      playCenter.style.pointerEvents = 'auto';
+    }
+    if (playBtn) playBtn.textContent = '\u25b6';
+    if (introContainer) introContainer.classList.add('paused');
+    updateIntroAudioUi();
   });
 
   updateIntroAudioUi();

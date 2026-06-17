@@ -3,6 +3,9 @@ export function setupVideoReelsPlayer(wrapperId, videoId, centerBtnId, playBtnId
   const video = document.getElementById(videoId);
   if (!wrapper || !video) return;
 
+  video.muted = true;
+  video.defaultMuted = true;
+
   let centerBtn;
   let playBtn;
   let muteBtn;
@@ -130,6 +133,8 @@ export function initInfoVideoCtas() {
 
   if (!video || !wrapper) return;
 
+  video.muted = true;
+  video.defaultMuted = true;
   video.addEventListener('volumechange', updateAudioUi);
   video.addEventListener('pause', () => {
     if (!internalPlayAttempt) userPaused = true;
@@ -141,11 +146,7 @@ export function initInfoVideoCtas() {
       if (!entry || hasTriedViewportPlay || userPaused || entry.intersectionRatio < 0.5) return;
 
       hasTriedViewportPlay = true;
-      playInfoVideo({ withAudio: true }).then((playedWithAudio) => {
-        if (playedWithAudio) return;
-
-        playInfoVideo({ withAudio: false });
-      });
+      playInfoVideo({ withAudio: false });
     }, { threshold: [0, 0.5, 0.75] });
 
     observer.observe(wrapper);
