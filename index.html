@@ -146,70 +146,108 @@
             <!-- PANELS -->
             <div class="panel-container" id="panel-donor">
                 <div class="panel-header">
-                    <h3 class="title-sm">Cadastro de Doador</h3>
+                    <div>
+                        <span class="panel-kicker">Doador ou interessado</span>
+                        <h3 class="title-sm">Entre para a rede FlaMedula</h3>
+                    </div>
                     <button class="btn-back" onclick="closePanels()">← Voltar</button>
                 </div>
-                <form id="form-donor" onsubmit="handleFormSubmit(event, 'donor')">
+
+                <div class="donor-form-intro">
+                    <p>Seu cadastro ajuda a FlaMedula a entender quem pode receber orientação, avisos de campanha e chamados de mobilização por região.</p>
+                    <span>Você pode participar mesmo que ainda não seja doador. O importante é sabermos como orientar e quando entrar em contato.</span>
+                </div>
+
+                <form id="form-donor" class="donor-lead-form" onsubmit="handleFormSubmit(event, 'donor')" novalidate>
+                    <div class="form-feedback" id="donor-form-feedback" role="status" aria-live="polite"></div>
+
                     <div class="form-grid">
-                        <div class="form-group form-col-full">
-                            <label>Nome completo</label>
-                            <input type="text" class="form-control" required placeholder="Digite seu nome">
-                        </div>
-                        <div class="form-group">
-                            <label>WhatsApp</label>
-                            <input type="tel" class="form-control" required placeholder="(00) 00000-0000">
-                        </div>
-                        <div class="form-group">
-                            <label>Cidade / Estado</label>
-                            <input type="text" class="form-control" required placeholder="Ex: Rio de Janeiro / RJ">
-                        </div>
-                        
-                        <div class="form-group form-col-full" style="margin-top: 16px;">
-                            <label>Você já é doador de sangue?</label>
-                            <div class="radio-group">
-                                <label class="radio-label"><input type="radio" name="sangue" value="sim"> Sim, já sou doador de sangue</label>
-                                <label class="radio-label"><input type="radio" name="sangue" value="interesse"> Ainda não sou, mas tenho interesse</label>
-                                <label class="radio-label"><input type="radio" name="sangue" value="naosei"> Ainda não sei</label>
+                        <fieldset class="form-section-card form-col-full">
+                            <legend>Seus dados</legend>
+                            <div class="form-section-grid">
+                                <div class="form-group form-col-full">
+                                    <label for="donor-nome">Nome completo</label>
+                                    <input id="donor-nome" name="nome" type="text" class="form-control" required autocomplete="name" placeholder="Digite seu nome completo">
+                                </div>
+                                <div class="form-group">
+                                    <label for="donor-telefone">WhatsApp</label>
+                                    <input id="donor-telefone" name="telefone" type="tel" class="form-control" required autocomplete="tel" placeholder="(00) 00000-0000">
+                                </div>
+                                <div class="form-group">
+                                    <label for="donor-email">E-mail <span class="optional-label">opcional</span></label>
+                                    <input id="donor-email" name="email" type="email" class="form-control" autocomplete="email" placeholder="voce@email.com">
+                                </div>
+                                <div class="form-group">
+                                    <label for="donor-cidade">Cidade</label>
+                                    <input id="donor-cidade" name="cidade" type="text" class="form-control" required autocomplete="address-level2" placeholder="Ex: Rio de Janeiro">
+                                </div>
+                                <div class="form-group">
+                                    <label for="donor-estado">Estado</label>
+                                    <input id="donor-estado" name="estado" type="text" class="form-control" required autocomplete="address-level1" placeholder="Ex: RJ">
+                                </div>
                             </div>
-                        </div>
-                        
-                        <div class="form-group form-col-full">
-                            <label>Você já é cadastrado como doador de medula?</label>
-                            <div class="radio-group">
-                                <label class="radio-label"><input type="radio" name="medula" value="sim"> Sim</label>
-                                <label class="radio-label"><input type="radio" name="medula" value="nao"> Não</label>
-                                <label class="radio-label"><input type="radio" name="medula" value="incerto"> Não tenho certeza</label>
+                        </fieldset>
+
+                        <fieldset class="form-section-card form-col-full" data-field-group="blood_donor_status">
+                            <legend>Sua relação com a doação</legend>
+                            <p class="form-question">Você já é doador de sangue?</p>
+                            <div class="radio-card-grid">
+                                <label class="radio-label radio-card"><input type="radio" name="blood_donor_status" value="ja_doador"> <span>Sim, já sou doador</span></label>
+                                <label class="radio-label radio-card"><input type="radio" name="blood_donor_status" value="quero_comecar"> <span>Ainda não sou, mas quero começar</span></label>
+                                <label class="radio-label radio-card"><input type="radio" name="blood_donor_status" value="quero_entender"> <span>Ainda não sei, quero entender melhor</span></label>
                             </div>
-                        </div>
+                        </fieldset>
 
-                        <div class="form-group form-col-full">
-                            <label>Você tem interesse em se tornar doador de medula ou entender melhor esse processo?</label>
-                            <div class="radio-group">
-                                <label class="radio-label"><input type="radio" name="int_medula" value="sim" required> Sim, tenho interesse</label>
-                                <label class="radio-label"><input type="radio" name="int_medula" value="entender"> Quero entender melhor antes</label>
-                                <label class="radio-label"><input type="radio" name="int_medula" value="nao"> Não neste momento</label>
+                        <fieldset class="form-section-card form-col-full" data-field-group="redome_status">
+                            <legend>Cadastro de medula</legend>
+                            <p class="form-question">Você já é cadastrado como doador de medula no REDOME?</p>
+                            <div class="radio-card-grid compact-options">
+                                <label class="radio-label radio-card"><input type="radio" name="redome_status" value="sim"> <span>Sim</span></label>
+                                <label class="radio-label radio-card"><input type="radio" name="redome_status" value="nao"> <span>Não</span></label>
+                                <label class="radio-label radio-card"><input type="radio" name="redome_status" value="nao_tenho_certeza"> <span>Não tenho certeza</span></label>
                             </div>
-                        </div>
+                            <p class="conditional-note" id="redome-positive-note">Ótimo. Manter seus dados atualizados ajuda os canais oficiais a encontrarem você se houver necessidade.</p>
 
-                        <div class="form-group form-col-full">
-                            <label>Qual canal você prefere para receber orientação?</label>
-                            <select class="form-control">
-                                <option>WhatsApp</option>
-                                <option>Ligação</option>
-                                <option>E-mail</option>
-                            </select>
-                        </div>
+                            <div class="conditional-field" id="medula-interest-group" data-field-group="medula_interest">
+                                <p class="form-question">Você tem interesse em receber orientação para entender o cadastro de medula?</p>
+                                <div class="radio-card-grid">
+                                    <label class="radio-label radio-card"><input type="radio" name="medula_interest" value="sim_tenho_interesse"> <span>Sim, tenho interesse</span></label>
+                                    <label class="radio-label radio-card"><input type="radio" name="medula_interest" value="quero_entender_melhor"> <span>Quero entender melhor antes</span></label>
+                                    <label class="radio-label radio-card"><input type="radio" name="medula_interest" value="nao_neste_momento"> <span>Não neste momento</span></label>
+                                </div>
+                            </div>
+                        </fieldset>
 
-                        <div class="checkbox-group form-col-full">
-                            <input type="checkbox" id="lgpd-donor" required>
-                            <label for="lgpd-donor">Autorizo a FlaMedula a entrar em contato para orientação, campanhas e mobilizações relacionadas à causa.</label>
-                        </div>
+                        <fieldset class="form-section-card form-col-full" data-field-group="contact_preference">
+                            <legend>Como prefere ser contatado?</legend>
+                            <p class="form-question">Qual canal você prefere para receber orientação ou avisos de campanha?</p>
+                            <div class="radio-card-grid compact-options">
+                                <label class="radio-label radio-card"><input type="radio" name="contact_preference" value="whatsapp"> <span>WhatsApp</span></label>
+                                <label class="radio-label radio-card"><input type="radio" name="contact_preference" value="ligacao"> <span>Ligação</span></label>
+                                <label class="radio-label radio-card"><input type="radio" name="contact_preference" value="email"> <span>E-mail</span></label>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="form-section-card form-col-full authorization-card">
+                            <legend>Autorização</legend>
+                            <label class="checkbox-group">
+                                <input type="checkbox" id="lgpd-donor" name="consent_lgpd" required>
+                                <span>Autorizo a FlaMedula a entrar em contato para orientação, campanhas e mobilizações relacionadas à doação de sangue e medula.</span>
+                            </label>
+                            <label class="checkbox-group">
+                                <input type="checkbox" id="updates-donor" name="consent_updates">
+                                <span>Também aceito receber avisos sobre novas campanhas, ações e formas de apoio à FlaMedula.</span>
+                            </label>
+                        </fieldset>
                     </div>
-                    <button type="submit" class="btn btn-donor panel-btn btn-glow">Enviar cadastro</button>
+
+                    <p class="responsible-note">A FlaMedula orienta e mobiliza. Cadastros oficiais, triagens e doações seguem pelos canais de saúde, hemocentros e REDOME.</p>
+
+                    <button type="submit" class="btn btn-donor panel-btn btn-glow">Enviar meu cadastro</button>
                 </form>
                 <div class="success-msg" id="success-donor">
-                    <h3 class="title-sm">Simulação enviada!</h3>
-                    <p class="text-body" style="margin-top: 8px;">Na versão final, a equipe receberá estes dados.</p>
+                    <h3 class="title-sm">Cadastro recebido.</h3>
+                    <p class="text-body" style="margin-top: 8px;">A FlaMedula poderá entrar em contato para orientação e mobilizações futuras.</p>
                     <button class="btn btn-outline" style="margin-top: 24px;" onclick="closePanels()">← Voltar</button>
                 </div>
             </div>

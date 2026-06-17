@@ -95,7 +95,54 @@
 
 @media (max-width: 900px) { .hub-grid { grid-template-columns: 1fr; } }
 
-@media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } .panel-container { padding: 24px; } }
+@media (max-width: 900px) {
+    #panel-donor {
+        max-width: 100%;
+    }
+    .form-section-grid,
+    .radio-card-grid,
+    .radio-card-grid.compact-options {
+        grid-template-columns: 1fr;
+    }
+    .form-section-card {
+        padding: 20px;
+    }
+    #panel-donor .panel-header {
+        align-items: flex-start;
+        gap: 18px;
+    }
+    .donor-form-intro {
+        margin-top: -4px;
+    }
+}
+
+@media (max-width: 600px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    .panel-container {
+        padding: 24px;
+    }
+    #panel-donor .panel-header {
+        flex-direction: column;
+        margin-bottom: 24px;
+    }
+    #panel-donor .btn-back {
+        width: fit-content;
+    }
+    .donor-form-intro,
+    .form-section-card {
+        padding: 16px;
+    }
+    .radio-card {
+        min-height: 58px;
+    }
+    .panel-btn {
+        min-height: 52px;
+        margin-top: 24px;
+    }
+}
 
 @media (max-width: 900px) {
     #containerIntroVideo {
