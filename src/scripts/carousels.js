@@ -218,8 +218,67 @@ export function renderActions() {
   const grid = document.getElementById('actionsCarousel');
   if (!grid) return;
 
+  grid.replaceChildren();
+
   actionsData.forEach((action) => {
-    grid.innerHTML += `<div class="action-card"><div class="action-graphic">FLA</div><div class="action-content"><div class="action-meta"><span>${action.date}</span><span>\u2022</span><span>${action.location}</span></div><h3 class="action-title">${action.title}</h3><p class="action-summary">${action.summary}</p><button class="btn btn-outline" style="width:100%">${action.cta}</button></div></div>`;
+    const card = document.createElement('article');
+    card.className = 'action-card';
+
+    const figure = document.createElement('figure');
+    figure.className = 'action-graphic';
+
+    if (action.image_url) {
+      const image = document.createElement('img');
+      image.className = 'action-image';
+      image.src = action.image_url;
+      image.alt = `Registro da ação ${action.title}`;
+      image.loading = 'lazy';
+      image.decoding = 'async';
+      figure.appendChild(image);
+    } else {
+      const fallback = document.createElement('span');
+      fallback.className = 'action-fallback';
+      fallback.textContent = 'FLA';
+      figure.appendChild(fallback);
+    }
+
+    const category = document.createElement('span');
+    category.className = 'action-category';
+    category.textContent = action.category;
+    figure.appendChild(category);
+
+    const content = document.createElement('div');
+    content.className = 'action-content';
+
+    const meta = document.createElement('div');
+    meta.className = 'action-meta';
+
+    const date = document.createElement('span');
+    date.textContent = action.date;
+
+    const separator = document.createElement('span');
+    separator.setAttribute('aria-hidden', 'true');
+    separator.textContent = '\u2022';
+
+    const location = document.createElement('span');
+    location.textContent = action.location;
+
+    const title = document.createElement('h3');
+    title.className = 'action-title';
+    title.textContent = action.title;
+
+    const summary = document.createElement('p');
+    summary.className = 'action-summary';
+    summary.textContent = action.summary;
+
+    const cta = document.createElement('span');
+    cta.className = 'action-cta';
+    cta.textContent = action.cta;
+
+    meta.append(date, separator, location);
+    content.append(meta, title, summary, cta);
+    card.append(figure, content);
+    grid.appendChild(card);
   });
 }
 

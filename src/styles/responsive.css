@@ -176,7 +176,9 @@
     .transparency-layout { max-width: 100%; }
     .transparency-connector { display: none; }
     .transparency-section { background-attachment: scroll; }
-    .network-purpose { padding: 22px; margin-top: 40px; }
+    .transparency-subtitle { font-size: 1rem; }
+    .transparency-note { font-size: 0.9rem; }
+    .network-purpose { padding: 22px; margin-top: 32px; }
     .purpose-grid { grid-template-columns: 1fr; gap: 12px; }
     .purpose-card { padding: 18px; }
     .transparency-metrics-wrapper { margin-top: 36px; }
@@ -186,7 +188,10 @@
     .metric-card-premium { padding: 18px 12px; }
 }
 
-@media (max-width: 768px) { .action-card { flex: 0 0 85%; } }
+@media (max-width: 768px) {
+    .action-card { flex: 0 0 84%; }
+    .action-graphic { height: 220px; }
+}
 
 @media (max-width: 980px) {
     .media-featured-card {
