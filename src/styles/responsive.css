@@ -93,54 +93,73 @@
 
 @media (prefers-reduced-motion: reduce) { .roller-track { animation-duration: 60s; } }
 
-@media (max-width: 900px) { .hub-grid { grid-template-columns: 1fr; } }
-
 @media (max-width: 900px) {
-    #panel-donor {
-        max-width: 100%;
+    .hub-mini-app {
+        min-height: 0;
+        padding: 22px;
     }
-    .form-section-grid,
-    .radio-card-grid,
-    .radio-card-grid.compact-options {
+    .mini-app-screen {
         grid-template-columns: 1fr;
     }
-    .form-section-card {
-        padding: 20px;
+    .hub-card {
+        min-height: 0;
+        padding: 18px;
     }
-    #panel-donor .panel-header {
-        align-items: flex-start;
-        gap: 18px;
+    .path-icon {
+        margin-bottom: 12px;
     }
-    .donor-form-intro {
-        margin-top: -4px;
+    .compact-form-grid,
+    .support-benefit-grid {
+        grid-template-columns: 1fr;
+    }
+    .radio-card-grid,
+    .radio-card-grid.compact-options,
+    .radio-card-grid.patient-options {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
 @media (max-width: 600px) {
-    .form-grid {
-        grid-template-columns: 1fr;
-        gap: 16px;
+    .hub-section {
+        padding: 58px 0;
     }
-    .panel-container {
-        padding: 24px;
+    .hub-header {
+        margin-bottom: 26px;
+        text-align: left;
     }
-    #panel-donor .panel-header {
+    .hub-mini-app {
+        margin-inline: -4px;
+        padding: 18px;
+    }
+    .mini-app-top {
         flex-direction: column;
-        margin-bottom: 24px;
+        gap: 12px;
     }
-    #panel-donor .btn-back {
-        width: fit-content;
+    .mini-app-actions {
+        width: 100%;
+        justify-content: flex-start;
     }
-    .donor-form-intro,
-    .form-section-card {
-        padding: 16px;
+    .mini-link-btn,
+    .btn-back {
+        flex: 1;
     }
-    .radio-card {
+    .step-copy {
+        padding: 14px;
+    }
+    .radio-card-grid,
+    .radio-card-grid.compact-options,
+    .radio-card-grid.patient-options {
+        grid-template-columns: 1fr;
+    }
+    .radio-label {
         min-height: 58px;
     }
-    .panel-btn {
+    .mini-step-footer {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    .mini-step-footer .btn {
         min-height: 52px;
-        margin-top: 24px;
     }
 }
 

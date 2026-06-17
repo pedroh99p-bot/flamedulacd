@@ -119,217 +119,306 @@
         <div class="bg-glow-hub"></div>
         <div class="container reveal-up">
             <div class="hub-header" id="hubHeader">
+                <span class="section-kicker">Cadastro FlaMedula</span>
                 <h2 class="title-md">Como você quer ajudar hoje?</h2>
-                <p class="text-large" style="margin-top: 16px;">Escolha um caminho. A FlaMedula orienta, organiza e mobiliza com responsabilidade.</p>
+                <p class="text-large">Escolha um caminho. A FlaMedula usa dados autorizados para orientar, organizar campanhas e mobilizar ajuda com mais direção.</p>
             </div>
 
-            <div class="hub-grid" id="hubGrid">
-                <div class="hub-card card-donor" onclick="openPanel('donor')">
-                    <h3>Quero doar</h3>
-                    <p>Para quem já doa sangue, quer começar a doar ou deseja entender melhor a doação de medula.</p>
-                    <div class="btn card-btn">Começar</div>
-                </div>
-
-                <div class="hub-card card-patient" onclick="openPanel('patient')">
-                    <h3>Cadastrar paciente</h3>
-                    <p>Sinalize um caso para análise, orientação e possível mobilização responsável.</p>
-                    <div class="btn card-btn">Cadastrar caso</div>
-                </div>
-
-                <div class="hub-card card-support" onclick="openPanel('support')">
-                    <h3>Quero apoiar</h3>
-                    <p>Ajude campanhas, comunicação, deslocamento e organização da rede.</p>
-                    <div class="btn card-btn">Apoiar a causa</div>
-                </div>
-            </div>
-
-            <!-- PANELS -->
-            <div class="panel-container" id="panel-donor">
-                <div class="panel-header">
+            <div class="hub-mini-app flow-neutral" id="hubMiniApp" data-flow="choice">
+                <div class="mini-app-top">
                     <div>
-                        <span class="panel-kicker">Doador ou interessado</span>
-                        <h3 class="title-sm">Entre para a rede FlaMedula</h3>
+                        <span class="mini-app-kicker" id="hubStepLabel">Escolha o caminho</span>
+                        <h3 class="title-sm" id="hubFlowTitle">Cadastro FlaMedula</h3>
                     </div>
-                    <button class="btn-back" onclick="closePanels()">← Voltar</button>
+                    <div class="mini-app-actions">
+                        <button type="button" class="mini-link-btn" id="hubSwitchBtn" data-action="switch-flow" hidden>Trocar caminho</button>
+                        <button type="button" class="btn-back" id="hubBackBtn" data-action="back" hidden>&larr; Voltar</button>
+                    </div>
                 </div>
 
-                <div class="donor-form-intro">
-                    <p>Seu cadastro ajuda a FlaMedula a entender quem pode receber orientação, avisos de campanha e chamados de mobilização por região.</p>
-                    <span>Você pode participar mesmo que ainda não seja doador. O importante é sabermos como orientar e quando entrar em contato.</span>
+                <div class="mini-progress" aria-hidden="true">
+                    <span id="hubProgressFill"></span>
+                </div>
+                <div class="form-feedback" id="hubFormFeedback" role="status" aria-live="polite"></div>
+
+                <div class="mini-app-screen is-active" id="hubGrid" data-screen="choice">
+                    <button type="button" class="hub-card path-card card-donor" data-action="choose-flow" data-flow="donor">
+                        <span class="path-icon">🩸</span>
+                        <span class="path-title">Doador ou interessado</span>
+                        <span class="path-copy">Já doa, quer começar ou quer entender o cadastro de medula.</span>
+                        <span class="card-btn">Começar</span>
+                    </button>
+
+                    <button type="button" class="hub-card path-card card-patient" data-action="choose-flow" data-flow="patient">
+                        <span class="path-icon">🏥</span>
+                        <span class="path-title">Paciente ou família</span>
+                        <span class="path-copy">Sinalize um caso para orientação e mobilização responsável.</span>
+                        <span class="card-btn">Cadastrar caso</span>
+                    </button>
+
+                    <button type="button" class="hub-card path-card card-support" data-action="choose-flow" data-flow="support">
+                        <span class="path-icon">💛</span>
+                        <span class="path-title">Apoio financeiro</span>
+                        <span class="path-copy">Ajude a manter campanhas, tecnologia, deslocamento e organização.</span>
+                        <span class="card-btn">Apoiar</span>
+                    </button>
                 </div>
 
-                <form id="form-donor" class="donor-lead-form" onsubmit="handleFormSubmit(event, 'donor')" novalidate>
-                    <div class="form-feedback" id="donor-form-feedback" role="status" aria-live="polite"></div>
-
-                    <div class="form-grid">
-                        <fieldset class="form-section-card form-col-full">
-                            <legend>Seus dados</legend>
-                            <div class="form-section-grid">
-                                <div class="form-group form-col-full">
-                                    <label for="donor-nome">Nome completo</label>
-                                    <input id="donor-nome" name="nome" type="text" class="form-control" required autocomplete="name" placeholder="Digite seu nome completo">
-                                </div>
-                                <div class="form-group">
-                                    <label for="donor-telefone">WhatsApp</label>
-                                    <input id="donor-telefone" name="telefone" type="tel" class="form-control" required autocomplete="tel" placeholder="(00) 00000-0000">
-                                </div>
-                                <div class="form-group">
-                                    <label for="donor-email">E-mail <span class="optional-label">opcional</span></label>
-                                    <input id="donor-email" name="email" type="email" class="form-control" autocomplete="email" placeholder="voce@email.com">
-                                </div>
-                                <div class="form-group">
-                                    <label for="donor-cidade">Cidade</label>
-                                    <input id="donor-cidade" name="cidade" type="text" class="form-control" required autocomplete="address-level2" placeholder="Ex: Rio de Janeiro">
-                                </div>
-                                <div class="form-group">
-                                    <label for="donor-estado">Estado</label>
-                                    <input id="donor-estado" name="estado" type="text" class="form-control" required autocomplete="address-level1" placeholder="Ex: RJ">
-                                </div>
+                <form id="form-donor" class="mini-flow-form" data-flow="donor" onsubmit="handleFormSubmit(event, 'donor')" novalidate hidden>
+                    <section class="mini-step is-active" data-step="0" data-title="Vamos começar pelo básico" data-label="Doador - etapa 1 de 4">
+                        <div class="step-copy">
+                            <span class="step-icon">🩸</span>
+                            <div>
+                                <h4>Vamos começar pelo básico</h4>
+                                <p>Dados mínimos para orientar contatos e campanhas por região.</p>
                             </div>
-                        </fieldset>
+                        </div>
+                        <div class="compact-form-grid">
+                            <div class="form-group form-col-full">
+                                <label for="donor-nome">Nome completo</label>
+                                <input id="donor-nome" name="nome" type="text" class="form-control" autocomplete="name" placeholder="Digite seu nome completo">
+                            </div>
+                            <div class="form-group">
+                                <label for="donor-telefone">WhatsApp</label>
+                                <input id="donor-telefone" name="telefone" type="tel" class="form-control" autocomplete="tel" placeholder="(00) 00000-0000">
+                            </div>
+                            <div class="form-group">
+                                <label for="donor-cidade">Cidade</label>
+                                <input id="donor-cidade" name="cidade" type="text" class="form-control" autocomplete="address-level2" placeholder="Ex: Rio de Janeiro">
+                            </div>
+                            <div class="form-group">
+                                <label for="donor-estado">Estado</label>
+                                <input id="donor-estado" name="estado" type="text" class="form-control" autocomplete="address-level1" placeholder="Ex: RJ">
+                            </div>
+                        </div>
+                    </section>
 
-                        <fieldset class="form-section-card form-col-full" data-field-group="blood_donor_status">
+                    <section class="mini-step" data-step="1" data-title="Você já doa sangue?" data-label="Doador - etapa 2 de 4">
+                        <div class="step-copy">
+                            <span class="step-icon">❤</span>
+                            <div>
+                                <h4>Você já doa sangue?</h4>
+                                <p>Isso ajuda a FlaMedula a entender como orientar seu próximo passo.</p>
+                            </div>
+                        </div>
+                        <fieldset class="option-fieldset" data-field-group="blood_donor_status">
                             <legend>Sua relação com a doação</legend>
-                            <p class="form-question">Você já é doador de sangue?</p>
                             <div class="radio-card-grid">
                                 <label class="radio-label radio-card"><input type="radio" name="blood_donor_status" value="ja_doador"> <span>Sim, já sou doador</span></label>
                                 <label class="radio-label radio-card"><input type="radio" name="blood_donor_status" value="quero_comecar"> <span>Ainda não sou, mas quero começar</span></label>
-                                <label class="radio-label radio-card"><input type="radio" name="blood_donor_status" value="quero_entender"> <span>Ainda não sei, quero entender melhor</span></label>
+                                <label class="radio-label radio-card"><input type="radio" name="blood_donor_status" value="quero_entender"> <span>Quero entender melhor antes</span></label>
                             </div>
                         </fieldset>
+                    </section>
 
-                        <fieldset class="form-section-card form-col-full" data-field-group="redome_status">
-                            <legend>Cadastro de medula</legend>
-                            <p class="form-question">Você já é cadastrado como doador de medula no REDOME?</p>
+                    <section class="mini-step" data-step="2" data-title="E sobre medula óssea?" data-label="Doador - etapa 3 de 4">
+                        <div class="step-copy">
+                            <span class="step-icon">🧬</span>
+                            <div>
+                                <h4>E sobre medula óssea?</h4>
+                                <p>Cadastros oficiais seguem pelos canais de saúde e REDOME.</p>
+                            </div>
+                        </div>
+                        <fieldset class="option-fieldset" data-field-group="redome_status">
+                            <legend>Você já é cadastrado como doador de medula no REDOME?</legend>
                             <div class="radio-card-grid compact-options">
                                 <label class="radio-label radio-card"><input type="radio" name="redome_status" value="sim"> <span>Sim</span></label>
                                 <label class="radio-label radio-card"><input type="radio" name="redome_status" value="nao"> <span>Não</span></label>
                                 <label class="radio-label radio-card"><input type="radio" name="redome_status" value="nao_tenho_certeza"> <span>Não tenho certeza</span></label>
                             </div>
-                            <p class="conditional-note" id="redome-positive-note">Ótimo. Manter seus dados atualizados ajuda os canais oficiais a encontrarem você se houver necessidade.</p>
-
-                            <div class="conditional-field" id="medula-interest-group" data-field-group="medula_interest">
-                                <p class="form-question">Você tem interesse em receber orientação para entender o cadastro de medula?</p>
-                                <div class="radio-card-grid">
-                                    <label class="radio-label radio-card"><input type="radio" name="medula_interest" value="sim_tenho_interesse"> <span>Sim, tenho interesse</span></label>
-                                    <label class="radio-label radio-card"><input type="radio" name="medula_interest" value="quero_entender_melhor"> <span>Quero entender melhor antes</span></label>
-                                    <label class="radio-label radio-card"><input type="radio" name="medula_interest" value="nao_neste_momento"> <span>Não neste momento</span></label>
-                                </div>
+                        </fieldset>
+                        <p class="conditional-note" id="redome-positive-note">Ótimo. Manter seus dados atualizados ajuda os canais oficiais a encontrarem você se houver necessidade.</p>
+                        <fieldset class="option-fieldset conditional-field is-hidden" id="medula-interest-group" data-field-group="medula_interest">
+                            <legend>Você tem interesse em receber orientação para entender o cadastro de medula?</legend>
+                            <div class="radio-card-grid">
+                                <label class="radio-label radio-card"><input type="radio" name="medula_interest" value="sim_tenho_interesse"> <span>Sim, tenho interesse</span></label>
+                                <label class="radio-label radio-card"><input type="radio" name="medula_interest" value="quero_entender_melhor"> <span>Quero entender melhor antes</span></label>
+                                <label class="radio-label radio-card"><input type="radio" name="medula_interest" value="nao_neste_momento"> <span>Não neste momento</span></label>
                             </div>
                         </fieldset>
+                    </section>
 
-                        <fieldset class="form-section-card form-col-full" data-field-group="contact_preference">
-                            <legend>Como prefere ser contatado?</legend>
-                            <p class="form-question">Qual canal você prefere para receber orientação ou avisos de campanha?</p>
+                    <section class="mini-step" data-step="3" data-title="Como podemos falar com você?" data-label="Doador - etapa 4 de 4">
+                        <div class="step-copy">
+                            <span class="step-icon">📲</span>
+                            <div>
+                                <h4>Como podemos falar com você?</h4>
+                                <p>A autorização é necessária para qualquer contato futuro.</p>
+                            </div>
+                        </div>
+                        <fieldset class="option-fieldset" data-field-group="contact_preference">
+                            <legend>Canal preferido</legend>
                             <div class="radio-card-grid compact-options">
                                 <label class="radio-label radio-card"><input type="radio" name="contact_preference" value="whatsapp"> <span>WhatsApp</span></label>
                                 <label class="radio-label radio-card"><input type="radio" name="contact_preference" value="ligacao"> <span>Ligação</span></label>
                                 <label class="radio-label radio-card"><input type="radio" name="contact_preference" value="email"> <span>E-mail</span></label>
                             </div>
                         </fieldset>
-
-                        <fieldset class="form-section-card form-col-full authorization-card">
-                            <legend>Autorização</legend>
+                        <div class="form-group">
+                            <label for="donor-email">E-mail <span class="optional-label">opcional</span></label>
+                            <input id="donor-email" name="email" type="email" class="form-control" autocomplete="email" placeholder="voce@email.com">
+                        </div>
+                        <div class="authorization-card">
                             <label class="checkbox-group">
-                                <input type="checkbox" id="lgpd-donor" name="consent_lgpd" required>
+                                <input type="checkbox" id="lgpd-donor" name="consent_lgpd">
                                 <span>Autorizo a FlaMedula a entrar em contato para orientação, campanhas e mobilizações relacionadas à doação de sangue e medula.</span>
                             </label>
                             <label class="checkbox-group">
                                 <input type="checkbox" id="updates-donor" name="consent_updates">
-                                <span>Também aceito receber avisos sobre novas campanhas, ações e formas de apoio à FlaMedula.</span>
+                                <span>Também aceito receber avisos sobre campanhas, ações e formas de apoio à FlaMedula.</span>
                             </label>
-                        </fieldset>
+                        </div>
+                        <p class="responsible-note">A FlaMedula orienta e mobiliza. Cadastros oficiais, triagens e doações seguem pelos canais de saúde, hemocentros e REDOME.</p>
+                    </section>
+
+                    <div class="mini-step-footer">
+                        <button type="button" class="btn btn-outline" data-action="prev-step">Voltar</button>
+                        <button type="button" class="btn btn-donor btn-glow" data-action="next-step">Continuar</button>
                     </div>
-
-                    <p class="responsible-note">A FlaMedula orienta e mobiliza. Cadastros oficiais, triagens e doações seguem pelos canais de saúde, hemocentros e REDOME.</p>
-
-                    <button type="submit" class="btn btn-donor panel-btn btn-glow">Enviar meu cadastro</button>
                 </form>
-                <div class="success-msg" id="success-donor">
-                    <h3 class="title-sm">Cadastro recebido.</h3>
-                    <p class="text-body" style="margin-top: 8px;">A FlaMedula poderá entrar em contato para orientação e mobilizações futuras.</p>
-                    <button class="btn btn-outline" style="margin-top: 24px;" onclick="closePanels()">← Voltar</button>
-                </div>
-            </div>
 
-            <div class="panel-container" id="panel-patient">
-                <div class="panel-header">
-                    <h3 class="title-sm">Cadastro de paciente/caso</h3>
-                    <button class="btn-back" onclick="closePanels()">← Voltar</button>
-                </div>
-                <form id="form-patient" onsubmit="handleFormSubmit(event, 'patient')">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Seu nome</label>
-                            <input type="text" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Seu WhatsApp</label>
-                            <input type="tel" class="form-control" required>
-                        </div>
-                        <div class="form-group form-col-full">
-                            <label>Nome ou identificação segura do paciente</label>
-                            <input type="text" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Relação com paciente</label>
-                            <input type="text" class="form-control" placeholder="Ex: Familiar, Amigo...">
-                        </div>
-                        <div class="form-group">
-                            <label>Urgência percebida</label>
-                            <select class="form-control">
-                                <option>Alta</option>
-                                <option>Média</option>
-                                <option>Baixa / Preventivo</option>
-                            </select>
-                        </div>
-                        <div class="form-group form-col-full">
-                            <label>Hospital ou unidade de referência</label>
-                            <input type="text" class="form-control">
-                        </div>
-                        <div class="checkbox-group form-col-full">
-                            <input type="checkbox" id="lgpd-patient" required>
-                            <label for="lgpd-patient">Confirmo que tenho autorização para enviar essas informações para análise e orientação inicial.</label>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-patient panel-btn btn-glow">Enviar caso</button>
-                </form>
-                <div class="success-msg" id="success-patient">
-                    <h3 class="title-sm">Caso recebido (Simulação)</h3>
-                    <button class="btn btn-outline" style="margin-top: 24px;" onclick="closePanels()">← Voltar</button>
-                </div>
-            </div>
-
-            <div class="panel-container" id="panel-support">
-                <div class="panel-header">
-                    <h3 class="title-sm">Apoio financeiro</h3>
-                    <button class="btn-back" onclick="closePanels()">← Voltar</button>
-                </div>
-                <div>
-                    <p class="text-body" style="margin-bottom: 24px;">Cada campanha precisa de comunicação, deslocamento, tecnologia e organização para acontecer.</p>
-                    
-                    <div class="form-grid" style="margin-bottom: 32px;">
-                        <div class="form-group form-col-full">
-                            <label>Como deseja apoiar?</label>
-                            <div class="radio-group">
-                                <label class="radio-label"><input type="radio" name="apoio" checked> Quero receber o link da página de apoio</label>
-                                <label class="radio-label"><input type="radio" name="apoio"> Quero falar com a equipe</label>
-                                <label class="radio-label"><input type="radio" name="apoio"> Quero apoiar uma campanha específica</label>
+                <form id="form-patient" class="mini-flow-form" data-flow="patient" onsubmit="handleFormSubmit(event, 'patient')" novalidate hidden>
+                    <section class="mini-step is-active" data-step="0" data-title="Quem está sinalizando o caso?" data-label="Paciente - etapa 1 de 4">
+                        <div class="step-copy">
+                            <span class="step-icon">🏥</span>
+                            <div>
+                                <h4>Quem está sinalizando o caso?</h4>
+                                <p>Um contato autorizado ajuda a organizar a orientação inicial.</p>
                             </div>
                         </div>
+                        <div class="compact-form-grid">
+                            <div class="form-group">
+                                <label for="patient-requester-name">Nome de quem está cadastrando</label>
+                                <input id="patient-requester-name" name="requester_name" type="text" class="form-control" autocomplete="name">
+                            </div>
+                            <div class="form-group">
+                                <label for="patient-requester-phone">WhatsApp para contato</label>
+                                <input id="patient-requester-phone" name="requester_phone" type="tel" class="form-control" autocomplete="tel">
+                            </div>
+                            <div class="form-group form-col-full">
+                                <label for="patient-relation">Relação com o paciente</label>
+                                <input id="patient-relation" name="relation_to_patient" type="text" class="form-control" placeholder="Ex: familiar, amigo, equipe">
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="mini-step" data-step="1" data-title="Onde está essa mobilização?" data-label="Paciente - etapa 2 de 4">
+                        <div class="step-copy">
+                            <span class="step-icon">📍</span>
+                            <div>
+                                <h4>Onde está essa mobilização?</h4>
+                                <p>Use uma identificação segura, sem expor dados sensíveis.</p>
+                            </div>
+                        </div>
+                        <div class="compact-form-grid">
+                            <div class="form-group form-col-full">
+                                <label for="patient-identifier">Identificação segura do paciente</label>
+                                <input id="patient-identifier" name="patient_identifier" type="text" class="form-control" placeholder="Ex: iniciais, primeiro nome ou referência segura">
+                            </div>
+                            <div class="form-group">
+                                <label for="patient-cidade">Cidade</label>
+                                <input id="patient-cidade" name="cidade" type="text" class="form-control" autocomplete="address-level2">
+                            </div>
+                            <div class="form-group">
+                                <label for="patient-estado">Estado</label>
+                                <input id="patient-estado" name="estado" type="text" class="form-control" autocomplete="address-level1" placeholder="Ex: RJ">
+                            </div>
+                            <div class="form-group form-col-full">
+                                <label for="patient-hospital">Hospital ou unidade de referência</label>
+                                <input id="patient-hospital" name="hospital" type="text" class="form-control">
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="mini-step" data-step="2" data-title="Que tipo de ajuda precisa ser mobilizada?" data-label="Paciente - etapa 3 de 4">
+                        <div class="step-copy">
+                            <span class="step-icon">🧭</span>
+                            <div>
+                                <h4>Que tipo de ajuda precisa ser mobilizada?</h4>
+                                <p>Selecione a necessidade principal e a urgência percebida.</p>
+                            </div>
+                        </div>
+                        <fieldset class="option-fieldset" data-field-group="need_type">
+                            <legend>Tipo de necessidade</legend>
+                            <div class="radio-card-grid patient-options">
+                                <label class="radio-label radio-card"><input type="radio" name="need_type" value="doacao_sangue"> <span>Doação de sangue</span></label>
+                                <label class="radio-label radio-card"><input type="radio" name="need_type" value="plaquetas"> <span>Plaquetas</span></label>
+                                <label class="radio-label radio-card"><input type="radio" name="need_type" value="medula_ossea"> <span>Medula óssea</span></label>
+                                <label class="radio-label radio-card"><input type="radio" name="need_type" value="mobilizacao_campanha"> <span>Mobilização de campanha</span></label>
+                                <label class="radio-label radio-card"><input type="radio" name="need_type" value="orientacao"> <span>Orientação</span></label>
+                            </div>
+                        </fieldset>
+                        <fieldset class="option-fieldset" data-field-group="urgency_level">
+                            <legend>Urgência percebida</legend>
+                            <div class="radio-card-grid compact-options">
+                                <label class="radio-label radio-card"><input type="radio" name="urgency_level" value="baixa"> <span>Baixa</span></label>
+                                <label class="radio-label radio-card"><input type="radio" name="urgency_level" value="media"> <span>Média</span></label>
+                                <label class="radio-label radio-card"><input type="radio" name="urgency_level" value="alta"> <span>Alta</span></label>
+                                <label class="radio-label radio-card"><input type="radio" name="urgency_level" value="nao_sei_informar"> <span>Não sei informar</span></label>
+                            </div>
+                        </fieldset>
+                        <div class="form-group">
+                            <label for="patient-context">Observações <span class="optional-label">opcional</span></label>
+                            <textarea id="patient-context" name="campaign_context" class="form-control" rows="3" placeholder="Contexto breve para orientação"></textarea>
+                        </div>
+                    </section>
+
+                    <section class="mini-step" data-step="3" data-title="Autorização para análise" data-label="Paciente - etapa 4 de 4">
+                        <div class="step-copy">
+                            <span class="step-icon">🔒</span>
+                            <div>
+                                <h4>Autorização para análise</h4>
+                                <p>Sem autorização, a equipe não pode tratar essas informações.</p>
+                            </div>
+                        </div>
+                        <div class="authorization-card">
+                            <label class="checkbox-group">
+                                <input type="checkbox" id="patient-consent" name="consent_authorized">
+                                <span>Autorizo a FlaMedula a analisar essas informações para orientação e possível mobilização responsável.</span>
+                            </label>
+                        </div>
+                        <p class="responsible-note">A FlaMedula não substitui hospitais, hemocentros, REDOME ou equipes oficiais de saúde.</p>
+                    </section>
+
+                    <div class="mini-step-footer">
+                        <button type="button" class="btn btn-outline" data-action="prev-step">Voltar</button>
+                        <button type="button" class="btn btn-patient btn-glow" data-action="next-step">Continuar</button>
                     </div>
-                    
-                    <div style="display: flex; gap: 16px; flex-wrap: wrap;">
-                        <a href="/apoie/" class="btn panel-btn" style="background: #FBBF24; color: #92400E; flex: 1; margin-top: 0;">Ir para /apoie/</a>
-                        <button class="btn btn-outline panel-btn" style="flex: 1; margin-top: 0;" onclick="handleFormSubmit(event, 'support')">Receber orientação</button>
-                    </div>
+                </form>
+
+                <div class="mini-flow-form support-panel" id="panel-support" data-flow="support" hidden>
+                    <section class="mini-step is-active" data-step="0" data-title="Ajude a manter a rede em movimento" data-label="Apoio financeiro">
+                        <div class="step-copy">
+                            <span class="step-icon">💛</span>
+                            <div>
+                                <h4>Ajude a manter a rede em movimento</h4>
+                                <p>Sua contribuição ajuda campanhas e mobilizações a chegarem mais longe.</p>
+                            </div>
+                        </div>
+                        <p class="support-lead">Sua contribuição ajuda a manter comunicação, tecnologia, deslocamento e organização para que campanhas e mobilizações cheguem mais longe.</p>
+                        <div class="support-benefit-grid">
+                            <span>📣 Comunicação de campanhas</span>
+                            <span>🚗 Deslocamento e logística</span>
+                            <span>💻 Tecnologia e organização</span>
+                            <span>🤝 Apoio a famílias e mobilizações</span>
+                        </div>
+                        <p class="responsible-note">Na próxima tela você poderá escolher Pix, cartão e recorrência.</p>
+                        <a href="/apoie/" class="btn support-cta">Ir para a página de apoio</a>
+                    </section>
                 </div>
-                <div class="success-msg" id="success-support">
-                    <h3 class="title-sm">Obrigado pelo interesse!</h3>
-                    <button class="btn btn-outline" style="margin-top: 24px;" onclick="closePanels()">← Voltar</button>
+
+                <div class="success-msg" id="success-donor" hidden>
+                    <h3 class="title-sm">Cadastro recebido.</h3>
+                    <p class="text-body">A FlaMedula poderá entrar em contato para orientação e mobilizações futuras.</p>
+                    <button type="button" class="btn btn-outline" data-action="switch-flow">Voltar ao início</button>
+                </div>
+
+                <div class="success-msg" id="success-patient" hidden>
+                    <h3 class="title-sm">Caso recebido.</h3>
+                    <p class="text-body">A equipe poderá analisar as informações e orientar os próximos passos com responsabilidade.</p>
+                    <button type="button" class="btn btn-outline" data-action="switch-flow">Voltar ao início</button>
                 </div>
             </div>
-
         </div>
     </section>
 
