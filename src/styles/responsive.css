@@ -258,7 +258,7 @@
     .edu-timeline { gap: 18px; margin-bottom: 48px; padding-left: 66px; }
     .edu-timeline::before,
     .edu-timeline::after { left: 24px; }
-    .edu-step { left: -66px; top: 20px; }
+    .edu-step { left: -70px; top: 20px; }
     .edu-card { padding: 22px 20px; }
     .affinity-block { grid-template-columns: 1fr; }
 }

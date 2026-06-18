@@ -49,7 +49,8 @@
     .impact-micro,
     .reveal-up.active .edu-timeline::after,
     .reveal-up.active .edu-card,
-    .reveal-up.active .edu-step {
+    .reveal-up.active .edu-step,
+    .cta-alert-badge {
         animation: none !important;
     }
     .edu-timeline::after { height: calc(100% - 32px); }
