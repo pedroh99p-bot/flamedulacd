@@ -298,7 +298,7 @@ function updateMiniHeader() {
   if (!config) {
     miniApp?.classList.add('flow-neutral');
     if (stepLabel) stepLabel.textContent = 'Escolha o caminho';
-    if (title) title.textContent = 'Cadastro FlaMedula';
+    if (title) title.textContent = 'Escolha uma forma de ajudar';
     setElementHidden(backButton, true);
     setElementHidden(switchButton, true);
     if (progressFill) progressFill.style.width = '0%';

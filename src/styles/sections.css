@@ -285,6 +285,9 @@
     box-shadow: 0 24px 70px rgba(17, 24, 39, 0.12);
     animation: slideUp 0.4s ease forwards;
 }
+.hub-mini-app [hidden] {
+    display: none !important;
+}
 .hub-mini-app.flow-patient {
     --flow-main: var(--patient-main);
     --flow-dark: var(--patient-dark);
@@ -301,8 +304,34 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: 18px;
-    padding-bottom: 18px;
+    padding-bottom: 16px;
     border-bottom: 1px solid var(--border-light);
+}
+.mini-app-heading {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    gap: 14px;
+}
+.mini-app-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    flex: 0 0 auto;
+    padding: 6px 10px 6px 8px;
+    border: 1px solid rgba(127, 29, 29, 0.12);
+    border-radius: 8px;
+    background: #FFFFFF;
+    box-shadow: 0 8px 22px rgba(17, 24, 39, 0.06);
+    color: var(--flow-dark);
+    font-size: 0.82rem;
+    font-weight: 900;
+}
+.mini-app-logo {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
 }
 .mini-app-kicker {
     display: inline-flex;
@@ -312,6 +341,13 @@
     font-weight: 800;
     letter-spacing: 0;
     text-transform: uppercase;
+}
+.mini-app-title {
+    max-width: 560px;
+    color: var(--text-main);
+    font-size: clamp(1.25rem, 2.2vw, 1.65rem);
+    line-height: 1.12;
+    letter-spacing: 0;
 }
 .mini-app-actions {
     display: flex;
@@ -494,7 +530,7 @@
 .step-copy h4 {
     margin-bottom: 4px;
     color: var(--text-main);
-    font-size: 1.15rem;
+    font-size: 1.2rem;
     line-height: 1.25;
 }
 .step-copy p {

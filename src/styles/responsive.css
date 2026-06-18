@@ -138,6 +138,20 @@
         flex-direction: column;
         gap: 12px;
     }
+    .mini-app-heading {
+        width: 100%;
+        align-items: flex-start;
+    }
+    .mini-app-brand {
+        min-height: 40px;
+        padding-right: 8px;
+    }
+    .mini-app-brand span {
+        display: none;
+    }
+    .mini-app-title {
+        font-size: 1.22rem;
+    }
     .mini-app-actions {
         width: 100%;
         justify-content: flex-start;

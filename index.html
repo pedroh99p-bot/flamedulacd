@@ -126,9 +126,15 @@
 
             <div class="hub-mini-app flow-neutral" id="hubMiniApp" data-flow="choice">
                 <div class="mini-app-top">
-                    <div>
-                        <span class="mini-app-kicker" id="hubStepLabel">Escolha o caminho</span>
-                        <h3 class="title-sm" id="hubFlowTitle">Cadastro FlaMedula</h3>
+                    <div class="mini-app-heading">
+                        <div class="mini-app-brand">
+                            <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781279524/Untitled_design_17_1_x7qbdx.webp" alt="FlaMedula" class="mini-app-logo">
+                            <span>FlaMedula</span>
+                        </div>
+                        <div>
+                            <span class="mini-app-kicker" id="hubStepLabel">Escolha o caminho</span>
+                            <h3 class="title-sm mini-app-title" id="hubFlowTitle">Escolha uma forma de ajudar</h3>
+                        </div>
                     </div>
                     <div class="mini-app-actions">
                         <button type="button" class="mini-link-btn" id="hubSwitchBtn" data-action="switch-flow" hidden>Trocar caminho</button>
@@ -278,7 +284,7 @@
                 </form>
 
                 <form id="form-patient" class="mini-flow-form" data-flow="patient" onsubmit="handleFormSubmit(event, 'patient')" novalidate hidden>
-                    <section class="mini-step is-active" data-step="0" data-title="Quem está sinalizando o caso?" data-label="Paciente - etapa 1 de 4">
+                    <section class="mini-step is-active" data-step="0" data-title="🏥 Quem está sinalizando o caso?" data-label="Paciente - etapa 1 de 4">
                         <div class="step-copy">
                             <span class="step-icon">🏥</span>
                             <div>
@@ -302,7 +308,7 @@
                         </div>
                     </section>
 
-                    <section class="mini-step" data-step="1" data-title="Onde está essa mobilização?" data-label="Paciente - etapa 2 de 4">
+                    <section class="mini-step" data-step="1" data-title="📍 Onde está essa mobilização?" data-label="Paciente - etapa 2 de 4">
                         <div class="step-copy">
                             <span class="step-icon">📍</span>
                             <div>
@@ -330,9 +336,9 @@
                         </div>
                     </section>
 
-                    <section class="mini-step" data-step="2" data-title="Que tipo de ajuda precisa ser mobilizada?" data-label="Paciente - etapa 3 de 4">
+                    <section class="mini-step" data-step="2" data-title="📝 Que tipo de ajuda precisa ser mobilizada?" data-label="Paciente - etapa 3 de 4">
                         <div class="step-copy">
-                            <span class="step-icon">🧭</span>
+                            <span class="step-icon">📝</span>
                             <div>
                                 <h4>Que tipo de ajuda precisa ser mobilizada?</h4>
                                 <p>Selecione a necessidade principal e a urgência percebida.</p>
@@ -363,7 +369,7 @@
                         </div>
                     </section>
 
-                    <section class="mini-step" data-step="3" data-title="Autorização para análise" data-label="Paciente - etapa 4 de 4">
+                    <section class="mini-step" data-step="3" data-title="🔒 Autorização para análise" data-label="Paciente - etapa 4 de 4">
                         <div class="step-copy">
                             <span class="step-icon">🔒</span>
                             <div>
@@ -387,7 +393,7 @@
                 </form>
 
                 <div class="mini-flow-form support-panel" id="panel-support" data-flow="support" hidden>
-                    <section class="mini-step is-active" data-step="0" data-title="Ajude a manter a rede em movimento" data-label="Apoio financeiro">
+                    <section class="mini-step is-active" data-step="0" data-title="💛 Ajude a manter a rede em movimento" data-label="Apoio financeiro">
                         <div class="step-copy">
                             <span class="step-icon">💛</span>
                             <div>
