@@ -272,8 +272,11 @@
     --flow-main: var(--donor-main);
     --flow-dark: var(--donor-dark);
     --flow-soft: rgba(185, 28, 28, 0.08);
+    display: flex;
+    flex-direction: column;
     width: min(100%, 900px);
-    min-height: 520px;
+    height: min(720px, calc(100vh - 54px));
+    min-height: min(620px, calc(100vh - 54px));
     margin: 0 auto;
     padding: 28px;
     border: 1px solid rgba(17, 24, 39, 0.08);
@@ -293,6 +296,7 @@
     --flow-soft: rgba(251, 191, 36, 0.16);
 }
 .mini-app-top {
+    flex: 0 0 auto;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
@@ -332,6 +336,7 @@
 .mini-link-btn:hover,
 .btn-back:hover { color: var(--text-main); background: #E5E7EB; }
 .mini-progress {
+    flex: 0 0 auto;
     height: 5px;
     margin: 18px 0 20px;
     overflow: hidden;
@@ -347,6 +352,7 @@
     transition: width 0.24s ease;
 }
 .form-feedback {
+    flex: 0 0 auto;
     margin-bottom: 16px;
     padding: 12px 14px;
     border-radius: 8px;
@@ -361,6 +367,9 @@
     color: #7F1D1D;
 }
 .mini-app-screen {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 16px;
@@ -440,15 +449,25 @@
 
 .mini-flow-form {
     display: flex;
-    min-height: 390px;
+    flex: 1 1 auto;
+    min-height: 0;
     flex-direction: column;
+    overflow: hidden;
 }
 .mini-step {
     display: none;
     flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 4px;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
 }
 .mini-step.is-active {
     display: block;
+    opacity: 1;
+    transform: translateY(0);
 }
 .step-copy {
     display: flex;
@@ -665,9 +684,12 @@ textarea.form-control {
     color: #78350F;
     font-weight: 900;
 }
+.support-back-btn {
+    width: 100%;
+    margin-top: 10px;
+}
 .mini-step-footer {
-    position: sticky;
-    bottom: 0;
+    flex: 0 0 auto;
     z-index: 2;
     display: grid;
     grid-template-columns: minmax(120px, 0.4fr) minmax(180px, 0.6fr);
@@ -686,6 +708,9 @@ textarea.form-control {
     transform: none;
 }
 .success-msg {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
     text-align: center;
     padding: 54px 20px 34px;
 }

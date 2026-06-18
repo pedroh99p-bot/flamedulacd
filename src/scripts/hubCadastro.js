@@ -6,8 +6,8 @@ const FLOW_CONFIG = {
     loadingText: 'Enviando...',
     successId: 'success-donor',
     stepFields: [
-      ['nome', 'telefone', 'cidade', 'estado'],
       ['blood_donor_status'],
+      ['nome', 'telefone', 'cidade', 'estado'],
       ['redome_status'],
       ['contact_preference', 'consent_lgpd'],
     ],
@@ -128,7 +128,7 @@ function focusFirstField(container, fields) {
     .map((name) => container?.querySelector(`[name="${name}"]`))
     .find(Boolean);
 
-  first?.focus({ preventScroll: false });
+  first?.focus({ preventScroll: true });
 }
 
 function updateContactPreferenceState() {
@@ -308,8 +308,8 @@ function updateMiniHeader() {
   miniApp?.classList.add(config.className);
   if (stepLabel) stepLabel.textContent = step?.dataset.label || config.title;
   if (title) title.textContent = step?.dataset.title || config.title;
-  setElementHidden(backButton, false);
-  setElementHidden(switchButton, false);
+  setElementHidden(backButton, true);
+  setElementHidden(switchButton, true);
 
   if (progressFill) {
     const progress = steps.length > 1 ? ((state.step + 1) / steps.length) * 100 : 100;
@@ -331,7 +331,7 @@ function updateFooter(flow) {
   }
 
   if (previousButton) {
-    previousButton.textContent = state.step === 0 ? 'Voltar ao início' : 'Voltar';
+    previousButton.textContent = state.step === 0 ? 'Voltar para opções' : 'Voltar';
   }
 }
 
@@ -353,6 +353,8 @@ function showOnlyActiveFlow() {
     step.classList.toggle('is-active', index === state.step);
   });
 
+  const activeStep = getCurrentStep();
+  if (activeStep) activeStep.scrollTop = 0;
   updateMiniHeader();
   updateFooter(state.flow);
   setFeedback('');
@@ -369,8 +371,6 @@ function startFlow(flow) {
     updateDonorConditionalFields();
     updateContactPreferenceState();
   }
-
-  document.getElementById('hub-cadastro')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function showChoice() {
@@ -448,7 +448,6 @@ export function openPanel(type) {
 
 export function closePanels() {
   showChoice();
-  document.getElementById('hub-cadastro')?.scrollIntoView({ behavior: 'smooth' });
 }
 
 export function handleFormSubmit(event, type) {

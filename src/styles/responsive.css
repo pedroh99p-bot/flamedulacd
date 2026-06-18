@@ -95,7 +95,8 @@
 
 @media (max-width: 900px) {
     .hub-mini-app {
-        min-height: 0;
+        height: min(700px, calc(100dvh - 32px));
+        min-height: min(560px, calc(100dvh - 32px));
         padding: 22px;
     }
     .mini-app-screen {
@@ -129,6 +130,8 @@
     }
     .hub-mini-app {
         margin-inline: -4px;
+        height: min(680px, calc(100dvh - 24px));
+        min-height: min(540px, calc(100dvh - 24px));
         padding: 18px;
     }
     .mini-app-top {

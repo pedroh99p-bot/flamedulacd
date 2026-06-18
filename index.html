@@ -165,12 +165,30 @@
                 </div>
 
                 <form id="form-donor" class="mini-flow-form" data-flow="donor" onsubmit="handleFormSubmit(event, 'donor')" novalidate hidden>
-                    <section class="mini-step is-active" data-step="0" data-title="Vamos começar pelo básico" data-label="Doador - etapa 1 de 4">
+                    <section class="mini-step is-active" data-step="0" data-title="🩸 Você já é doador?" data-label="Doador - etapa 1 de 4">
                         <div class="step-copy">
                             <span class="step-icon">🩸</span>
                             <div>
-                                <h4>Vamos começar pelo básico</h4>
-                                <p>Dados mínimos para orientar contatos e campanhas por região.</p>
+                                <h4>🩸 Você já é doador?</h4>
+                                <p>Você pode participar mesmo que ainda não doe. A rede usa essa informação para orientar melhor cada pessoa.</p>
+                            </div>
+                        </div>
+                        <fieldset class="option-fieldset" data-field-group="blood_donor_status">
+                            <legend>Perfil de doação</legend>
+                            <div class="radio-card-grid donor-profile-options">
+                                <label class="radio-label radio-card option-card-with-emoji"><input type="radio" name="blood_donor_status" value="ja_doador"> <span class="option-emoji">🩸</span> <span>Sim, já sou doador de sangue</span></label>
+                                <label class="radio-label radio-card option-card-with-emoji"><input type="radio" name="blood_donor_status" value="quero_comecar"> <span class="option-emoji">🌱</span> <span>Ainda não sou, mas quero começar</span></label>
+                                <label class="radio-label radio-card option-card-with-emoji"><input type="radio" name="blood_donor_status" value="quero_entender"> <span class="option-emoji">🤔</span> <span>Ainda não sei, quero entender melhor</span></label>
+                            </div>
+                        </fieldset>
+                    </section>
+
+                    <section class="mini-step" data-step="1" data-title="📍 Agora seus dados básicos" data-label="Doador - etapa 2 de 4">
+                        <div class="step-copy">
+                            <span class="step-icon">📍</span>
+                            <div>
+                                <h4>📍 Agora seus dados básicos</h4>
+                                <p>Essas informações ajudam a organizar mobilizações por região.</p>
                             </div>
                         </div>
                         <div class="compact-form-grid">
@@ -193,30 +211,12 @@
                         </div>
                     </section>
 
-                    <section class="mini-step" data-step="1" data-title="Você já doa sangue?" data-label="Doador - etapa 2 de 4">
-                        <div class="step-copy">
-                            <span class="step-icon">❤</span>
-                            <div>
-                                <h4>Você já doa sangue?</h4>
-                                <p>Isso ajuda a FlaMedula a entender como orientar seu próximo passo.</p>
-                            </div>
-                        </div>
-                        <fieldset class="option-fieldset" data-field-group="blood_donor_status">
-                            <legend>Sua relação com a doação</legend>
-                            <div class="radio-card-grid">
-                                <label class="radio-label radio-card"><input type="radio" name="blood_donor_status" value="ja_doador"> <span>Sim, já sou doador</span></label>
-                                <label class="radio-label radio-card"><input type="radio" name="blood_donor_status" value="quero_comecar"> <span>Ainda não sou, mas quero começar</span></label>
-                                <label class="radio-label radio-card"><input type="radio" name="blood_donor_status" value="quero_entender"> <span>Quero entender melhor antes</span></label>
-                            </div>
-                        </fieldset>
-                    </section>
-
-                    <section class="mini-step" data-step="2" data-title="E sobre medula óssea?" data-label="Doador - etapa 3 de 4">
+                    <section class="mini-step" data-step="2" data-title="🧬 E sobre medula?" data-label="Doador - etapa 3 de 4">
                         <div class="step-copy">
                             <span class="step-icon">🧬</span>
                             <div>
-                                <h4>E sobre medula óssea?</h4>
-                                <p>Cadastros oficiais seguem pelos canais de saúde e REDOME.</p>
+                                <h4>🧬 E sobre medula?</h4>
+                                <p>O cadastro oficial de medula acontece pelos canais de saúde e REDOME. A FlaMedula pode orientar o caminho.</p>
                             </div>
                         </div>
                         <fieldset class="option-fieldset" data-field-group="redome_status">
@@ -238,12 +238,12 @@
                         </fieldset>
                     </section>
 
-                    <section class="mini-step" data-step="3" data-title="Como podemos falar com você?" data-label="Doador - etapa 4 de 4">
+                    <section class="mini-step" data-step="3" data-title="📲 Como podemos falar com você?" data-label="Doador - etapa 4 de 4">
                         <div class="step-copy">
                             <span class="step-icon">📲</span>
                             <div>
-                                <h4>Como podemos falar com você?</h4>
-                                <p>A autorização é necessária para qualquer contato futuro.</p>
+                                <h4>📲 Como podemos falar com você?</h4>
+                                <p>Escolha o melhor canal para receber orientação e avisos de campanha.</p>
                             </div>
                         </div>
                         <fieldset class="option-fieldset" data-field-group="contact_preference">
@@ -404,19 +404,20 @@
                         </div>
                         <p class="responsible-note">Na próxima tela você poderá escolher Pix, cartão e recorrência.</p>
                         <a href="/apoie/" class="btn support-cta">Ir para a página de apoio</a>
+                        <button type="button" class="btn btn-outline support-back-btn" data-action="switch-flow">Voltar para opções</button>
                     </section>
                 </div>
 
                 <div class="success-msg" id="success-donor" hidden>
-                    <h3 class="title-sm">Cadastro recebido.</h3>
+                    <h3 class="title-sm">✅ Cadastro recebido.</h3>
                     <p class="text-body">A FlaMedula poderá entrar em contato para orientação e mobilizações futuras.</p>
-                    <button type="button" class="btn btn-outline" data-action="switch-flow">Voltar ao início</button>
+                    <button type="button" class="btn btn-outline" data-action="switch-flow">Voltar para opções</button>
                 </div>
 
                 <div class="success-msg" id="success-patient" hidden>
-                    <h3 class="title-sm">Caso recebido.</h3>
+                    <h3 class="title-sm">✅ Caso recebido.</h3>
                     <p class="text-body">A equipe poderá analisar as informações e orientar os próximos passos com responsabilidade.</p>
-                    <button type="button" class="btn btn-outline" data-action="switch-flow">Voltar ao início</button>
+                    <button type="button" class="btn btn-outline" data-action="switch-flow">Voltar para opções</button>
                 </div>
             </div>
         </div>
