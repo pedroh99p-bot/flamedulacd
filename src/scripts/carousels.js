@@ -21,6 +21,30 @@ function isValidImageUrl(value) {
   }
 }
 
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  }[char]));
+}
+
+function createAvatarMarkup(person, className) {
+  const name = String(person.name ?? '').trim();
+  const initial = escapeHtml(name.charAt(0) || '?');
+
+  if (!isValidImageUrl(person.image_url)) {
+    return `<div class="${className}">${initial}</div>`;
+  }
+
+  const src = escapeHtml(person.image_url);
+  const alt = escapeHtml(person.image_alt || `Foto de ${name}`);
+
+  return `<div class="${className} has-image" data-initial="${initial}"><img src="${src}" alt="${alt}" loading="lazy" onerror="this.parentElement.classList.remove('has-image'); this.parentElement.textContent = this.parentElement.dataset.initial;"></div>`;
+}
+
 function createHeroSlide(item, index) {
   const slide = document.createElement('article');
   slide.className = `carousel-slide ${index === 0 ? 'active' : ''}`;
@@ -198,20 +222,22 @@ export function renderTeam() {
   const grid = document.getElementById('teamGrid');
   if (!grid) return;
 
-  teamMembers.forEach((member) => {
-    const initial = member.name.charAt(0);
-    grid.innerHTML += `<div class="team-card-v"><div class="team-avatar-v">${initial}</div><div class="team-name-v">${member.name}</div><div class="team-role-v">${member.role}</div></div>`;
-  });
+  grid.innerHTML = teamMembers.map((member) => {
+    const avatar = createAvatarMarkup(member, 'team-avatar-v');
+
+    return `<div class="team-card-v">${avatar}<div class="team-name-v">${escapeHtml(member.name)}</div><div class="team-role-v">${escapeHtml(member.role)}</div></div>`;
+  }).join('');
 }
 
 export function renderAmbassadors() {
   const grid = document.getElementById('ambassadorsGrid');
   if (!grid) return;
 
-  ambassadors.forEach((ambassador) => {
-    const initial = ambassador.name.charAt(0);
-    grid.innerHTML += `<div class="ambassador-card"><div class="ambassador-badge">${ambassador.role}</div><div class="ambassador-avatar">${initial}</div><h3 style="font-size:1.1rem; font-weight:700;">${ambassador.name}</h3><p class="ambassador-desc">"${ambassador.desc}"</p></div>`;
-  });
+  grid.innerHTML = ambassadors.map((ambassador) => {
+    const avatar = createAvatarMarkup(ambassador, 'ambassador-avatar');
+
+    return `<div class="ambassador-card"><div class="ambassador-badge">${escapeHtml(ambassador.role)}</div>${avatar}<h3 style="font-size:1.1rem; font-weight:700;">${escapeHtml(ambassador.name)}</h3><p class="ambassador-desc">"${escapeHtml(ambassador.desc)}"</p></div>`;
+  }).join('');
 }
 
 export function renderActions() {

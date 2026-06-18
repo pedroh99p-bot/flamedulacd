@@ -1173,6 +1173,7 @@ textarea.form-control {
     transform: scaleY(var(--timeline-progress));
     transform-origin: top;
     transition: transform 0.12s linear;
+    pointer-events: none;
 }
 .edu-card {
     background: rgba(255,255,255,0.92);
@@ -1183,7 +1184,8 @@ textarea.form-control {
     padding: 24px 26px;
     box-shadow: 0 18px 42px rgba(17, 24, 39, 0.08);
     position: relative;
-    z-index: 1;
+    z-index: 2;
+    overflow: visible;
     opacity: 1;
     transform: translateY(0);
 }
@@ -1207,10 +1209,11 @@ textarea.form-control {
     justify-content: center;
     font-weight: 800;
     font-size: 1.1rem;
+    line-height: 1;
     position: absolute;
     top: 22px;
     left: -78px;
-    z-index: 3;
+    z-index: 5;
     isolation: isolate;
     box-shadow: 0 8px 22px rgba(185, 28, 28, 0.3), 0 0 0 8px rgba(185, 28, 28, 0.08);
     opacity: 1;
@@ -1226,11 +1229,11 @@ textarea.form-control {
     box-shadow: 0 0 0 1px rgba(185, 28, 28, 0.08);
 }
 .reveal-up:not(.active) .edu-step {
-    opacity: 0;
-    transform: scale(0.82);
+    opacity: 1;
+    transform: scale(1);
 }
 .reveal-up.active .edu-step {
-    animation: timelineDotIn 0.52s ease forwards;
+    animation: none;
 }
 .reveal-up.active .edu-card:nth-child(2) .edu-step { animation-delay: 0.22s; }
 .reveal-up.active .edu-card:nth-child(3) .edu-step { animation-delay: 0.42s; }
@@ -1435,7 +1438,10 @@ textarea.form-control {
 .team-grid.mobile-carousel { @media(min-width: 769px){ grid-template-columns: repeat(5, 1fr); } }
 .team-card-v { background: rgba(255,255,255,0.05); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); padding: 24px 16px; text-align: center; transition: transform 0.2s;}
 .team-card-v:hover { transform: translateY(-4px); background: rgba(255,255,255,0.1); }
-.team-avatar-v { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 16px; background: linear-gradient(135deg, var(--donor-main), var(--donor-dark)); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: white;}
+.team-avatar-v { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 16px; background: linear-gradient(135deg, var(--donor-main), var(--donor-dark)); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: white; overflow: hidden;}
+.team-avatar-v.has-image { background: rgba(255,255,255,0.08); box-shadow: 0 0 0 2px rgba(255,255,255,0.18); }
+.team-avatar-v img,
+.ambassador-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .team-name-v { font-weight: 600; font-size: 1rem; margin-bottom: 4px; }
 .team-role-v { font-size: 0.85rem; color: rgba(255,255,255,0.7); }
 
@@ -1444,7 +1450,8 @@ textarea.form-control {
 .ambassadors-grid.mobile-carousel { @media(min-width: 769px){ grid-template-columns: repeat(2, 1fr); } }
 .ambassador-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(8px); border: 1px solid rgba(185, 28, 28, 0.4); border-radius: var(--radius-md); padding: 24px; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative;}
 .ambassador-badge { position: absolute; top: 12px; right: 12px; background: var(--donor-main); font-size: 0.7rem; padding: 4px 8px; border-radius: 12px; font-weight: 600;}
-.ambassador-avatar { width: 72px; height: 72px; border-radius: 50%; margin-bottom: 16px; background: #FFF; display: flex; align-items: center; justify-content: center; color: var(--donor-main); font-weight: 700; font-size: 1.5rem;}
+.ambassador-avatar { width: 72px; height: 72px; border-radius: 50%; margin-bottom: 16px; background: #FFF; display: flex; align-items: center; justify-content: center; color: var(--donor-main); font-weight: 700; font-size: 1.5rem; overflow: hidden;}
+.ambassador-avatar.has-image { background: rgba(255,255,255,0.12); box-shadow: 0 0 0 2px rgba(255,255,255,0.18); }
 .ambassador-desc { font-size: 0.9rem; color: rgba(255,255,255,0.8); margin-top: 12px; font-style: italic;}
 
 
