@@ -145,6 +145,10 @@
         width: 100%;
         align-items: flex-start;
     }
+    .hub-mini-app.flow-neutral .mini-app-heading {
+        align-items: center;
+        justify-content: center;
+    }
     .mini-app-brand {
         min-height: 40px;
         padding-right: 8px;

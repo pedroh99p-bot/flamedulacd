@@ -297,8 +297,8 @@ function updateMiniHeader() {
 
   if (!config) {
     miniApp?.classList.add('flow-neutral');
-    if (stepLabel) stepLabel.textContent = 'Escolha o caminho';
-    if (title) title.textContent = 'Escolha uma forma de ajudar';
+    if (stepLabel) stepLabel.textContent = 'Escolha uma opção para abrir o cadastro correto.';
+    if (title) title.textContent = 'Como você quer participar?';
     setElementHidden(backButton, true);
     setElementHidden(switchButton, true);
     if (progressFill) progressFill.style.width = '0%';

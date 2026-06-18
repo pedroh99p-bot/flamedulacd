@@ -132,8 +132,8 @@
                             <span>FlaMedula</span>
                         </div>
                         <div>
-                            <span class="mini-app-kicker" id="hubStepLabel">Escolha o caminho</span>
-                            <h3 class="title-sm mini-app-title" id="hubFlowTitle">Escolha uma forma de ajudar</h3>
+                            <span class="mini-app-kicker" id="hubStepLabel">Escolha uma opção para abrir o cadastro correto.</span>
+                            <h3 class="title-sm mini-app-title" id="hubFlowTitle">Como você quer participar?</h3>
                         </div>
                     </div>
                     <div class="mini-app-actions">
@@ -148,28 +148,33 @@
                 <div class="form-feedback" id="hubFormFeedback" role="status" aria-live="polite"></div>
 
                 <div class="mini-app-screen is-active" id="hubGrid" data-screen="choice">
+                    <p class="mini-choice-intro">A FlaMedula usa essas informações para orientar, organizar casos e mobilizar pessoas quando houver necessidade.</p>
+
                     <button type="button" class="hub-card path-card card-donor" data-action="choose-flow" data-flow="donor">
                         <span class="path-icon">🩸</span>
-                        <span class="path-title">Doador ou interessado</span>
-                        <span class="path-copy">Já doa, quer começar ou quer entender o cadastro de medula.</span>
-                        <span class="card-btn">Começar</span>
+                        <span class="path-text">
+                            <span class="path-title">Quero me cadastrar como doador</span>
+                            <span class="path-copy">Para quem já doa, quer começar ou quer entender melhor sobre medula.</span>
+                        </span>
                     </button>
 
                     <button type="button" class="hub-card path-card card-patient" data-action="choose-flow" data-flow="patient">
                         <span class="path-icon">🏥</span>
-                        <span class="path-title">Paciente ou família</span>
-                        <span class="path-copy">Sinalize um caso para orientação e mobilização responsável.</span>
-                        <span class="card-btn">Cadastrar caso</span>
+                        <span class="path-text">
+                            <span class="path-title">Quero cadastrar um paciente</span>
+                            <span class="path-copy">Para familiares, responsáveis ou profissionais que precisam sinalizar um caso.</span>
+                        </span>
                     </button>
 
                     <button type="button" class="hub-card path-card card-support" data-action="choose-flow" data-flow="support">
                         <span class="path-icon">💛</span>
-                        <span class="path-title">Apoio financeiro</span>
-                        <span class="path-copy">Ajude a manter campanhas, tecnologia, deslocamento e organização.</span>
-                        <span class="card-btn">Apoiar</span>
+                        <span class="path-text">
+                            <span class="path-title">Quero apoiar financeiramente</span>
+                            <span class="path-copy">Ajude a manter campanhas, tecnologia, deslocamento e organização.</span>
+                        </span>
                     </button>
 
-                    <p class="mini-privacy-note">🔒 Seus dados são usados apenas para orientação, contato autorizado e ativações de campanha. A permissão é confirmada antes do envio.</p>
+                    <p class="mini-privacy-note">🔒 Cada opção abre apenas o mini app correspondente. Seus dados só são enviados após autorização.</p>
                 </div>
 
                 <form id="form-donor" class="mini-flow-form" data-flow="donor" onsubmit="handleFormSubmit(event, 'donor')" novalidate hidden>

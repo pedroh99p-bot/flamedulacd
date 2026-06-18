@@ -288,6 +288,17 @@
 .hub-mini-app [hidden] {
     display: none !important;
 }
+.hub-mini-app.flow-neutral {
+    width: min(100%, 620px);
+    height: auto;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+    border-color: rgba(127, 29, 29, 0.12);
+    border-radius: 8px;
+    background: #FFFFFF;
+    box-shadow: 0 18px 48px rgba(17, 24, 39, 0.12);
+}
 .hub-mini-app.flow-patient {
     --flow-main: var(--patient-main);
     --flow-dark: var(--patient-dark);
@@ -307,11 +318,21 @@
     padding-bottom: 16px;
     border-bottom: 1px solid var(--border-light);
 }
+.hub-mini-app.flow-neutral .mini-app-top {
+    justify-content: center;
+    padding: 20px 24px;
+    border-bottom: 0;
+    background: linear-gradient(135deg, #8B0000, #C40000);
+    text-align: center;
+}
 .mini-app-heading {
     display: flex;
     align-items: center;
     min-width: 0;
     gap: 14px;
+}
+.hub-mini-app.flow-neutral .mini-app-heading {
+    justify-content: center;
 }
 .mini-app-brand {
     display: inline-flex;
@@ -328,6 +349,9 @@
     font-size: 0.82rem;
     font-weight: 900;
 }
+.hub-mini-app.flow-neutral .mini-app-brand {
+    display: none;
+}
 .mini-app-logo {
     width: 28px;
     height: 28px;
@@ -342,12 +366,26 @@
     letter-spacing: 0;
     text-transform: uppercase;
 }
+.hub-mini-app.flow-neutral .mini-app-kicker {
+    display: block;
+    margin: 7px 0 0;
+    color: rgba(255,255,255,0.88);
+    font-size: 0.86rem;
+    font-weight: 700;
+    text-transform: none;
+}
 .mini-app-title {
     max-width: 560px;
     color: var(--text-main);
     font-size: clamp(1.25rem, 2.2vw, 1.65rem);
     line-height: 1.12;
     letter-spacing: 0;
+}
+.hub-mini-app.flow-neutral .mini-app-title {
+    color: #FFFFFF;
+    font-size: clamp(1.25rem, 3vw, 1.65rem);
+    line-height: 1.18;
+    text-align: center;
 }
 .mini-app-actions {
     display: flex;
@@ -379,6 +417,9 @@
     border-radius: 99px;
     background: #EEF2F7;
 }
+.hub-mini-app.flow-neutral .mini-progress {
+    display: none;
+}
 .mini-progress span {
     display: block;
     width: 0;
@@ -396,6 +437,9 @@
     font-weight: 700;
     line-height: 1.4;
 }
+.hub-mini-app.flow-neutral .form-feedback {
+    margin: 0 20px 14px;
+}
 .form-feedback[hidden] { display: none; }
 .form-feedback.is-error {
     border: 1px solid rgba(185, 28, 28, 0.28);
@@ -410,6 +454,13 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 18px;
     align-content: start;
+}
+.hub-mini-app.flow-neutral .mini-app-screen {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 22px 24px 20px;
+    overflow: visible;
 }
 .mini-app-screen[hidden],
 .mini-flow-form[hidden],
@@ -429,6 +480,34 @@
     overflow: hidden;
     transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
     cursor: pointer;
+}
+.hub-mini-app.flow-neutral .hub-card {
+    position: relative;
+    min-height: 0;
+    padding: 13px 46px 13px 14px;
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    border-radius: 8px;
+    box-shadow: none;
+}
+.hub-mini-app.flow-neutral .hub-card::after {
+    content: '›';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    color: var(--text-muted);
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1;
+    transform: translateY(-50%);
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+.hub-mini-app.flow-neutral .hub-card:hover::after,
+.hub-mini-app.flow-neutral .hub-card:focus-visible::after {
+    color: var(--flow-main);
+    transform: translate(2px, -50%);
 }
 .hub-card:hover,
 .hub-card:focus-visible {
@@ -455,6 +534,13 @@
     background: var(--flow-soft);
     font-size: 1.35rem;
 }
+.hub-mini-app.flow-neutral .path-icon {
+    width: 38px;
+    height: 38px;
+    margin: 0;
+    border-radius: 8px;
+    font-size: 1.25rem;
+}
 .card-donor .path-icon { background: rgba(185, 28, 28, 0.1); }
 .card-patient .path-icon { background: rgba(37, 99, 235, 0.1); }
 .card-support .path-icon { background: rgba(251, 191, 36, 0.2); }
@@ -465,11 +551,24 @@
     font-weight: 800;
     line-height: 1.2;
 }
+.path-text {
+    min-width: 0;
+}
+.hub-mini-app.flow-neutral .path-title {
+    margin-bottom: 3px;
+    font-size: 0.98rem;
+    line-height: 1.22;
+}
 .path-copy {
     flex: 1;
     color: var(--text-muted);
     font-size: 0.92rem;
     line-height: 1.48;
+}
+.hub-mini-app.flow-neutral .path-copy {
+    flex: initial;
+    font-size: 0.8rem;
+    line-height: 1.35;
 }
 .card-btn {
     display: inline-flex;
@@ -498,6 +597,22 @@
     font-size: 0.84rem;
     font-weight: 700;
     line-height: 1.45;
+}
+.mini-choice-intro {
+    margin: 0 0 4px;
+    color: var(--text-main);
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.48;
+}
+.hub-mini-app.flow-neutral .mini-privacy-note {
+    margin-top: 2px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    text-align: center;
 }
 
 .mini-flow-form {
