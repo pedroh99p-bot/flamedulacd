@@ -23,8 +23,8 @@
             <div class="apoie-card-head">
                 <span class="apoie-kicker">Apoio financeiro</span>
                 <h1 id="apoieTitle">Apoie a FlaMedula</h1>
-                <p>Sua doação ajuda a manter viva uma rede que orienta, organiza campanhas e mobiliza pessoas por quem precisa.</p>
-                <strong>Mais do que doar, você ajuda a dar estrutura para a solidariedade acontecer.</strong>
+                <p>Sua contribuição ajuda a manter campanhas, tecnologia, comunicação e mobilização.</p>
+                <strong>Estrutura para a solidariedade acontecer.</strong>
             </div>
 
             <div class="apoie-progress" aria-label="Progresso do cadastro">
@@ -43,7 +43,7 @@
                 <div class="apoie-feedback" id="apoieFeedback" role="status" aria-live="polite"></div>
 
                 <section class="apoie-step is-active" data-step="1" aria-labelledby="stepOneTitle">
-                    <h2 id="stepOneTitle">Seus dados</h2>
+                    <h2 id="stepOneTitle">Dados do apoiador</h2>
 
                     <div class="apoie-segment" role="radiogroup" aria-label="Tipo de apoiador">
                         <label>
@@ -57,11 +57,11 @@
                     </div>
 
                     <div class="apoie-fields" data-donor-fields="pessoa_fisica">
-                        <label>Nome *
+                        <label>Nome completo *
                             <input type="text" name="name" autocomplete="name" required>
                         </label>
                         <label>CPF *
-                            <input type="text" name="document" inputmode="numeric" required>
+                            <input type="text" name="cpf" inputmode="numeric" required>
                         </label>
                         <label>E-mail *
                             <input type="email" name="email" autocomplete="email" required>
@@ -75,11 +75,11 @@
                     </div>
 
                     <div class="apoie-fields" data-donor-fields="pessoa_juridica" hidden>
-                        <label>Razão social ou nome da empresa *
+                        <label>Razão social *
                             <input type="text" name="company_name" autocomplete="organization" required>
                         </label>
                         <label>CNPJ *
-                            <input type="text" name="document" inputmode="numeric" required>
+                            <input type="text" name="cnpj" inputmode="numeric" required>
                         </label>
                         <label>Nome do responsável *
                             <input type="text" name="responsible_name" autocomplete="name" required>
@@ -101,23 +101,25 @@
                         </div>
                     </fieldset>
 
-                    <button type="button" class="apoie-primary" data-action="next">De esperança. Doe!</button>
+                    <button type="button" class="apoie-primary" data-action="next">Continuar para doação</button>
                 </section>
 
                 <section class="apoie-step" data-step="2" aria-labelledby="stepTwoTitle" hidden>
                     <h2 id="stepTwoTitle">Doação</h2>
 
                     <div class="apoie-impact-banner">
-                        <div>
-                            <span>Sua doação mantém a rede em movimento</span>
-                            <p>Cada contribuição ajuda a transformar intenção em estrutura para campanhas, orientação e mobilização.</p>
+                        <div class="apoie-impact-copy">
+                            <span>Como sua doação será utilizada?</span>
+                            <p>Sua contribuição ajuda a manter a rede em movimento.</p>
                         </div>
-                        <ul>
-                            <li>📣 Comunicação de campanhas</li>
-                            <li>🚗 Deslocamento e logística</li>
-                            <li>💻 Tecnologia e organização</li>
-                            <li>🤝 Apoio a famílias e mobilizações</li>
-                        </ul>
+                        <div class="apoie-impact-grid" aria-label="Destinação do recurso">
+                            <span>📣 Comunicação</span>
+                            <span>🚗 Logística</span>
+                            <span>💻 Tecnologia</span>
+                            <span>🤝 Famílias</span>
+                            <span>🩸 Doadores</span>
+                            <span>🧬 Orientação</span>
+                        </div>
                     </div>
 
                     <fieldset class="apoie-option-group">
@@ -126,9 +128,39 @@
                             <label><input type="radio" name="payment_method" value="pix"><span>PIX</span></label>
                             <label><input type="radio" name="payment_method" value="credit_card"><span>Cartão de crédito</span></label>
                         </div>
-                        <p class="apoie-payment-copy" data-payment-copy>Escolha uma forma de pagamento para ver as instruções de segurança.</p>
-                        <div class="apoie-card-flags" data-card-flags hidden>
-                            <span>Visa</span><span>Mastercard</span><span>Elo</span><span>Amex</span>
+                        <div class="apoie-payment-panel" data-payment-panel="pix" hidden aria-hidden="true">
+                            <div class="apoie-pix-placeholder" aria-hidden="true">
+                                <span></span>
+                            </div>
+                            <div>
+                                <h3>Pagamento via Pix</h3>
+                                <p>Na integração final, um QR Code Pix será gerado de forma segura.</p>
+                            </div>
+                        </div>
+                        <div class="apoie-payment-panel" data-payment-panel="credit_card" hidden aria-hidden="true">
+                            <div class="apoie-card-panel-head">
+                                <div>
+                                    <h3>Dados do cartão</h3>
+                                    <p>Na versão final, os dados do cartão serão tokenizados em ambiente seguro do provedor de pagamento.</p>
+                                </div>
+                                <div class="apoie-card-flags">
+                                    <span>Visa</span><span>Mastercard</span><span>Elo</span><span>Amex</span><span>Hipercard</span>
+                                </div>
+                            </div>
+                            <div class="apoie-card-visual-fields">
+                                <label>Número do cartão
+                                    <input type="text" name="card_number_visual" inputmode="numeric" autocomplete="off" data-card-visual>
+                                </label>
+                                <label>CVV
+                                    <input type="text" name="card_cvv_visual" inputmode="numeric" autocomplete="off" data-card-visual>
+                                </label>
+                                <label>Titular do cartão
+                                    <input type="text" name="card_holder_visual" autocomplete="off" data-card-visual>
+                                </label>
+                                <label>Validade
+                                    <input type="text" name="card_expiry_visual" placeholder="MM/AA" inputmode="numeric" autocomplete="off" data-card-visual>
+                                </label>
+                            </div>
                         </div>
                     </fieldset>
 
@@ -163,7 +195,7 @@
                             <label><input type="radio" name="amount" value="custom"><span>Outro valor</span></label>
                         </div>
                         <label class="apoie-custom-amount" hidden>Outro valor
-                            <input type="number" name="custom_amount" min="1" step="1" inputmode="decimal" placeholder="Digite o valor">
+                            <input type="number" name="custom_amount" min="10" step="1" inputmode="decimal" placeholder="Digite o valor">
                         </label>
                     </fieldset>
 
@@ -174,7 +206,7 @@
 
                     <label class="apoie-check">
                         <input type="checkbox" name="privacy_accepted" required>
-                        <span>Ao finalizar o cadastro, concordo com a Política de Privacidade.</span>
+                        <span>Li e concordo com a Política de Privacidade.</span>
                     </label>
                     <label class="apoie-check">
                         <input type="checkbox" name="terms_accepted" required>

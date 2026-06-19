@@ -8,6 +8,7 @@ const steps = [...document.querySelectorAll('.apoie-step')];
 const progressSteps = [...document.querySelectorAll('[data-progress-step]')];
 const progressLine = document.querySelector('.apoie-progress-line span');
 const dueDaySelect = document.querySelector('[data-due-day]');
+const paymentPanels = [...document.querySelectorAll('[data-payment-panel]')];
 
 function activeDonorType() {
   return form.elements.donor_type.value;
@@ -25,6 +26,47 @@ function setFeedback(message, tone = 'error') {
 function clearErrors() {
   form.querySelectorAll('.is-invalid').forEach((field) => field.classList.remove('is-invalid'));
   setFeedback('');
+}
+
+function onlyDigits(value) {
+  return String(value || '').replace(/\D/g, '');
+}
+
+function formatCpf(value) {
+  const digits = onlyDigits(value).slice(0, 11);
+  return digits
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+}
+
+function formatCnpj(value) {
+  const digits = onlyDigits(value).slice(0, 14);
+  return digits
+    .replace(/^(\d{2})(\d)/, '$1.$2')
+    .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+    .replace(/\.(\d{3})(\d)/, '.$1/$2')
+    .replace(/(\d{4})(\d{1,2})$/, '$1-$2');
+}
+
+function formatPhone(value) {
+  const digits = onlyDigits(value).slice(0, 11);
+  if (digits.length <= 10) {
+    return digits.replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{4})(\d{1,4})$/, '$1-$2');
+  }
+  return digits.replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d{1,4})$/, '$1-$2');
+}
+
+function formatDate(value) {
+  return onlyDigits(value).slice(0, 8).replace(/(\d{2})(\d)/, '$1/$2').replace(/(\d{2})(\d)/, '$1/$2');
+}
+
+function formatCardNumber(value) {
+  return onlyDigits(value).slice(0, 19).replace(/(\d{4})(?=\d)/g, '$1 ');
+}
+
+function formatCardExpiry(value) {
+  return onlyDigits(value).slice(0, 4).replace(/(\d{2})(\d)/, '$1/$2');
 }
 
 function showStep(stepNumber) {
@@ -104,11 +146,16 @@ function validateStepTwo() {
 
   const amount = form.querySelector('input[name="amount"]:checked')?.value;
   const customAmount = form.elements.custom_amount;
-  if (amount === 'custom' && !customAmount.value) {
+  if (amount === 'custom' && (!customAmount.value || Number(customAmount.value) < 10)) {
     markInvalid(customAmount);
-    setFeedback('Informe o outro valor da doação.');
+    setFeedback('Informe um valor personalizado de pelo menos R$ 10,00.');
     customAmount.focus();
     return false;
+  }
+
+  if (form.querySelector('input[name="payment_method"]:checked')?.value === 'credit_card') {
+    const cardFields = [...form.querySelectorAll('[data-card-visual]')];
+    if (!validateRequired(cardFields, 'Preencha os dados visuais do cartão para continuar.')) return false;
   }
 
   if (!form.elements.privacy_accepted.checked) {
@@ -126,31 +173,26 @@ function validateStepTwo() {
   return true;
 }
 
-function syncPaymentCopy() {
+function syncPaymentPanels() {
   const method = form.querySelector('input[name="payment_method"]:checked')?.value;
-  const copy = document.querySelector('[data-payment-copy]');
-  const flags = document.querySelector('[data-card-flags]');
 
-  if (method === 'credit_card') {
-    copy.textContent = 'Os dados do cartão serão coletados futuramente em ambiente seguro do provedor de pagamento.';
-    flags.hidden = false;
-    return;
-  }
-
-  if (method === 'pix') {
-    copy.textContent = 'Na integração final, um QR Code Pix será gerado de forma segura.';
-    flags.hidden = true;
-    return;
-  }
-
-  copy.textContent = 'Escolha uma forma de pagamento para ver as instruções de segurança.';
-  flags.hidden = true;
+  paymentPanels.forEach((panel) => {
+    const isActive = panel.dataset.paymentPanel === method;
+    panel.hidden = false;
+    panel.classList.toggle('is-open', isActive);
+    panel.setAttribute('aria-hidden', String(!isActive));
+    panel.querySelectorAll('input').forEach((input) => {
+      input.disabled = !isActive;
+      if (!isActive) input.value = '';
+    });
+  });
 }
 
 function syncDonationType() {
   const isSingle = form.querySelector('input[name="donation_type"]:checked')?.value === 'single';
   const recurring = document.querySelector('.apoie-recurring-fields');
 
+  recurring.hidden = isSingle;
   recurring.classList.toggle('is-disabled', isSingle);
   recurring.querySelectorAll('input, select').forEach((field) => {
     field.disabled = isSingle;
@@ -170,26 +212,31 @@ function syncCustomAmount() {
 
 export function buildDonationIntentPayload() {
   const data = new FormData(form);
+  const donorType = data.get('donor_type');
+  const documentType = donorType === 'pessoa_juridica' ? 'cnpj' : 'cpf';
   const amount = data.get('amount');
+  const isSingle = data.get('donation_type') === 'single';
 
   // Futuro: este payload será enviado ao Supabase e à API de pagamento.
   // Cartão deve ser tokenizado pelo provedor de pagamento. Nunca salvar dados sensíveis de cartão no Supabase.
+  // Campos visuais de cartão nunca entram neste payload e não devem ser salvos ou logados.
   return {
-    donor_type: data.get('donor_type'),
+    donor_type: donorType,
     name: data.get('name') || '',
     company_name: data.get('company_name') || '',
     responsible_name: data.get('responsible_name') || '',
-    document: data.get('document') || '',
+    document_type: documentType,
+    document: data.get(documentType) || '',
     email: data.get('email') || '',
     phone: data.get('phone') || '',
     birth_date: data.get('birth_date') || '',
     contact_preference: data.get('contact_preference'),
     payment_method: data.get('payment_method'),
     donation_type: data.get('donation_type'),
-    due_day: data.get('donation_type') === 'single' ? '' : data.get('due_day'),
-    recurrence_period: data.get('donation_type') === 'single' ? '' : data.get('recurrence_period'),
-    amount: amount === 'custom' ? '' : amount,
-    custom_amount: amount === 'custom' ? data.get('custom_amount') : '',
+    due_day: isSingle ? null : data.get('due_day'),
+    recurrence_period: isSingle ? null : data.get('recurrence_period'),
+    amount,
+    custom_amount: amount === 'custom' ? data.get('custom_amount') : null,
     privacy_accepted: data.get('privacy_accepted') === 'on',
     terms_accepted: data.get('terms_accepted') === 'on',
     source: 'apoie_page',
@@ -209,15 +256,27 @@ function initApoiePage() {
 
   populateDueDays();
   syncDonorFields();
-  syncPaymentCopy();
+  syncPaymentPanels();
   syncDonationType();
   syncCustomAmount();
 
   form.addEventListener('change', (event) => {
     if (event.target.name === 'donor_type') syncDonorFields();
-    if (event.target.name === 'payment_method') syncPaymentCopy();
+    if (event.target.name === 'payment_method') syncPaymentPanels();
     if (event.target.name === 'donation_type') syncDonationType();
     if (event.target.name === 'amount') syncCustomAmount();
+    event.target.closest('.is-invalid')?.classList.remove('is-invalid');
+  });
+
+  form.addEventListener('input', (event) => {
+    const { name } = event.target;
+    if (name === 'cpf') event.target.value = formatCpf(event.target.value);
+    if (name === 'cnpj') event.target.value = formatCnpj(event.target.value);
+    if (name === 'phone') event.target.value = formatPhone(event.target.value);
+    if (name === 'birth_date') event.target.value = formatDate(event.target.value);
+    if (name === 'card_number_visual') event.target.value = formatCardNumber(event.target.value);
+    if (name === 'card_cvv_visual') event.target.value = onlyDigits(event.target.value).slice(0, 4);
+    if (name === 'card_expiry_visual') event.target.value = formatCardExpiry(event.target.value);
     event.target.closest('.is-invalid')?.classList.remove('is-invalid');
   });
 

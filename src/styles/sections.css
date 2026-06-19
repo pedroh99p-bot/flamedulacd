@@ -847,10 +847,14 @@ textarea.form-control {
 }
 .support-cta {
     width: 100%;
-    margin-top: 18px;
+    margin-top: 10px;
     background: #FBBF24;
     color: #78350F;
     font-weight: 900;
+}
+.support-panel .responsible-note {
+    margin-top: 10px;
+    font-size: 0.84rem;
 }
 .support-back-btn {
     width: 100%;

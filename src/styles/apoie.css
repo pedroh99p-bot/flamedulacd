@@ -334,8 +334,7 @@ body.apoie-page {
 
 .apoie-impact-banner {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 18px;
+    gap: 16px;
     margin-bottom: 22px;
     padding: 20px;
     border-radius: 18px;
@@ -345,30 +344,38 @@ body.apoie-page {
     color: white;
 }
 
-.apoie-impact-banner span {
+.apoie-impact-copy span {
     display: block;
     margin-bottom: 8px;
     color: #FDE68A;
     font-weight: 900;
 }
 
-.apoie-impact-banner p,
-.apoie-impact-banner li {
+.apoie-impact-banner p {
     color: rgba(255,255,255,0.86);
     font-size: 0.9rem;
     line-height: 1.45;
 }
 
-.apoie-impact-banner ul {
+.apoie-impact-grid {
     display: grid;
-    gap: 7px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
 }
 
-.apoie-payment-copy {
-    margin-top: 10px;
-    color: var(--text-muted);
-    font-size: 0.86rem;
-    line-height: 1.5;
+.apoie-impact-grid span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 8px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.92);
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-align: center;
 }
 
 .apoie-card-flags {
@@ -385,6 +392,104 @@ body.apoie-page {
     color: white;
     font-size: 0.76rem;
     font-weight: 800;
+}
+
+.apoie-payment-panel {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transform: translateY(-6px);
+    margin-top: 0;
+    padding: 0 16px;
+    border: 1px solid transparent;
+    border-radius: 16px;
+    background: #FFF8F5;
+    transition: max-height 0.32s ease, opacity 0.24s ease, transform 0.24s ease, margin-top 0.24s ease, padding 0.24s ease, border-color 0.24s ease;
+}
+
+.apoie-payment-panel.is-open {
+    max-height: 620px;
+    opacity: 1;
+    transform: translateY(0);
+    margin-top: 14px;
+    padding: 16px;
+    border-color: rgba(185, 28, 28, 0.12);
+}
+
+.apoie-payment-panel h3 {
+    margin-bottom: 6px;
+    color: var(--donor-dark);
+    font-size: 1rem;
+}
+
+.apoie-payment-panel p {
+    color: var(--text-muted);
+    font-size: 0.86rem;
+    line-height: 1.5;
+}
+
+.apoie-pix-placeholder {
+    float: left;
+    width: 76px;
+    height: 76px;
+    margin: 0 14px 6px 0;
+    border-radius: 14px;
+    background:
+        linear-gradient(90deg, rgba(17,24,39,0.12) 2px, transparent 2px),
+        linear-gradient(rgba(17,24,39,0.12) 2px, transparent 2px),
+        white;
+    background-size: 14px 14px;
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    display: grid;
+    place-items: center;
+}
+
+.apoie-pix-placeholder span {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    background: var(--donor-main);
+}
+
+.apoie-card-panel-head {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.apoie-card-visual-fields {
+    display: grid;
+    grid-template-columns: 1.5fr 0.65fr;
+    gap: 12px;
+}
+
+.apoie-card-visual-fields label {
+    display: grid;
+    gap: 7px;
+    color: var(--donor-main);
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.apoie-card-visual-fields label:nth-child(3) {
+    grid-column: 1 / -1;
+}
+
+.apoie-card-visual-fields input {
+    width: 100%;
+    min-height: 46px;
+    padding: 12px 14px;
+    border: 1px solid rgba(17, 24, 39, 0.12);
+    border-radius: 14px;
+    background: #fff;
+    color: var(--text-main);
+    font: inherit;
+    outline: none;
+}
+
+.apoie-card-visual-fields input:focus {
+    border-color: var(--donor-main);
+    box-shadow: 0 0 0 4px rgba(185, 28, 28, 0.08);
 }
 
 .apoie-recurring-fields {
@@ -512,8 +617,10 @@ body.apoie-page {
 
     .apoie-fields,
     .apoie-impact-banner,
+    .apoie-impact-grid,
     .apoie-recurring-fields,
-    .apoie-actions {
+    .apoie-actions,
+    .apoie-card-visual-fields {
         grid-template-columns: 1fr;
     }
 
@@ -526,5 +633,12 @@ body.apoie-page {
 
     .apoie-form {
         padding: 22px 18px 26px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .apoie-progress-line span,
+    .apoie-payment-panel {
+        transition: none;
     }
 }
