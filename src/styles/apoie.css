@@ -8,6 +8,92 @@ body.apoie-page {
     overflow-x: hidden;
 }
 
+body.apoie-preloading .apoie-topbar,
+body.apoie-preloading .apoie-shell {
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+}
+
+.apoie-preloader {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 18px;
+    padding: 24px;
+    background:
+        radial-gradient(circle at 50% 42%, rgba(185, 28, 28, 0.24), transparent 34%),
+        linear-gradient(135deg, #110606 0%, #2B0708 55%, #090909 100%);
+    color: white;
+    transition: opacity 0.26s ease, visibility 0.26s ease;
+}
+
+.apoie-preloader[hidden] {
+    display: none !important;
+}
+
+.apoie-preloader.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.apoie-preloader-glow {
+    position: absolute;
+    width: min(320px, 72vw);
+    height: min(320px, 72vw);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(220, 38, 38, 0.28), transparent 68%);
+    filter: blur(8px);
+}
+
+.apoie-preloader-logo {
+    position: relative;
+    width: 112px;
+    height: 92px;
+    object-fit: contain;
+    animation: apoiePulse 1.15s ease-in-out infinite;
+}
+
+.apoie-preloader p {
+    position: relative;
+    color: rgba(255,255,255,0.88);
+    font-weight: 800;
+    text-align: center;
+}
+
+.apoie-preloader-bar {
+    position: relative;
+    width: 190px;
+    height: 4px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.14);
+}
+
+.apoie-preloader-bar span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--donor-main), #FBBF24);
+    transform-origin: left;
+    animation: apoiePreloaderBar 0.9s ease forwards;
+}
+
+@keyframes apoiePulse {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 8px 22px rgba(185, 28, 28, 0.22)); }
+    50% { transform: scale(1.045); filter: drop-shadow(0 12px 30px rgba(220, 38, 38, 0.34)); }
+}
+
+@keyframes apoiePreloaderBar {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+}
+
 .apoie-topbar {
     width: min(1120px, calc(100% - 32px));
     margin: 0 auto;
@@ -16,6 +102,7 @@ body.apoie-page {
     align-items: center;
     justify-content: space-between;
     gap: 16px;
+    transition: opacity 0.26s ease, transform 0.26s ease;
 }
 
 .apoie-brand img {
@@ -44,6 +131,7 @@ body.apoie-page {
     width: min(760px, calc(100% - 28px));
     margin: 0 auto;
     padding: 12px 0 52px;
+    transition: opacity 0.26s ease, transform 0.26s ease;
 }
 
 .apoie-card {
@@ -153,6 +241,14 @@ body.apoie-page {
 
 .apoie-form {
     padding: clamp(22px, 5vw, 42px);
+}
+
+.apoie-fields[hidden],
+.apoie-step[hidden],
+.apoie-custom-amount[hidden],
+.apoie-payment-panel[hidden],
+.apoie-recurring-fields[hidden] {
+    display: none !important;
 }
 
 .apoie-step h2 {
@@ -344,6 +440,23 @@ body.apoie-page {
     color: white;
 }
 
+.apoie-destination-figure {
+    width: 100%;
+    margin: 0 0 18px;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid rgba(185, 28, 28, 0.1);
+    box-shadow: 0 14px 36px rgba(127, 29, 29, 0.08);
+    background: #FFF8F5;
+}
+
+.apoie-destination-figure img {
+    display: block;
+    width: 100%;
+    height: clamp(180px, 32vw, 290px);
+    object-fit: cover;
+}
+
 .apoie-impact-copy span {
     display: block;
     margin-bottom: 8px;
@@ -401,7 +514,7 @@ body.apoie-page {
     transform: translateY(-6px);
     margin-top: 0;
     padding: 0 16px;
-    border: 1px solid transparent;
+    border: 0 solid transparent;
     border-radius: 16px;
     background: #FFF8F5;
     transition: max-height 0.32s ease, opacity 0.24s ease, transform 0.24s ease, margin-top 0.24s ease, padding 0.24s ease, border-color 0.24s ease;
@@ -413,6 +526,7 @@ body.apoie-page {
     transform: translateY(0);
     margin-top: 14px;
     padding: 16px;
+    border-width: 1px;
     border-color: rgba(185, 28, 28, 0.12);
 }
 
@@ -634,11 +748,23 @@ body.apoie-page {
     .apoie-form {
         padding: 22px 18px 26px;
     }
+
+    .apoie-destination-figure img {
+        height: 168px;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
     .apoie-progress-line span,
-    .apoie-payment-panel {
+    .apoie-payment-panel,
+    .apoie-topbar,
+    .apoie-shell,
+    .apoie-preloader {
         transition: none;
+    }
+
+    .apoie-preloader-logo,
+    .apoie-preloader-bar span {
+        animation: none;
     }
 }

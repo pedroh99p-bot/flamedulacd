@@ -9,6 +9,7 @@ const progressSteps = [...document.querySelectorAll('[data-progress-step]')];
 const progressLine = document.querySelector('.apoie-progress-line span');
 const dueDaySelect = document.querySelector('[data-due-day]');
 const paymentPanels = [...document.querySelectorAll('[data-payment-panel]')];
+const preloader = document.getElementById('apoiePreloader');
 
 function activeDonorType() {
   return form.elements.donor_type.value;
@@ -119,8 +120,10 @@ function syncDonorFields() {
   document.querySelectorAll('[data-donor-fields]').forEach((fieldset) => {
     const isActive = fieldset.dataset.donorFields === type;
     fieldset.hidden = !isActive;
+    fieldset.classList.remove('is-invalid');
     fieldset.querySelectorAll('input').forEach((input) => {
       input.disabled = !isActive;
+      input.closest('.is-invalid')?.classList.remove('is-invalid');
     });
   });
 
@@ -213,23 +216,24 @@ function syncCustomAmount() {
 export function buildDonationIntentPayload() {
   const data = new FormData(form);
   const donorType = data.get('donor_type');
+  const isCompany = donorType === 'pessoa_juridica';
   const documentType = donorType === 'pessoa_juridica' ? 'cnpj' : 'cpf';
   const amount = data.get('amount');
   const isSingle = data.get('donation_type') === 'single';
 
   // Futuro: este payload será enviado ao Supabase e à API de pagamento.
-  // Cartão deve ser tokenizado pelo provedor de pagamento. Nunca salvar dados sensíveis de cartão no Supabase.
+  // Futuro: dados de cartão serão tokenizados pelo provedor de pagamento. Nunca salvar dados sensíveis no Supabase.
   // Campos visuais de cartão nunca entram neste payload e não devem ser salvos ou logados.
   return {
     donor_type: donorType,
-    name: data.get('name') || '',
-    company_name: data.get('company_name') || '',
-    responsible_name: data.get('responsible_name') || '',
+    name: isCompany ? null : data.get('name') || '',
+    company_name: isCompany ? data.get('company_name') || '' : null,
+    responsible_name: isCompany ? data.get('responsible_name') || '' : null,
     document_type: documentType,
     document: data.get(documentType) || '',
     email: data.get('email') || '',
     phone: data.get('phone') || '',
-    birth_date: data.get('birth_date') || '',
+    birth_date: isCompany ? null : data.get('birth_date') || '',
     contact_preference: data.get('contact_preference'),
     payment_method: data.get('payment_method'),
     donation_type: data.get('donation_type'),
@@ -251,9 +255,30 @@ function populateDueDays() {
   }).join('');
 }
 
+function initMiniPreloader() {
+  if (!preloader) return;
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const duration = reduceMotion ? 250 : 900;
+  const fadeDuration = reduceMotion ? 0 : 260;
+
+  preloader.hidden = false;
+  document.body.classList.add('apoie-preloading');
+
+  window.setTimeout(() => {
+    preloader.classList.add('is-hidden');
+    document.body.classList.remove('apoie-preloading');
+
+    window.setTimeout(() => {
+      preloader.hidden = true;
+    }, fadeDuration);
+  }, duration);
+}
+
 function initApoiePage() {
   if (!form) return;
 
+  initMiniPreloader();
   populateDueDays();
   syncDonorFields();
   syncPaymentPanels();
