@@ -1,3 +1,16 @@
 import { defineConfig } from 'vite';
+import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-export default defineConfig({});
+const rootDir = fileURLToPath(new URL('.', import.meta.url));
+
+export default defineConfig({
+  build: {
+    rollupOptions: {
+      input: {
+        main: resolve(rootDir, 'index.html'),
+        apoie: resolve(rootDir, 'apoie/index.html'),
+      },
+    },
+  },
+});

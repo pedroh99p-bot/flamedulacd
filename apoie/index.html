@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apoie a FlaMedula</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Oswald:wght@500;600&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <script type="module" src="/src/apoie.js"></script>
+</head>
+<body class="apoie-page">
+    <header class="apoie-topbar">
+        <a href="/" class="apoie-brand" aria-label="Voltar para a página inicial da FlaMedula">
+            <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781279524/Untitled_design_17_1_x7qbdx.webp" alt="FlaMedula">
+        </a>
+        <a href="/" class="apoie-back">Voltar para o site</a>
+    </header>
+
+    <main class="apoie-shell">
+        <section class="apoie-card" aria-labelledby="apoieTitle">
+            <div class="apoie-card-head">
+                <span class="apoie-kicker">Apoio financeiro</span>
+                <h1 id="apoieTitle">Apoie a FlaMedula</h1>
+                <p>Sua doação ajuda a manter viva uma rede que orienta, organiza campanhas e mobiliza pessoas por quem precisa.</p>
+                <strong>Mais do que doar, você ajuda a dar estrutura para a solidariedade acontecer.</strong>
+            </div>
+
+            <div class="apoie-progress" aria-label="Progresso do cadastro">
+                <div class="apoie-progress-step is-active" data-progress-step="1">
+                    <span>1</span>
+                    <small>Seus dados</small>
+                </div>
+                <div class="apoie-progress-line"><span></span></div>
+                <div class="apoie-progress-step" data-progress-step="2">
+                    <span>2</span>
+                    <small>Doação</small>
+                </div>
+            </div>
+
+            <form id="apoieForm" class="apoie-form" novalidate>
+                <div class="apoie-feedback" id="apoieFeedback" role="status" aria-live="polite"></div>
+
+                <section class="apoie-step is-active" data-step="1" aria-labelledby="stepOneTitle">
+                    <h2 id="stepOneTitle">Seus dados</h2>
+
+                    <div class="apoie-segment" role="radiogroup" aria-label="Tipo de apoiador">
+                        <label>
+                            <input type="radio" name="donor_type" value="pessoa_fisica" checked>
+                            <span>Pessoa Física</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="donor_type" value="pessoa_juridica">
+                            <span>Pessoa Jurídica</span>
+                        </label>
+                    </div>
+
+                    <div class="apoie-fields" data-donor-fields="pessoa_fisica">
+                        <label>Nome *
+                            <input type="text" name="name" autocomplete="name" required>
+                        </label>
+                        <label>CPF *
+                            <input type="text" name="document" inputmode="numeric" required>
+                        </label>
+                        <label>E-mail *
+                            <input type="email" name="email" autocomplete="email" required>
+                        </label>
+                        <label>Telefone / WhatsApp *
+                            <input type="tel" name="phone" autocomplete="tel" required>
+                        </label>
+                        <label>Data de nascimento
+                            <input type="text" name="birth_date" placeholder="dd/mm/aaaa" inputmode="numeric">
+                        </label>
+                    </div>
+
+                    <div class="apoie-fields" data-donor-fields="pessoa_juridica" hidden>
+                        <label>Razão social ou nome da empresa *
+                            <input type="text" name="company_name" autocomplete="organization" required>
+                        </label>
+                        <label>CNPJ *
+                            <input type="text" name="document" inputmode="numeric" required>
+                        </label>
+                        <label>Nome do responsável *
+                            <input type="text" name="responsible_name" autocomplete="name" required>
+                        </label>
+                        <label>E-mail *
+                            <input type="email" name="email" autocomplete="email" required>
+                        </label>
+                        <label>Telefone / WhatsApp *
+                            <input type="tel" name="phone" autocomplete="tel" required>
+                        </label>
+                    </div>
+
+                    <fieldset class="apoie-option-group">
+                        <legend>Preferência de contato *</legend>
+                        <div class="apoie-pill-row">
+                            <label><input type="radio" name="contact_preference" value="email"><span>Email</span></label>
+                            <label><input type="radio" name="contact_preference" value="whatsapp"><span>WhatsApp</span></label>
+                            <label><input type="radio" name="contact_preference" value="telefone"><span>Telefone</span></label>
+                        </div>
+                    </fieldset>
+
+                    <button type="button" class="apoie-primary" data-action="next">De esperança. Doe!</button>
+                </section>
+
+                <section class="apoie-step" data-step="2" aria-labelledby="stepTwoTitle" hidden>
+                    <h2 id="stepTwoTitle">Doação</h2>
+
+                    <div class="apoie-impact-banner">
+                        <div>
+                            <span>Sua doação mantém a rede em movimento</span>
+                            <p>Cada contribuição ajuda a transformar intenção em estrutura para campanhas, orientação e mobilização.</p>
+                        </div>
+                        <ul>
+                            <li>📣 Comunicação de campanhas</li>
+                            <li>🚗 Deslocamento e logística</li>
+                            <li>💻 Tecnologia e organização</li>
+                            <li>🤝 Apoio a famílias e mobilizações</li>
+                        </ul>
+                    </div>
+
+                    <fieldset class="apoie-option-group">
+                        <legend>Forma de pagamento *</legend>
+                        <div class="apoie-pill-row">
+                            <label><input type="radio" name="payment_method" value="pix"><span>PIX</span></label>
+                            <label><input type="radio" name="payment_method" value="credit_card"><span>Cartão de crédito</span></label>
+                        </div>
+                        <p class="apoie-payment-copy" data-payment-copy>Escolha uma forma de pagamento para ver as instruções de segurança.</p>
+                        <div class="apoie-card-flags" data-card-flags hidden>
+                            <span>Visa</span><span>Mastercard</span><span>Elo</span><span>Amex</span>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="apoie-option-group">
+                        <legend>Tipo de doação *</legend>
+                        <div class="apoie-pill-row">
+                            <label><input type="radio" name="donation_type" value="monthly" checked><span>Mensal</span></label>
+                            <label><input type="radio" name="donation_type" value="single"><span>Única</span></label>
+                        </div>
+                    </fieldset>
+
+                    <div class="apoie-recurring-fields">
+                        <label>Dia de vencimento
+                            <select name="due_day" data-due-day></select>
+                        </label>
+                        <fieldset class="apoie-option-group">
+                            <legend>Período de recorrência</legend>
+                            <div class="apoie-pill-row compact">
+                                <label><input type="radio" name="recurrence_period" value="6_months"><span>6 meses</span></label>
+                                <label><input type="radio" name="recurrence_period" value="12_months"><span>12 meses</span></label>
+                                <label><input type="radio" name="recurrence_period" value="indefinite" checked><span>Indeterminado</span></label>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <fieldset class="apoie-option-group">
+                        <legend>Valor a doar *</legend>
+                        <div class="apoie-amount-grid">
+                            <label><input type="radio" name="amount" value="50"><span>R$ 50,00</span></label>
+                            <label><input type="radio" name="amount" value="75"><span>R$ 75,00</span></label>
+                            <label><input type="radio" name="amount" value="100"><span>R$ 100,00</span></label>
+                            <label><input type="radio" name="amount" value="custom"><span>Outro valor</span></label>
+                        </div>
+                        <label class="apoie-custom-amount" hidden>Outro valor
+                            <input type="number" name="custom_amount" min="1" step="1" inputmode="decimal" placeholder="Digite o valor">
+                        </label>
+                    </fieldset>
+
+                    <div class="apoie-security-note">
+                        <strong>Pagamento seguro em preparação</strong>
+                        <p>Pagamento real ainda não está ativo. Dados de cartão não serão coletados nesta etapa. Na integração final, cartão será tokenizado pelo provedor e o Pix QR Code será gerado por API de pagamento.</p>
+                    </div>
+
+                    <label class="apoie-check">
+                        <input type="checkbox" name="privacy_accepted" required>
+                        <span>Ao finalizar o cadastro, concordo com a Política de Privacidade.</span>
+                    </label>
+                    <label class="apoie-check">
+                        <input type="checkbox" name="terms_accepted" required>
+                        <span>Concordo com os Termos do Doador.</span>
+                    </label>
+
+                    <div class="apoie-captcha" aria-label="Verificação de segurança">
+                        <span></span>
+                        Verificação de segurança
+                    </div>
+
+                    <div class="apoie-actions">
+                        <button type="button" class="apoie-secondary" data-action="back">Voltar</button>
+                        <button type="submit" class="apoie-primary">Doe agora</button>
+                    </div>
+                </section>
+            </form>
+        </section>
+    </main>
+</body>
+</html>
