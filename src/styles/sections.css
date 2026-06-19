@@ -308,6 +308,21 @@
     --flow-main: #FBBF24;
     --flow-dark: #92400E;
     --flow-soft: rgba(251, 191, 36, 0.16);
+    width: min(100%, 620px);
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+}
+.hub-mini-app.flow-support .mini-progress {
+    display: none;
+}
+.hub-mini-app.flow-support .mini-flow-form,
+.hub-mini-app.flow-support .mini-step {
+    flex: 0 0 auto;
+    overflow: visible;
+}
+.hub-mini-app.flow-support .mini-step {
+    padding-right: 0;
 }
 .mini-app-top {
     flex: 0 0 auto;
@@ -851,6 +866,28 @@ textarea.form-control {
     background: #FBBF24;
     color: #78350F;
     font-weight: 900;
+}
+.support-donation-summary {
+    display: grid;
+    gap: 8px;
+    margin-top: 14px;
+}
+.support-donation-summary li {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    padding: 10px 12px;
+    border: 1px solid rgba(146, 64, 14, 0.16);
+    border-radius: 8px;
+    background: rgba(255, 251, 235, 0.72);
+    color: #78350F;
+    font-size: 0.88rem;
+    font-weight: 800;
+    line-height: 1.35;
+}
+.support-donation-summary span {
+    flex: 0 0 auto;
+    line-height: 1.2;
 }
 .support-panel .responsible-note {
     margin-top: 10px;
