@@ -239,6 +239,11 @@ body.apoie-preloading .apoie-shell {
     transition: width 0.25s ease;
 }
 
+body.apoie-step-two .apoie-card > .apoie-progress,
+body.apoie-donation-complete .apoie-card > .apoie-progress {
+    display: none;
+}
+
 .apoie-form {
     padding: clamp(22px, 5vw, 42px);
 }
@@ -247,7 +252,8 @@ body.apoie-preloading .apoie-shell {
 .apoie-step[hidden],
 .apoie-custom-amount[hidden],
 .apoie-payment-panel[hidden],
-.apoie-recurring-fields[hidden] {
+.apoie-recurring-fields[hidden],
+.apoie-thanks[hidden] {
     display: none !important;
 }
 
@@ -255,6 +261,22 @@ body.apoie-preloading .apoie-shell {
     font-family: var(--font-premium);
     font-size: 1.45rem;
     margin-bottom: 20px;
+}
+
+.apoie-step-progress {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+    padding: 14px;
+    border-radius: 16px;
+    background: #FFF8F5;
+    border: 1px solid rgba(185, 28, 28, 0.08);
+}
+
+.apoie-step-progress .apoie-progress-line span {
+    width: 100%;
 }
 
 .apoie-feedback {
@@ -356,7 +378,6 @@ body.apoie-preloading .apoie-shell {
 .apoie-fields label:nth-child(3),
 .apoie-option-group,
 .apoie-custom-amount,
-.apoie-security-note,
 .apoie-check,
 .apoie-captcha {
     grid-column: 1 / -1;
@@ -428,67 +449,14 @@ body.apoie-preloading .apoie-shell {
     color: var(--text-main);
 }
 
-.apoie-impact-banner {
-    display: grid;
-    gap: 16px;
-    margin-bottom: 22px;
-    padding: 20px;
-    border-radius: 18px;
-    background:
-        radial-gradient(circle at 90% 12%, rgba(251, 191, 36, 0.22), transparent 34%),
-        linear-gradient(135deg, var(--donor-dark), var(--donor-main));
-    color: white;
-}
-
-.apoie-destination-figure {
-    width: 100%;
-    margin: 0 0 18px;
-    border-radius: 18px;
-    overflow: hidden;
-    border: 1px solid rgba(185, 28, 28, 0.1);
-    box-shadow: 0 14px 36px rgba(127, 29, 29, 0.08);
-    background: #FFF8F5;
-}
-
-.apoie-destination-figure img {
+.apoie-destination-image {
     display: block;
     width: 100%;
-    height: clamp(180px, 32vw, 290px);
-    object-fit: cover;
-}
-
-.apoie-impact-copy span {
-    display: block;
-    margin-bottom: 8px;
-    color: #FDE68A;
-    font-weight: 900;
-}
-
-.apoie-impact-banner p {
-    color: rgba(255,255,255,0.86);
-    font-size: 0.9rem;
-    line-height: 1.45;
-}
-
-.apoie-impact-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 8px;
-}
-
-.apoie-impact-grid span {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 42px;
-    padding: 8px;
+    height: auto;
+    margin: 0 0 20px;
     border-radius: 12px;
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.12);
-    color: rgba(255,255,255,0.92);
-    font-size: 0.8rem;
-    font-weight: 800;
-    text-align: center;
+    object-fit: contain;
+    animation: apoieFadeUp 0.35s ease both;
 }
 
 .apoie-card-flags {
@@ -612,6 +580,7 @@ body.apoie-preloading .apoie-shell {
     gap: 16px;
     align-items: end;
     margin-top: 18px;
+    animation: apoieSlideDown 0.24s ease both;
 }
 
 .apoie-recurring-fields.is-disabled {
@@ -624,26 +593,7 @@ body.apoie-preloading .apoie-shell {
 
 .apoie-custom-amount {
     margin-top: 12px;
-}
-
-.apoie-security-note {
-    margin-top: 22px;
-    padding: 14px;
-    border-radius: 14px;
-    background: #FFF7ED;
-    border: 1px solid rgba(234, 88, 12, 0.18);
-}
-
-.apoie-security-note strong {
-    display: block;
-    margin-bottom: 6px;
-    color: #9A3412;
-}
-
-.apoie-security-note p {
-    color: #7C2D12;
-    font-size: 0.86rem;
-    line-height: 1.5;
+    animation: apoieSlideDown 0.22s ease both;
 }
 
 .apoie-check {
@@ -686,8 +636,12 @@ body.apoie-preloading .apoie-shell {
 
 .apoie-actions {
     display: grid;
-    grid-template-columns: 0.42fr 1fr;
-    gap: 12px;
+    grid-template-columns: 1fr;
+    margin-top: 22px;
+}
+
+.apoie-actions .apoie-primary {
+    margin-top: 0;
 }
 
 .is-invalid input,
@@ -697,8 +651,122 @@ body.apoie-preloading .apoie-shell {
     box-shadow: 0 0 0 4px rgba(185, 28, 28, 0.08);
 }
 
-.apoie-form.is-complete .apoie-step[data-step="2"] > *:not(.apoie-feedback) {
-    opacity: 0.78;
+.apoie-thanks {
+    padding: clamp(24px, 5vw, 44px);
+    animation: apoieThanksIn 0.32s ease both;
+}
+
+.apoie-thanks-card {
+    max-width: 620px;
+    margin: 0 auto;
+    padding: clamp(24px, 5vw, 42px);
+    border-radius: 22px;
+    background:
+        radial-gradient(circle at 88% 10%, rgba(251, 191, 36, 0.22), transparent 34%),
+        linear-gradient(135deg, #FFFFFF, #FFF8F5);
+    border: 1px solid rgba(185, 28, 28, 0.12);
+    text-align: center;
+    box-shadow: 0 18px 54px rgba(127, 29, 29, 0.12);
+}
+
+.apoie-thanks-icon {
+    display: grid;
+    place-items: center;
+    width: 62px;
+    height: 62px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    background: #FBBF24;
+    color: #78350F;
+    font-size: 1.9rem;
+    box-shadow: 0 14px 30px rgba(251, 191, 36, 0.28);
+}
+
+.apoie-thanks h2 {
+    margin-bottom: 14px;
+    color: var(--donor-dark);
+    font-family: var(--font-premium);
+    font-size: clamp(1.7rem, 5vw, 2.45rem);
+    line-height: 1.1;
+}
+
+.apoie-thanks p {
+    color: var(--text-muted);
+    line-height: 1.62;
+}
+
+.apoie-thanks strong {
+    display: block;
+    margin-top: 16px;
+    color: var(--donor-main);
+    line-height: 1.45;
+}
+
+.apoie-thanks-actions {
+    display: grid;
+    gap: 10px;
+    margin-top: 26px;
+}
+
+.apoie-thanks-actions a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+    padding: 13px 18px;
+    border-radius: var(--radius-full);
+    font-weight: 900;
+    text-align: center;
+}
+
+.apoie-thanks-primary {
+    background: linear-gradient(135deg, var(--donor-main), var(--donor-dark));
+    color: white;
+    box-shadow: 0 14px 30px rgba(185, 28, 28, 0.2);
+}
+
+.apoie-thanks-whatsapp {
+    border: 1px solid rgba(22, 163, 74, 0.32);
+    background: rgba(22, 163, 74, 0.1);
+    color: #166534;
+}
+
+.apoie-thanks-secondary {
+    background: #F3F4F6;
+    color: var(--text-main);
+}
+
+@keyframes apoieFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes apoieSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes apoieThanksIn {
+    from {
+        opacity: 0;
+        transform: scale(0.98) translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
 }
 
 @media (max-width: 720px) {
@@ -730,8 +798,6 @@ body.apoie-preloading .apoie-shell {
     }
 
     .apoie-fields,
-    .apoie-impact-banner,
-    .apoie-impact-grid,
     .apoie-recurring-fields,
     .apoie-actions,
     .apoie-card-visual-fields {
@@ -749,8 +815,9 @@ body.apoie-preloading .apoie-shell {
         padding: 22px 18px 26px;
     }
 
-    .apoie-destination-figure img {
-        height: 168px;
+    .apoie-step-progress {
+        gap: 8px;
+        padding: 12px;
     }
 }
 
@@ -764,7 +831,11 @@ body.apoie-preloading .apoie-shell {
     }
 
     .apoie-preloader-logo,
-    .apoie-preloader-bar span {
+    .apoie-preloader-bar span,
+    .apoie-destination-image,
+    .apoie-recurring-fields,
+    .apoie-custom-amount,
+    .apoie-thanks {
         animation: none;
     }
 }

@@ -112,24 +112,19 @@
                 </section>
 
                 <section class="apoie-step" data-step="2" aria-labelledby="stepTwoTitle" hidden>
+                    <img class="apoie-destination-image" src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781888492/Captura_de_tela_2026-06-19_140107_l6r1o1.webp" alt="Destinações do apoio financeiro FlaMedula">
+
                     <h2 id="stepTwoTitle">Doação</h2>
 
-                    <figure class="apoie-destination-figure">
-                        <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781888492/Captura_de_tela_2026-06-19_140107_l6r1o1.webp" alt="Destinações do apoio financeiro FlaMedula">
-                    </figure>
-
-                    <div class="apoie-impact-banner">
-                        <div class="apoie-impact-copy">
-                            <span>Como sua doação será utilizada?</span>
-                            <p>Sua contribuição ajuda a manter a rede em movimento.</p>
+                    <div class="apoie-step-progress" aria-label="Progresso do cadastro na etapa de doação">
+                        <div class="apoie-progress-step is-active">
+                            <span>1</span>
+                            <small>Seus dados</small>
                         </div>
-                        <div class="apoie-impact-grid" aria-label="Destinação do recurso">
-                            <span>📣 Comunicação</span>
-                            <span>🚗 Logística</span>
-                            <span>💻 Tecnologia</span>
-                            <span>🤝 Famílias</span>
-                            <span>🩸 Doadores</span>
-                            <span>🧬 Orientação</span>
+                        <div class="apoie-progress-line"><span></span></div>
+                        <div class="apoie-progress-step is-active">
+                            <span>2</span>
+                            <small>Doação</small>
                         </div>
                     </div>
 
@@ -210,11 +205,6 @@
                         </label>
                     </fieldset>
 
-                    <div class="apoie-security-note">
-                        <strong>Pagamento seguro em preparação</strong>
-                        <p>Pagamento real ainda não está ativo. Dados de cartão não serão coletados nesta etapa. Na integração final, cartão será tokenizado pelo provedor e o Pix QR Code será gerado por API de pagamento.</p>
-                    </div>
-
                     <label class="apoie-check">
                         <input type="checkbox" name="privacy_accepted" required>
                         <span>Li e concordo com a Política de Privacidade.</span>
@@ -230,11 +220,25 @@
                     </div>
 
                     <div class="apoie-actions">
-                        <button type="button" class="apoie-secondary" data-action="back">Voltar</button>
                         <button type="submit" class="apoie-primary">Doe agora</button>
                     </div>
                 </section>
             </form>
+
+            <section class="apoie-thanks" id="apoieThanks" hidden aria-labelledby="apoieThanksTitle" tabindex="-1">
+                <div class="apoie-thanks-card">
+                    <span class="apoie-thanks-icon" aria-hidden="true">💛</span>
+                    <h2 id="apoieThanksTitle">Obrigado por apoiar a FlaMedula</h2>
+                    <p>Seu cadastro de apoio foi recebido. Em breve, a FlaMedula poderá entrar em contato com as próximas instruções para finalizar sua contribuição com segurança.</p>
+                    <strong>Sua ajuda fortalece campanhas, comunicação e mobilização por quem precisa.</strong>
+                    <div class="apoie-thanks-actions">
+                        <a href="/" class="apoie-thanks-primary">Voltar para o site</a>
+                        <!-- Configurar WhatsApp oficial da FlaMedula aqui. -->
+                        <a href="#" class="apoie-thanks-whatsapp">Falar com a FlaMedula</a>
+                        <a href="/#hub-cadastro" class="apoie-thanks-secondary">Também quero me cadastrar como doador/paciente</a>
+                    </div>
+                </div>
+            </section>
         </section>
     </main>
 </body>

@@ -10,6 +10,8 @@ const progressLine = document.querySelector('.apoie-progress-line span');
 const dueDaySelect = document.querySelector('[data-due-day]');
 const paymentPanels = [...document.querySelectorAll('[data-payment-panel]')];
 const preloader = document.getElementById('apoiePreloader');
+const thanksScreen = document.getElementById('apoieThanks');
+let donationCompleted = false;
 
 function activeDonorType() {
   return form.elements.donor_type.value;
@@ -71,6 +73,8 @@ function formatCardExpiry(value) {
 }
 
 function showStep(stepNumber) {
+  document.body.classList.toggle('apoie-step-two', stepNumber === 2);
+
   steps.forEach((step) => {
     const isActive = step.dataset.step === String(stepNumber);
     step.hidden = !isActive;
@@ -221,8 +225,7 @@ export function buildDonationIntentPayload() {
   const amount = data.get('amount');
   const isSingle = data.get('donation_type') === 'single';
 
-  // Futuro: este payload será enviado ao Supabase e à API de pagamento.
-  // Futuro: dados de cartão serão tokenizados pelo provedor de pagamento. Nunca salvar dados sensíveis no Supabase.
+  // Futuro: enviar para Supabase + gateway de pagamento. Cartão deve ser tokenizado pelo provedor. Nunca salvar dados sensíveis no Supabase.
   // Campos visuais de cartão nunca entram neste payload e não devem ser salvos ou logados.
   return {
     donor_type: donorType,
@@ -246,6 +249,18 @@ export function buildDonationIntentPayload() {
     source: 'apoie_page',
     status: 'pending_payment_setup',
   };
+}
+
+function showDonationThanks() {
+  donationCompleted = true;
+  window.flamedulaDonationCompleted = donationCompleted;
+  document.body.classList.add('apoie-donation-complete');
+  document.body.classList.remove('apoie-step-two');
+  form.hidden = true;
+  thanksScreen.hidden = false;
+  thanksScreen.focus({ preventScroll: true });
+  const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+  thanksScreen.scrollIntoView({ behavior, block: 'start' });
 }
 
 function populateDueDays() {
@@ -310,7 +325,7 @@ function initApoiePage() {
     showStep(2);
   });
 
-  form.querySelector('[data-action="back"]').addEventListener('click', () => {
+  form.querySelector('[data-action="back"]')?.addEventListener('click', () => {
     showStep(1);
   });
 
@@ -319,8 +334,7 @@ function initApoiePage() {
     if (!validateStepTwo()) return;
 
     window.flamedulaDonationIntentPayload = buildDonationIntentPayload();
-    setFeedback('Cadastro de apoio recebido. Em breve, a FlaMedula poderá entrar em contato com as próximas instruções.', 'success');
-    form.classList.add('is-complete');
+    showDonationThanks();
   });
 }
 
