@@ -1962,19 +1962,158 @@ textarea.form-control {
 .testimonial-role { font-size: 0.85rem; color: var(--donor-main); font-weight: 600; margin-top: 4px; }
 
 /* === REDOME DEDICADO === */
-.redome-wave { line-height: 0; background: var(--bg-page); position: relative; margin-top: -1px; margin-bottom: -1px; z-index: 2; }
+.redome-wave {
+    line-height: 0;
+    background:
+        radial-gradient(circle at 20% 40%, rgba(234, 88, 12, 0.16), transparent 30%),
+        var(--bg-page);
+    position: relative;
+    margin-top: -1px;
+    margin-bottom: -1px;
+    z-index: 2;
+}
 .redome-wave svg { display: block; width: 100%; height: clamp(42px, 6vw, 68px); }
 
-.redome-section { padding: 60px 0 80px; background-color: var(--redome-bg); position: relative;}
-.redome-section::before { content:''; position: absolute; inset:0; background-image: radial-gradient(rgba(234, 88, 12, 0.1) 1px, transparent 1px); background-size: 20px 20px; pointer-events: none;}
+.redome-section {
+    padding: 54px 0 72px;
+    background-color: var(--redome-bg);
+    background-image:
+        radial-gradient(circle at 18px 18px, rgba(234, 88, 12, 0.2) 2px, transparent 2px),
+        radial-gradient(circle at 78% 20%, rgba(251, 191, 36, 0.24), transparent 28%),
+        linear-gradient(180deg, #FFF7ED 0%, #FFEDD5 100%);
+    background-size: 36px 36px, auto, auto;
+    position: relative;
+    overflow: hidden;
+}
+.redome-section::before {
+    content:'';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 14% 18%, rgba(234, 88, 12, 0.18), transparent 26%),
+        radial-gradient(circle at 92% 62%, rgba(251, 191, 36, 0.18), transparent 28%);
+    pointer-events: none;
+}
+.redome-section .container {
+    position: relative;
+    z-index: 1;
+}
 
-.redome-box { background: white; border-radius: var(--radius-xl); padding: 48px; box-shadow: 0 10px 40px rgba(234, 88, 12, 0.1); border: 1px solid rgba(234, 88, 12, 0.2); max-width: 800px; margin: 0 auto; text-align: center; position: relative;}
+.redome-box {
+    background: rgba(255,255,255,0.9);
+    border-radius: var(--radius-xl);
+    padding: clamp(28px, 4vw, 46px);
+    box-shadow: 0 18px 54px rgba(154, 52, 18, 0.14);
+    border: 1px solid rgba(234, 88, 12, 0.22);
+    max-width: 860px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.redome-box::before {
+    content: '';
+    position: absolute;
+    inset: 12px;
+    border-radius: calc(var(--radius-xl) - 10px);
+    border: 1px dashed rgba(234, 88, 12, 0.18);
+    pointer-events: none;
+}
+.redome-compact,
+.redome-expanded-inner {
+    position: relative;
+    z-index: 1;
+}
+.redome-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+    padding: 5px 12px;
+    border-radius: var(--radius-full);
+    background: rgba(234, 88, 12, 0.12);
+    color: var(--redome-dark);
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+}
 .redome-logo-top { 
-    height: 80px; /* Aumentado 100% */
-    object-fit: contain; margin: 0 auto 32px; display: block; 
+    height: 76px;
+    object-fit: contain;
+    margin: 0 auto 22px;
+    display: block;
+}
+.redome-logo-expanded {
+    height: 58px;
+    object-fit: contain;
+    margin: 0 auto 20px;
+    display: block;
+}
+.redome-compact .title-md,
+.redome-expanded .title-sm {
+    color: var(--redome-dark);
+}
+.redome-summary {
+    max-width: 640px;
+    margin: 18px auto 26px;
+    color: #7C2D12;
+    font-size: 1.08rem;
+    line-height: 1.58;
+}
+.redome-toggle-btn,
+.redome-actions .btn:first-child {
+    background: var(--redome-main);
+    color: white;
+}
+.redome-expanded {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transform: translateY(-8px);
+    transition: max-height 0.42s ease, opacity 0.28s ease, transform 0.28s ease, margin-top 0.28s ease;
+}
+.redome-expanded[hidden] {
+    display: block;
+}
+.redome-section.is-expanded .redome-expanded {
+    max-height: 760px;
+    opacity: 1;
+    transform: translateY(0);
+    margin-top: 32px;
+}
+.redome-expanded-inner {
+    padding-top: 30px;
+    border-top: 1px solid rgba(234, 88, 12, 0.18);
+}
+.redome-expanded .text-body {
+    max-width: 700px;
+    margin: 18px auto 0;
+    font-size: 1.06rem;
 }
 .redome-checklist { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin: 32px 0; }
 .redome-check-item { display: flex; align-items: center; gap: 8px; background: var(--redome-bg); color: var(--redome-dark); padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 0.9rem;}
+.redome-note {
+    background: rgba(234, 88, 12, 0.1);
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 32px;
+}
+.redome-note p {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--redome-dark);
+}
+.redome-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.redome-actions .btn-outline {
+    border-color: var(--redome-main);
+    color: var(--redome-dark);
+    background: rgba(255,255,255,0.7);
+}
 
 
 /* === FAQ ACCORDION === */
@@ -2066,6 +2205,16 @@ textarea.form-control {
     }
 }
 .cta-buttons { display: flex; gap: 16px; justify-content: center; margin-top: 40px; flex-wrap: wrap;}
+.btn-support-final {
+    background: #FBBF24;
+    color: #7C2D12;
+    border-color: rgba(251, 191, 36, 0.72);
+    box-shadow: 0 18px 42px rgba(251, 191, 36, 0.18);
+}
+.btn-support-final:hover {
+    background: #FDE047;
+    color: #7C2D12;
+}
 
 /* === FOOTER === */
 .footer-section { background-color: var(--bg-dark); color: white; padding: 80px 0 40px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.9rem;}

@@ -14,12 +14,16 @@ import { initHeroCarousel, renderActions, renderAmbassadors, renderTeam, renderT
 import { renderMetrics, setupScrollReveal } from './scripts/counters.js';
 import { initFaq } from './scripts/faq.js';
 import { renderMediaSection } from './scripts/mediaCarousel.js';
+import { initNavbarMenu } from './scripts/navbarMenu.js';
+import { initRedomeSection } from './scripts/redome.js';
 import { initSmoothScroll } from './scripts/smoothScroll.js';
 
 initHubCadastro();
 initFaq();
 initIntroVideo();
 initPreloader();
+initNavbarMenu();
+initRedomeSection();
 initSmoothScroll();
 
 document.addEventListener('DOMContentLoaded', () => {

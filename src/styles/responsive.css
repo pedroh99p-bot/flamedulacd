@@ -6,6 +6,10 @@
 
 @media (prefers-reduced-motion: reduce) {
     .preloader-logo-wrapper { animation: none; filter: drop-shadow(0 0 15px rgba(185,28,28,0.4)); }
+    .nav-menu-toggle span,
+    .redome-expanded {
+        transition: none;
+    }
 }
 
 @media (max-width: 900px) {
@@ -14,6 +18,21 @@
     .nav-actions .btn { padding: 10px 16px; font-size: 0.85rem; }
     .nav-inner { padding: 0 12px; }
     .nav-logo img { height: 50px; }
+    .nav-menu-toggle {
+        width: 42px;
+        height: 42px;
+        border-radius: 13px;
+    }
+    .nav-quick-menu {
+        left: 14px;
+        right: 14px;
+        width: auto;
+        max-height: calc(100dvh - var(--nav-h) - 24px);
+        overflow-y: auto;
+    }
+    .nav-menu-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 768px) {
@@ -352,6 +371,19 @@
     .testimonial-card { flex: 0 0 calc(33.333% - 16px); scroll-snap-align: start; }
 }
 
-@media (max-width: 600px) { .redome-box { padding: 32px 24px; } }
+@media (max-width: 600px) {
+    .redome-section { padding: 42px 0 58px; }
+    .redome-box { padding: 30px 20px; border-radius: var(--radius-lg); }
+    .redome-box::before { inset: 8px; border-radius: var(--radius-md); }
+    .redome-logo-top { height: 62px; margin-bottom: 18px; }
+    .redome-logo-expanded { height: 48px; }
+    .redome-summary { font-size: 0.98rem; margin-bottom: 22px; }
+    .redome-section.is-expanded .redome-expanded { max-height: 920px; margin-top: 24px; }
+    .redome-checklist { gap: 10px; margin: 24px 0; }
+    .redome-check-item { width: 100%; justify-content: center; }
+    .redome-actions .btn { width: 100%; }
+    .cta-buttons { flex-direction: column; align-items: stretch; }
+    .cta-buttons .btn { width: 100%; }
+}
 
 @media (max-width: 900px) { .footer-grid { grid-template-columns: 1fr; gap: 40px;} .footer-bottom { flex-direction: column; gap: 16px; text-align: center;} }

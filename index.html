@@ -77,6 +77,27 @@
             <div class="nav-actions">
                 <a href="#hub-cadastro" class="btn btn-donor" onclick="openPanel('donor')">Doador</a>
                 <a href="#hub-cadastro" class="btn btn-patient" onclick="openPanel('patient')">Paciente</a>
+                <button class="nav-menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="navQuickMenu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            <div class="nav-quick-menu" id="navQuickMenu" hidden>
+                <div class="nav-menu-head">
+                    <strong>Atalhos FlaMedula</strong>
+                    <button class="nav-menu-close" type="button" aria-label="Fechar menu">×</button>
+                </div>
+                <div class="nav-menu-grid">
+                    <a href="#hub-cadastro" data-menu-flow="donor"><span>🩸</span><strong>Quero ser doador</strong><small>Abra o cadastro certo</small></a>
+                    <a href="#hub-cadastro" data-menu-flow="patient"><span>🏥</span><strong>Cadastrar paciente</strong><small>Sinalize um caso</small></a>
+                    <a href="/apoie/"><span>💛</span><strong>Apoio financeiro</strong><small>Mantenha a rede ativa</small></a>
+                    <a href="#acoes"><span>📣</span><strong>Ações FlaMedula</strong><small>Veja mobilizações</small></a>
+                    <a href="#midias"><span>🎥</span><strong>FlaMedula na mídia</strong><small>Assista conteúdos</small></a>
+                    <a href="#educacional"><span>🧬</span><strong>Entender medula</strong><small>Informação sem medo</small></a>
+                    <a href="#atualiza-redome"><span>🟠</span><strong>Atualizar REDOME</strong><small>Lembrete responsável</small></a>
+                    <a href="#faq"><span>❓</span><strong>Dúvidas frequentes</strong><small>Respostas rápidas</small></a>
+                </div>
             </div>
         </div>
     </nav>
@@ -725,26 +746,36 @@
     <section class="redome-section section-blend-top section-blend-bottom" id="atualiza-redome">
         <div class="container reveal-up">
             <div class="redome-box">
-                <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781283383/logo-redome_wmvgt8.png" alt="REDOME" class="redome-logo-top">
-                <h2 class="title-md" style="color: var(--redome-dark);">Já é doador de medula?</h2>
-                <h3 class="title-sm" style="margin-top: 8px;">Atualize seu cadastro no REDOME.</h3>
-                
-                <p class="text-body" style="margin-top: 24px; font-size: 1.1rem;">A compatibilidade pode aparecer anos depois do cadastro. Se seu telefone, e-mail, cidade ou endereço mudou, manter seus dados atualizados ajuda os canais oficiais a encontrarem você.</p>
-                
-                <div class="redome-checklist">
-                    <div class="redome-check-item">✓ Telefone atualizado</div>
-                    <div class="redome-check-item">✓ E-mail atualizado</div>
-                    <div class="redome-check-item">✓ Cidade atual</div>
-                    <div class="redome-check-item">✓ Endereço correto</div>
+                <div class="redome-compact">
+                    <span class="redome-label">REDOME</span>
+                    <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781283383/logo-redome_wmvgt8.png" alt="REDOME" class="redome-logo-top">
+                    <h2 class="title-md">Já é doador de medula?</h2>
+                    <p class="redome-summary">Manter seus dados atualizados ajuda os canais oficiais a encontrarem você se houver uma possível compatibilidade.</p>
+                    <button class="btn btn-glow redome-toggle-btn" type="button" id="redomeToggle" aria-expanded="false" aria-controls="redomeExpanded">Atualize seus dados</button>
                 </div>
 
-                <div style="background: rgba(234, 88, 12, 0.1); padding: 16px; border-radius: 8px; margin-bottom: 32px;">
-                    <p style="font-size: 0.85rem; font-weight: 600; color: var(--redome-dark);">A FlaMedula orienta e lembra. A atualização oficial deve ser feita nos canais do REDOME, hemocentros ou canais oficiais indicados.</p>
-                </div>
+                <div class="redome-expanded" id="redomeExpanded" hidden>
+                    <div class="redome-expanded-inner">
+                        <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781283383/logo-redome_wmvgt8.png" alt="REDOME" class="redome-logo-expanded">
+                        <h3 class="title-sm">Atualize seu cadastro no REDOME</h3>
+                        <p class="text-body">A compatibilidade pode aparecer anos depois do cadastro. Se seu telefone, e-mail, cidade ou endereço mudou, manter seus dados atualizados ajuda os canais oficiais a entrarem em contato.</p>
+                        
+                        <div class="redome-checklist">
+                            <div class="redome-check-item">✓ Telefone atualizado</div>
+                            <div class="redome-check-item">✓ E-mail atualizado</div>
+                            <div class="redome-check-item">✓ Cidade atual</div>
+                            <div class="redome-check-item">✓ Endereço correto</div>
+                        </div>
 
-                <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
-                    <a href="#" class="btn btn-glow" style="background: var(--redome-main); color: white;">Atualizar cadastro no REDOME</a>
-                    <button class="btn btn-outline" style="border-color: var(--redome-main); color: var(--redome-dark);" onclick="document.getElementById('hub-cadastro').scrollIntoView({behavior: 'smooth'})">Ainda não sou cadastrado</button>
+                        <div class="redome-note">
+                            <p>A FlaMedula orienta e lembra. A atualização oficial deve ser feita nos canais do REDOME, hemocentros ou canais oficiais indicados.</p>
+                        </div>
+
+                        <div class="redome-actions">
+                            <a href="#" class="btn btn-glow">Atualizar cadastro no REDOME</a>
+                            <a href="#hub-cadastro" class="btn btn-outline">Ainda não sou cadastrado</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -825,8 +856,9 @@
             <p style="font-size: 1.25rem; opacity: 0.9; max-width: 600px; margin: 0 auto;">Escolha um caminho e ajude a FlaMedula a transformar informação em mobilização responsável. Comece agora.</p>
             
             <div class="cta-buttons">
-                <button class="btn btn-donor btn-glow" onclick="document.getElementById('hub-cadastro').scrollIntoView({behavior: 'smooth'})" style="background: white; color: var(--donor-dark);">Cadastrar doador</button>
+                <button class="btn btn-donor btn-glow" onclick="document.getElementById('hub-cadastro').scrollIntoView({behavior: 'smooth'})" style="background: white; color: var(--donor-dark);">Quero me cadastrar como doador</button>
                 <button class="btn btn-patient btn-glow" onclick="document.getElementById('hub-cadastro').scrollIntoView({behavior: 'smooth'})" style="background: var(--patient-main); color: white;">Cadastrar paciente</button>
+                <a class="btn btn-support-final btn-glow" href="/apoie/">💛 Apoiar financeiramente</a>
             </div>
         </div>
     </section>
