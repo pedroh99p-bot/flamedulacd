@@ -264,7 +264,6 @@ export function buildDonorPayload(form = getFlowForm('donor')) {
     ? 'ja_cadastrado_redome'
     : getCheckedValue(form, 'medula_interest');
 
-  // Futuro: enviar este payload para a tabela donor_leads no Supabase.
   return {
     nome: getFormValue(form, 'nome'),
     telefone: getFormValue(form, 'telefone'),
@@ -284,7 +283,6 @@ export function buildDonorPayload(form = getFlowForm('donor')) {
 }
 
 export function buildPatientPayload(form = getFlowForm('patient')) {
-  // Futuro: enviar este payload para a tabela patient_cases no Supabase.
   return {
     requester_name: getFormValue(form, 'requester_name'),
     requester_phone: getFormValue(form, 'requester_phone'),
