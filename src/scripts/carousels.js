@@ -233,6 +233,7 @@ export function renderAmbassadors() {
   const grid = document.getElementById('ambassadorsGrid');
   if (!grid) return;
 
+  grid.classList.toggle('has-single-item', ambassadors.length === 1);
   grid.innerHTML = ambassadors.map((ambassador) => {
     const avatar = createAvatarMarkup(ambassador, 'ambassador-avatar');
 
