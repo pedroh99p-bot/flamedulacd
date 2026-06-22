@@ -248,6 +248,15 @@ body.apoie-donation-complete .apoie-card > .apoie-progress {
     padding: clamp(22px, 5vw, 42px);
 }
 
+.apoie-honeypot {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
 .apoie-fields[hidden],
 .apoie-step[hidden],
 .apoie-custom-amount[hidden],
@@ -539,39 +548,24 @@ body.apoie-donation-complete .apoie-card > .apoie-progress {
     margin-bottom: 14px;
 }
 
-.apoie-card-visual-fields {
+.apoie-payment-safety-note {
     display: grid;
-    grid-template-columns: 1.5fr 0.65fr;
-    gap: 12px;
-}
-
-.apoie-card-visual-fields label {
-    display: grid;
-    gap: 7px;
-    color: var(--donor-main);
-    font-size: 0.82rem;
-    font-weight: 800;
-}
-
-.apoie-card-visual-fields label:nth-child(3) {
-    grid-column: 1 / -1;
-}
-
-.apoie-card-visual-fields input {
-    width: 100%;
-    min-height: 46px;
-    padding: 12px 14px;
-    border: 1px solid rgba(17, 24, 39, 0.12);
+    gap: 6px;
+    padding: 14px 16px;
+    border: 1px solid rgba(17, 24, 39, 0.1);
     border-radius: 14px;
-    background: #fff;
-    color: var(--text-main);
-    font: inherit;
-    outline: none;
+    background: rgba(255, 255, 255, 0.78);
 }
 
-.apoie-card-visual-fields input:focus {
-    border-color: var(--donor-main);
-    box-shadow: 0 0 0 4px rgba(185, 28, 28, 0.08);
+.apoie-payment-safety-note strong {
+    color: var(--donor-main);
+    font-size: 0.9rem;
+}
+
+.apoie-payment-safety-note span {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    line-height: 1.45;
 }
 
 .apoie-recurring-fields {
@@ -799,8 +793,7 @@ body.apoie-donation-complete .apoie-card > .apoie-progress {
 
     .apoie-fields,
     .apoie-recurring-fields,
-    .apoie-actions,
-    .apoie-card-visual-fields {
+    .apoie-actions {
         grid-template-columns: 1fr;
     }
 

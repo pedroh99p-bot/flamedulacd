@@ -2,6 +2,10 @@ import './styles/variables.css';
 import './styles/base.css';
 import './styles/apoie.css';
 
+import { submitDonationIntent } from './services/intakeApi.js';
+import { setSubmitting as setButtonSubmitting, applyFieldErrors } from './utils/formState.js';
+import { hasMinPhoneDigits, isValidCnpj, isValidCpf, isValidEmail, toIsoDateFromBrazilian } from './utils/formValidation.js';
+
 const form = document.getElementById('apoieForm');
 const feedback = document.getElementById('apoieFeedback');
 const steps = [...document.querySelectorAll('.apoie-step')];
@@ -12,6 +16,7 @@ const paymentPanels = [...document.querySelectorAll('[data-payment-panel]')];
 const preloader = document.getElementById('apoiePreloader');
 const thanksScreen = document.getElementById('apoieThanks');
 let donationCompleted = false;
+let isSubmitting = false;
 
 function activeDonorType() {
   return form.elements.donor_type.value;
@@ -28,6 +33,7 @@ function setFeedback(message, tone = 'error') {
 
 function clearErrors() {
   form.querySelectorAll('.is-invalid').forEach((field) => field.classList.remove('is-invalid'));
+  form.querySelectorAll('[aria-invalid="true"]').forEach((field) => field.removeAttribute('aria-invalid'));
   setFeedback('');
 }
 
@@ -64,14 +70,6 @@ function formatDate(value) {
   return onlyDigits(value).slice(0, 8).replace(/(\d{2})(\d)/, '$1/$2').replace(/(\d{2})(\d)/, '$1/$2');
 }
 
-function formatCardNumber(value) {
-  return onlyDigits(value).slice(0, 19).replace(/(\d{4})(?=\d)/g, '$1 ');
-}
-
-function formatCardExpiry(value) {
-  return onlyDigits(value).slice(0, 4).replace(/(\d{2})(\d)/, '$1/$2');
-}
-
 function showStep(stepNumber) {
   document.body.classList.toggle('apoie-step-two', stepNumber === 2);
 
@@ -96,6 +94,7 @@ function showStep(stepNumber) {
 function markInvalid(element) {
   const target = element.closest('label, fieldset') || element;
   target.classList.add('is-invalid');
+  element.setAttribute?.('aria-invalid', 'true');
 }
 
 function validateRequired(elements, message) {
@@ -140,8 +139,45 @@ function validateStepOne() {
   const fields = [...activeFieldset().querySelectorAll('input[required]')]
     .filter((input) => !input.disabled);
 
-  return validateRequired(fields, 'Preencha os dados obrigatórios do apoiador.')
-    && validateRadio('contact_preference', 'Escolha uma preferência de contato.');
+  if (!validateRequired(fields, 'Preencha os dados obrigatórios do apoiador.')) return false;
+
+  const email = activeFieldset().querySelector('input[name="email"]');
+  if (!isValidEmail(email.value)) {
+    markInvalid(email);
+    setFeedback('Informe um e-mail válido.');
+    email.focus();
+    return false;
+  }
+
+  const phone = activeFieldset().querySelector('input[name="phone"]');
+  if (!hasMinPhoneDigits(phone.value)) {
+    markInvalid(phone);
+    setFeedback('Informe um telefone/WhatsApp válido com DDD.');
+    phone.focus();
+    return false;
+  }
+
+  const donorType = activeDonorType();
+  const documentField = donorType === 'pessoa_juridica' ? form.elements.cnpj : form.elements.cpf;
+  const validDocument = donorType === 'pessoa_juridica'
+    ? isValidCnpj(documentField.value)
+    : isValidCpf(documentField.value);
+  if (!validDocument) {
+    markInvalid(documentField);
+    setFeedback(donorType === 'pessoa_juridica' ? 'Informe um CNPJ válido.' : 'Informe um CPF válido.');
+    documentField.focus();
+    return false;
+  }
+
+  const birthDate = form.elements.birth_date;
+  if (donorType === 'pessoa_fisica' && birthDate.value && !toIsoDateFromBrazilian(birthDate.value)) {
+    markInvalid(birthDate);
+    setFeedback('Informe uma data de nascimento válida.');
+    birthDate.focus();
+    return false;
+  }
+
+  return validateRadio('contact_preference', 'Escolha uma preferência de contato.');
 }
 
 function validateStepTwo() {
@@ -158,11 +194,6 @@ function validateStepTwo() {
     setFeedback('Informe um valor personalizado de pelo menos R$ 10,00.');
     customAmount.focus();
     return false;
-  }
-
-  if (form.querySelector('input[name="payment_method"]:checked')?.value === 'credit_card') {
-    const cardFields = [...form.querySelectorAll('[data-card-visual]')];
-    if (!validateRequired(cardFields, 'Preencha os dados visuais do cartão para continuar.')) return false;
   }
 
   if (!form.elements.privacy_accepted.checked) {
@@ -224,8 +255,11 @@ export function buildDonationIntentPayload() {
   const documentType = donorType === 'pessoa_juridica' ? 'cnpj' : 'cpf';
   const amount = data.get('amount');
   const isSingle = data.get('donation_type') === 'single';
+  const normalizedAmount = amount === 'custom'
+    ? Number(data.get('custom_amount'))
+    : Number(amount);
 
-  // Futuro: enviar para Supabase + gateway de pagamento. Cartão deve ser tokenizado pelo provedor. Nunca salvar dados sensíveis no Supabase.
+  // Futuro: gateway de pagamento real. Cartão deve ser tokenizado pelo provedor. Nunca salvar dados sensíveis no Supabase.
   // Campos visuais de cartão nunca entram neste payload e não devem ser salvos ou logados.
   return {
     donor_type: donorType,
@@ -236,18 +270,18 @@ export function buildDonationIntentPayload() {
     document: data.get(documentType) || '',
     email: data.get('email') || '',
     phone: data.get('phone') || '',
-    birth_date: isCompany ? null : data.get('birth_date') || '',
+    birth_date: isCompany ? null : toIsoDateFromBrazilian(data.get('birth_date')) || null,
     contact_preference: data.get('contact_preference'),
     payment_method: data.get('payment_method'),
     donation_type: data.get('donation_type'),
-    due_day: isSingle ? null : data.get('due_day'),
+    due_day: isSingle ? null : Number(data.get('due_day')),
     recurrence_period: isSingle ? null : data.get('recurrence_period'),
-    amount,
-    custom_amount: amount === 'custom' ? data.get('custom_amount') : null,
+    amount: normalizedAmount,
+    custom_amount: amount === 'custom' ? normalizedAmount : null,
     privacy_accepted: data.get('privacy_accepted') === 'on',
     terms_accepted: data.get('terms_accepted') === 'on',
     source: 'apoie_page',
-    status: 'pending_payment_setup',
+    website: data.get('website') || '',
   };
 }
 
@@ -314,9 +348,6 @@ function initApoiePage() {
     if (name === 'cnpj') event.target.value = formatCnpj(event.target.value);
     if (name === 'phone') event.target.value = formatPhone(event.target.value);
     if (name === 'birth_date') event.target.value = formatDate(event.target.value);
-    if (name === 'card_number_visual') event.target.value = formatCardNumber(event.target.value);
-    if (name === 'card_cvv_visual') event.target.value = onlyDigits(event.target.value).slice(0, 4);
-    if (name === 'card_expiry_visual') event.target.value = formatCardExpiry(event.target.value);
     event.target.closest('.is-invalid')?.classList.remove('is-invalid');
   });
 
@@ -331,10 +362,27 @@ function initApoiePage() {
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
+    if (isSubmitting) return;
     if (!validateStepTwo()) return;
 
-    window.flamedulaDonationIntentPayload = buildDonationIntentPayload();
-    showDonationThanks();
+    const submitButton = form.querySelector('button[type="submit"]');
+    isSubmitting = true;
+    setButtonSubmitting(submitButton, true);
+    setFeedback('');
+
+    submitDonationIntent(buildDonationIntentPayload())
+      .then(() => {
+        showDonationThanks();
+        form.reset();
+      })
+      .catch((error) => {
+        applyFieldErrors(form, error.fieldErrors);
+        setFeedback(error.message || 'Não foi possível enviar agora. Tente novamente.');
+      })
+      .finally(() => {
+        isSubmitting = false;
+        setButtonSubmitting(submitButton, false);
+      });
   });
 }
 

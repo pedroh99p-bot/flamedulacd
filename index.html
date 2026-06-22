@@ -207,6 +207,9 @@
                 </div>
 
                 <form id="form-donor" class="mini-flow-form" data-flow="donor" onsubmit="handleFormSubmit(event, 'donor')" novalidate hidden>
+                    <label class="form-honeypot" aria-hidden="true">Website
+                        <input type="text" name="website" tabindex="-1" autocomplete="off">
+                    </label>
                     <section class="mini-step is-active" data-step="0" data-title="🩸 Você já é doador?" data-label="Doador - etapa 1 de 4">
                         <div class="step-copy">
                             <span class="step-icon">🩸</span>
@@ -320,6 +323,9 @@
                 </form>
 
                 <form id="form-patient" class="mini-flow-form" data-flow="patient" onsubmit="handleFormSubmit(event, 'patient')" novalidate hidden>
+                    <label class="form-honeypot" aria-hidden="true">Website
+                        <input type="text" name="website" tabindex="-1" autocomplete="off">
+                    </label>
                     <section class="mini-step is-active" data-step="0" data-title="🏥 Quem está sinalizando o caso?" data-label="Paciente - etapa 1 de 4">
                         <div class="step-copy">
                             <span class="step-icon">🏥</span>
@@ -450,13 +456,13 @@
 
                 <div class="success-msg" id="success-donor" hidden>
                     <h3 class="title-sm">✅ Cadastro recebido.</h3>
-                    <p class="text-body">A FlaMedula poderá entrar em contato para orientação e mobilizações futuras.</p>
+                    <p class="text-body">Cadastro recebido. A equipe da FlaMedula poderá entrar em contato pelos canais autorizados.</p>
                     <button type="button" class="btn btn-outline" data-action="switch-flow">Voltar para opções</button>
                 </div>
 
                 <div class="success-msg" id="success-patient" hidden>
                     <h3 class="title-sm">✅ Caso recebido.</h3>
-                    <p class="text-body">A equipe poderá analisar as informações e orientar os próximos passos com responsabilidade.</p>
+                    <p class="text-body">Informações recebidas. Nossa equipe fará a triagem inicial e poderá entrar em contato.</p>
                     <button type="button" class="btn btn-outline" data-action="switch-flow">Voltar para opções</button>
                 </div>
             </div>

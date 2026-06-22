@@ -461,6 +461,14 @@
     background: rgba(254, 226, 226, 0.82);
     color: #7F1D1D;
 }
+.form-honeypot {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
 .mini-app-screen {
     flex: 1 1 auto;
     min-height: 0;

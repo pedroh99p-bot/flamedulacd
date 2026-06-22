@@ -61,6 +61,9 @@
             </div>
 
             <form id="apoieForm" class="apoie-form" novalidate>
+                <label class="apoie-honeypot" aria-hidden="true">Website
+                    <input type="text" name="website" tabindex="-1" autocomplete="off">
+                </label>
                 <div class="apoie-feedback" id="apoieFeedback" role="status" aria-live="polite"></div>
 
                 <section class="apoie-step is-active" data-step="1" aria-labelledby="stepOneTitle">
@@ -160,26 +163,16 @@
                         <div class="apoie-payment-panel" data-payment-panel="credit_card" hidden aria-hidden="true">
                             <div class="apoie-card-panel-head">
                                 <div>
-                                    <h3>Dados do cartão</h3>
-                                    <p>Na versão final, os dados do cartão serão tokenizados em ambiente seguro do provedor de pagamento.</p>
+                                    <h3>Cartão de crédito</h3>
+                                    <p>Os dados do cartão não são coletados nesta etapa. A equipe orientará o pagamento em ambiente seguro.</p>
                                 </div>
                                 <div class="apoie-card-flags">
                                     <span>Visa</span><span>Mastercard</span><span>Elo</span><span>Amex</span><span>Hipercard</span>
                                 </div>
                             </div>
-                            <div class="apoie-card-visual-fields">
-                                <label>Número do cartão
-                                    <input type="text" name="card_number_visual" inputmode="numeric" autocomplete="off" data-card-visual>
-                                </label>
-                                <label>CVV
-                                    <input type="text" name="card_cvv_visual" inputmode="numeric" autocomplete="off" data-card-visual>
-                                </label>
-                                <label>Titular do cartão
-                                    <input type="text" name="card_holder_visual" autocomplete="off" data-card-visual>
-                                </label>
-                                <label>Validade
-                                    <input type="text" name="card_expiry_visual" placeholder="MM/AA" inputmode="numeric" autocomplete="off" data-card-visual>
-                                </label>
+                            <div class="apoie-payment-safety-note">
+                                <strong>Sem dados sensíveis no site</strong>
+                                <span>A intenção de apoio registra apenas contato, valor e preferência de pagamento.</span>
                             </div>
                         </div>
                     </fieldset>
@@ -243,7 +236,7 @@
                 <div class="apoie-thanks-card">
                     <span class="apoie-thanks-icon" aria-hidden="true">💛</span>
                     <h2 id="apoieThanksTitle">Obrigado por apoiar a FlaMedula</h2>
-                    <p>Seu cadastro de apoio foi recebido. Em breve, a FlaMedula poderá entrar em contato com as próximas instruções para finalizar sua contribuição com segurança.</p>
+                    <p>Intenção de apoio recebida. Nossa equipe entrará em contato para orientar a contribuição de forma segura.</p>
                     <strong>Sua ajuda fortalece campanhas, comunicação e mobilização por quem precisa.</strong>
                     <div class="apoie-thanks-actions">
                         <a href="/" class="apoie-thanks-primary">Voltar para o site</a>

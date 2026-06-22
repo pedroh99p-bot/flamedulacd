@@ -1,3 +1,7 @@
+import { submitDonorLead, submitPatientCase } from '../services/intakeApi.js';
+import { applyFieldErrors } from '../utils/formState.js';
+import { hasMinPhoneDigits, isValidEmail } from '../utils/formValidation.js';
+
 const FLOW_CONFIG = {
   donor: {
     className: 'flow-donor',
@@ -34,6 +38,7 @@ const FLOW_CONFIG = {
 const state = {
   flow: 'choice',
   step: 0,
+  submitting: false,
 };
 
 function getMiniApp() {
@@ -234,6 +239,22 @@ function validateStep(flow, stepIndex = state.step) {
     return false;
   }
 
+  const phoneFieldName = flow === 'donor' ? 'telefone' : 'requester_phone';
+  if (fields.includes(phoneFieldName) && !hasMinPhoneDigits(getFormValue(form, phoneFieldName))) {
+    setFieldInvalid(step, phoneFieldName, true);
+    setFeedback('Informe um telefone/WhatsApp válido com DDD.');
+    focusFirstField(step, [phoneFieldName]);
+    return false;
+  }
+
+  const donorEmail = getFormValue(form, 'email');
+  if (flow === 'donor' && fields.includes('email') && donorEmail && !isValidEmail(donorEmail)) {
+    setFieldInvalid(step, 'email', true);
+    setFeedback('Informe um e-mail válido.');
+    focusFirstField(step, ['email']);
+    return false;
+  }
+
   return true;
 }
 
@@ -256,9 +277,9 @@ export function buildDonorPayload(form = getFlowForm('donor')) {
     contact_preference: getCheckedValue(form, 'contact_preference'),
     consent_lgpd: getCheckboxValue(form, 'consent_lgpd'),
     consent_updates: getCheckboxValue(form, 'consent_updates'),
-    origem: 'landing',
-    source_section: 'hub_cadastro',
-    status: 'novo',
+    origem: 'pagina_principal',
+    source_section: 'hub_cadastro_doador',
+    website: getFormValue(form, 'website'),
   };
 }
 
@@ -267,6 +288,7 @@ export function buildPatientPayload(form = getFlowForm('patient')) {
   return {
     requester_name: getFormValue(form, 'requester_name'),
     requester_phone: getFormValue(form, 'requester_phone'),
+    requester_email: null,
     relation_to_patient: getFormValue(form, 'relation_to_patient'),
     patient_identifier: getFormValue(form, 'patient_identifier'),
     cidade: getFormValue(form, 'cidade'),
@@ -276,9 +298,9 @@ export function buildPatientPayload(form = getFlowForm('patient')) {
     urgency_level: getCheckedValue(form, 'urgency_level'),
     campaign_context: getFormValue(form, 'campaign_context') || null,
     consent_authorized: getCheckboxValue(form, 'consent_authorized'),
-    origem: 'landing',
-    source_section: 'hub_cadastro',
-    status: 'novo',
+    origem: 'pagina_principal',
+    source_section: 'hub_cadastro_paciente',
+    website: getFormValue(form, 'website'),
   };
 }
 
@@ -392,7 +414,7 @@ function goPrevious() {
 }
 
 function goNext() {
-  if (state.flow === 'choice' || state.flow === 'support') return;
+  if (state.submitting || state.flow === 'choice' || state.flow === 'support') return;
   if (!validateStep(state.flow, state.step)) return;
 
   const steps = getSteps(state.flow);
@@ -416,25 +438,35 @@ function setSubmitting(flow, submitting) {
   button.textContent = submitting ? FLOW_CONFIG[flow].loadingText : FLOW_CONFIG[flow].submitText;
 }
 
-function submitFlow(flow) {
+async function submitFlow(flow) {
   const payload = flow === 'donor'
     ? buildDonorPayload()
     : buildPatientPayload();
 
+  const form = getFlowForm(flow);
+  const success = document.getElementById(FLOW_CONFIG[flow].successId);
+
+  state.submitting = true;
   setSubmitting(flow, true);
+  setFeedback('');
 
-  window.setTimeout(() => {
-    if (import.meta.env?.DEV) {
-      console.info(`[FlaMedula] ${flow}_payload`, payload);
+  try {
+    if (flow === 'donor') {
+      await submitDonorLead(payload);
+    } else {
+      await submitPatientCase(payload);
     }
-
-    const form = getFlowForm(flow);
-    const success = document.getElementById(FLOW_CONFIG[flow].successId);
     setElementHidden(form, true);
     setElementHidden(success, false);
     setFeedback('');
+    form.reset?.();
+  } catch (error) {
+    applyFieldErrors(form, error.fieldErrors);
+    setFeedback(error.message || 'Não foi possível enviar agora. Tente novamente.');
+  } finally {
+    state.submitting = false;
     setSubmitting(flow, false);
-  }, 450);
+  }
 }
 
 export function openPanel(type) {
