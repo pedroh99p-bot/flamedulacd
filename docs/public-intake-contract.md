@@ -8,7 +8,7 @@ Este documento descreve os endpoints publicos usados pelos formularios da landin
 - `SUPABASE_PUBLISHABLE_KEY`: chave publica `sb_publishable_*`
 - `FUNCTIONS_BASE_URL`: `https://dkaajnppslypktcgfeow.supabase.co/functions/v1`
 
-A chave `SUPABASE_SERVICE_ROLE_KEY` fica exclusivamente nas Edge Functions. Ela nao deve ser exposta no frontend, em `.env` publico, no repositorio ou em logs.
+As chaves administrativas ficam exclusivamente no ambiente hospedado das Edge Functions. O helper usa `SUPABASE_SECRET_KEYS.default` e aceita `SUPABASE_SERVICE_ROLE_KEY` apenas como fallback legado. Nenhuma chave segura deve ser exposta no frontend, em `.env` publico, no repositorio ou em logs.
 
 ## Regras comuns
 
