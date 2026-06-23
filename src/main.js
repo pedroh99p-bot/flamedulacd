@@ -10,10 +10,10 @@ import { initPreloader } from './scripts/preloader.js';
 import { initIntroVideo } from './scripts/introVideo.js';
 import { initHubCadastro } from './scripts/hubCadastro.js';
 import { initInfoVideoCtas, setupVideoReelsPlayer } from './scripts/videoPlayer.js';
-import { initHeroCarousel, renderActions, renderAmbassadors, renderTeam, renderTestimonials } from './scripts/carousels.js';
+import { renderAmbassadors, renderTeam, renderTestimonials } from './scripts/carousels.js';
 import { renderMetrics, setupScrollReveal } from './scripts/counters.js';
 import { initFaq } from './scripts/faq.js';
-import { renderMediaSection } from './scripts/mediaCarousel.js';
+import { initLandingPublicContent } from './scripts/publicContent.js';
 import { initNavbarMenu } from './scripts/navbarMenu.js';
 import { initRedomeSection } from './scripts/redome.js';
 import { initSmoothScroll } from './scripts/smoothScroll.js';
@@ -27,12 +27,10 @@ initRedomeSection();
 initSmoothScroll();
 
 document.addEventListener('DOMContentLoaded', () => {
-  initHeroCarousel();
+  initLandingPublicContent();
   renderMetrics();
   renderTeam();
   renderAmbassadors();
-  renderActions();
-  renderMediaSection();
   renderTestimonials();
   setupScrollReveal();
   setupVideoReelsPlayer('vidWrapperInfo', 'infoVideo', null, 'playPauseBtnInfo', 'muteBtnInfo', 'vidProgressContainerInfo', 'vidProgressFilledInfo');

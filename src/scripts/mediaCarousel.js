@@ -13,8 +13,8 @@ function isValidUrl(value) {
   }
 }
 
-function getSortedPublishedItems() {
-  return mediaItems
+function getSortedPublishedItems(items = mediaItems) {
+  return items
     .filter((item) => item.published === true)
     .sort((first, second) => (first.order ?? 0) - (second.order ?? 0));
 }
@@ -46,9 +46,11 @@ function createThumbnail(item, className) {
   if (thumbnailUrl) {
     const image = document.createElement('img');
     image.src = thumbnailUrl;
-    image.alt = `Thumbnail do vídeo ${item.title}`;
+    image.alt = item.image_alt || `Thumbnail do vídeo ${item.title}`;
     image.loading = 'lazy';
     image.decoding = 'async';
+    if (item.image_width) image.width = item.image_width;
+    if (item.image_height) image.height = item.image_height;
     figure.appendChild(image);
   } else {
     const fallback = document.createElement('div');
@@ -77,7 +79,7 @@ function createMediaCard(item, variant = 'compact') {
     element.href = href;
     element.target = '_blank';
     element.rel = 'noopener noreferrer';
-    element.setAttribute('aria-label', `Assistir ${item.title} no YouTube`);
+    element.setAttribute('aria-label', `Assistir ${item.title}`);
   }
 
   const thumbnail = createThumbnail(item, isFeatured ? 'media-featured-thumb' : 'media-card-thumb');
@@ -86,8 +88,8 @@ function createMediaCard(item, variant = 'compact') {
 
   const meta = document.createElement('div');
   meta.className = 'media-meta';
-  meta.appendChild(createBadge(item.category || 'YouTube'));
-  meta.appendChild(createBadge('YouTube', 'media-badge media-badge-soft'));
+  meta.appendChild(createBadge(item.category || 'Mídia'));
+  if (item.type) meta.appendChild(createBadge(item.type, 'media-badge media-badge-soft'));
   if (item.duration) meta.appendChild(createBadge(item.duration, 'media-badge media-badge-duration'));
   if (isFeatured) meta.appendChild(createBadge('Destaque', 'media-badge media-badge-featured'));
 
@@ -99,7 +101,7 @@ function createMediaCard(item, variant = 'compact') {
 
   const cta = document.createElement('span');
   cta.className = isFeatured ? 'media-link-button media-link-button-strong' : 'media-link-button';
-  cta.textContent = isFeatured ? 'Assistir agora' : 'Assistir no YouTube';
+  cta.textContent = href ? (isFeatured ? 'Assistir agora' : 'Abrir conteúdo') : 'Saiba mais';
 
   content.append(meta, title, description, cta);
   element.append(thumbnail, content);
@@ -129,29 +131,42 @@ function setupMediaCarousel() {
     carousel.scrollBy({ left: cardWidth * direction, behavior: 'smooth' });
   };
 
-  prevButton.addEventListener('click', () => scrollByCard(-1));
-  nextButton.addEventListener('click', () => scrollByCard(1));
-  carousel.addEventListener('scroll', () => updateArrowState(carousel, prevButton, nextButton), { passive: true });
-  window.addEventListener('resize', () => updateArrowState(carousel, prevButton, nextButton));
+  prevButton.onclick = () => scrollByCard(-1);
+  nextButton.onclick = () => scrollByCard(1);
+
+  if (carousel._mediaScrollHandler) {
+    carousel.removeEventListener('scroll', carousel._mediaScrollHandler);
+  }
+  carousel._mediaScrollHandler = () => updateArrowState(carousel, prevButton, nextButton);
+  carousel.addEventListener('scroll', carousel._mediaScrollHandler, { passive: true });
+
+  if (window.__flamedulaMediaResizeHandler) {
+    window.removeEventListener('resize', window.__flamedulaMediaResizeHandler);
+  }
+  window.__flamedulaMediaResizeHandler = () => updateArrowState(carousel, prevButton, nextButton);
+  window.addEventListener('resize', window.__flamedulaMediaResizeHandler);
 
   updateArrowState(carousel, prevButton, nextButton);
 }
 
-export function renderMediaSection() {
+export function renderMediaSection(items = mediaItems) {
   const section = document.getElementById('midias');
   const featuredContainer = document.querySelector('.media-featured');
   const carousel = document.querySelector('.media-carousel');
   const carouselWrap = document.querySelector('.media-carousel-wrap');
   if (!section || !featuredContainer || !carousel || !carouselWrap) return;
 
-  const items = getSortedPublishedItems();
-  if (!items.length) {
+  const publishedItems = getSortedPublishedItems(items);
+  if (!publishedItems.length) {
     section.hidden = true;
     return;
   }
 
-  const featuredItem = items.find((item) => item.featured) || items[0];
-  const carouselItems = items.filter((item) => item.id !== featuredItem.id);
+  section.hidden = false;
+  carouselWrap.hidden = false;
+
+  const featuredItem = publishedItems.find((item) => item.featured) || publishedItems[0];
+  const carouselItems = publishedItems.filter((item) => item.id !== featuredItem.id);
 
   featuredContainer.replaceChildren(createMediaCard(featuredItem, 'featured'));
   carousel.replaceChildren(...carouselItems.map((item) => createMediaCard(item)));

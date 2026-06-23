@@ -9,8 +9,9 @@ const slideDuration = 6000;
 let slideInterval;
 let slideResumeTimeout;
 let publishedHeroItems = [];
+let testimonialsInterval;
 
-function isValidImageUrl(value) {
+function isValidUrl(value) {
   if (!value) return false;
 
   try {
@@ -35,7 +36,7 @@ function createAvatarMarkup(person, className) {
   const name = String(person.name ?? '').trim();
   const initial = escapeHtml(name.charAt(0) || '?');
 
-  if (!isValidImageUrl(person.image_url)) {
+  if (!isValidUrl(person.image_url)) {
     return `<div class="${className}">${initial}</div>`;
   }
 
@@ -48,11 +49,11 @@ function createAvatarMarkup(person, className) {
 function createHeroSlide(item, index) {
   const slide = document.createElement('article');
   slide.className = `carousel-slide ${index === 0 ? 'active' : ''}`;
-  slide.dataset.slideId = item.id;
+  slide.dataset.slideId = String(item.id ?? `hero-slide-${index + 1}`);
   slide.setAttribute('aria-hidden', index === 0 ? 'false' : 'true');
   if (item.image_alt) slide.setAttribute('aria-label', item.image_alt);
 
-  if (isValidImageUrl(item.image_url)) {
+  if (isValidUrl(item.image_url)) {
     slide.classList.add('has-image');
     slide.style.setProperty('--hero-image', `url("${item.image_url}")`);
   }
@@ -65,29 +66,33 @@ function createHeroSlide(item, index) {
 
   const category = document.createElement('span');
   category.className = 'slide-tag';
-  category.textContent = item.category;
+  category.textContent = item.category || 'FlaMedula';
 
   const title = document.createElement('h1');
   title.className = 'slide-title';
-  title.textContent = item.title;
+  title.textContent = item.title || 'FlaMedula';
 
   const description = document.createElement('p');
   description.className = 'slide-text';
   description.textContent = item.subtitle || item.description || '';
 
-  const cta = document.createElement('a');
-  cta.className = 'btn slide-btn btn-glow';
-  cta.href = item.cta_url;
-  cta.textContent = item.cta_label;
+  editorialCard.append(category, title, description);
 
-  editorialCard.append(category, title, description, cta);
+  if (item.cta_label && isValidUrl(item.cta_url)) {
+    const cta = document.createElement('a');
+    cta.className = 'btn slide-btn btn-glow';
+    cta.href = item.cta_url;
+    cta.textContent = item.cta_label;
+    editorialCard.appendChild(cta);
+  }
+
   content.appendChild(editorialCard);
   slide.appendChild(content);
 
   return slide;
 }
 
-export function initHeroCarousel() {
+export function initHeroCarousel(items = heroNewsItems) {
   const track = document.getElementById('carouselTrack');
   const dotsContainer = document.getElementById('carouselDots');
   const carousel = document.getElementById('heroCarousel');
@@ -95,9 +100,17 @@ export function initHeroCarousel() {
   const nextButton = carousel?.querySelector('.hero-arrow-next');
   if (!track || !dotsContainer || !carousel) return;
 
-  publishedHeroItems = heroNewsItems
-    .filter((item) => item.published)
-    .sort((first, second) => first.order - second.order);
+  pauseAutoplay();
+  currentSlide = 0;
+  publishedHeroItems = [];
+  carousel.classList.remove('hero-empty', 'single-slide');
+  track.replaceChildren();
+  dotsContainer.replaceChildren();
+  resetProgress();
+
+  publishedHeroItems = items
+    .filter((item) => item?.published)
+    .sort((first, second) => (first.order ?? 0) - (second.order ?? 0));
 
   if (!publishedHeroItems.length) {
     carousel.classList.add('hero-empty');
@@ -119,27 +132,31 @@ export function initHeroCarousel() {
     dotsContainer.appendChild(dot);
   });
 
+  if (!carousel.dataset.heroControlsBound) {
+    prevButton?.addEventListener('click', () => {
+      goToSlide(currentSlide - 1);
+      pauseAutoplayTemporarily();
+    });
+
+    nextButton?.addEventListener('click', () => {
+      goToSlide(currentSlide + 1);
+      pauseAutoplayTemporarily();
+    });
+
+    carousel.addEventListener('pointerenter', pauseAutoplay);
+    carousel.addEventListener('pointerleave', startAutoplay);
+    carousel.addEventListener('focusin', pauseAutoplay);
+    carousel.addEventListener('focusout', (event) => {
+      if (!carousel.contains(event.relatedTarget)) startAutoplay();
+    });
+
+    carousel.dataset.heroControlsBound = 'true';
+  }
+
   if (publishedHeroItems.length === 1) {
     carousel.classList.add('single-slide');
     return;
   }
-
-  prevButton?.addEventListener('click', () => {
-    goToSlide(currentSlide - 1);
-    pauseAutoplayTemporarily();
-  });
-
-  nextButton?.addEventListener('click', () => {
-    goToSlide(currentSlide + 1);
-    pauseAutoplayTemporarily();
-  });
-
-  carousel.addEventListener('pointerenter', pauseAutoplay);
-  carousel.addEventListener('pointerleave', startAutoplay);
-  carousel.addEventListener('focusin', pauseAutoplay);
-  carousel.addEventListener('focusout', (event) => {
-    if (!carousel.contains(event.relatedTarget)) startAutoplay();
-  });
 
   startAutoplay();
 }
@@ -218,6 +235,42 @@ function resetProgress() {
   progressFill.style.width = '0%';
 }
 
+function formatActionDate(value) {
+  if (!value) return '';
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(value)) return value;
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return String(value);
+
+  return new Intl.DateTimeFormat('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(parsed);
+}
+
+function createActionCta(action) {
+  const label = action.cta || action.cta_label || 'Ver ação';
+
+  if (isValidUrl(action.cta_url)) {
+    const link = document.createElement('a');
+    link.className = 'action-cta';
+    link.href = action.cta_url;
+    link.textContent = label;
+    if (/^https?:/i.test(action.cta_url)) {
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+    }
+    return link;
+  }
+
+  const text = document.createElement('span');
+  text.className = 'action-cta';
+  text.textContent = label;
+  return text;
+}
+
 export function renderTeam() {
   const grid = document.getElementById('teamGrid');
   if (!grid) return;
@@ -241,26 +294,28 @@ export function renderAmbassadors() {
   }).join('');
 }
 
-export function renderActions() {
+export function renderActions(items = actionsData) {
   const grid = document.getElementById('actionsCarousel');
   if (!grid) return;
 
   grid.replaceChildren();
 
-  actionsData.forEach((action) => {
+  items.forEach((action) => {
     const card = document.createElement('article');
     card.className = 'action-card';
 
     const figure = document.createElement('figure');
     figure.className = 'action-graphic';
 
-    if (action.image_url) {
+    if (isValidUrl(action.image_url)) {
       const image = document.createElement('img');
       image.className = 'action-image';
       image.src = action.image_url;
-      image.alt = `Registro da ação ${action.title}`;
+      image.alt = action.image_alt || `Registro da ação ${action.title}`;
       image.loading = 'lazy';
       image.decoding = 'async';
+      if (action.image_width) image.width = action.image_width;
+      if (action.image_height) image.height = action.image_height;
       figure.appendChild(image);
     } else {
       const fallback = document.createElement('span');
@@ -269,10 +324,13 @@ export function renderActions() {
       figure.appendChild(fallback);
     }
 
-    const category = document.createElement('span');
-    category.className = 'action-category';
-    category.textContent = action.category;
-    figure.appendChild(category);
+    const badgeText = action.category || action.action_status || '';
+    if (badgeText) {
+      const category = document.createElement('span');
+      category.className = 'action-category';
+      category.textContent = badgeText;
+      figure.appendChild(category);
+    }
 
     const content = document.createElement('div');
     content.className = 'action-content';
@@ -280,30 +338,30 @@ export function renderActions() {
     const meta = document.createElement('div');
     meta.className = 'action-meta';
 
-    const date = document.createElement('span');
-    date.textContent = action.date;
+    const metaParts = [formatActionDate(action.date), action.location].filter(Boolean);
+    metaParts.forEach((part, index) => {
+      const text = document.createElement('span');
+      text.textContent = part;
+      meta.appendChild(text);
 
-    const separator = document.createElement('span');
-    separator.setAttribute('aria-hidden', 'true');
-    separator.textContent = '\u2022';
-
-    const location = document.createElement('span');
-    location.textContent = action.location;
+      if (index < metaParts.length - 1) {
+        const separator = document.createElement('span');
+        separator.setAttribute('aria-hidden', 'true');
+        separator.textContent = '\u2022';
+        meta.appendChild(separator);
+      }
+    });
 
     const title = document.createElement('h3');
     title.className = 'action-title';
-    title.textContent = action.title;
+    title.textContent = action.title || 'Ação FlaMedula';
 
     const summary = document.createElement('p');
     summary.className = 'action-summary';
-    summary.textContent = action.summary;
+    summary.textContent = action.summary || '';
 
-    const cta = document.createElement('span');
-    cta.className = 'action-cta';
-    cta.textContent = action.cta;
-
-    meta.append(date, separator, location);
-    content.append(meta, title, summary, cta);
+    if (meta.childNodes.length) content.appendChild(meta);
+    content.append(title, summary, createActionCta(action));
     card.append(figure, content);
     grid.appendChild(card);
   });
@@ -313,8 +371,7 @@ export function renderTestimonials() {
   const track = document.getElementById('testimonialsTrack');
   if (!track) return;
 
-  testimonialsData.forEach((testimonial) => {
-    track.innerHTML += `
+  track.innerHTML = testimonialsData.map((testimonial) => `
       <div class="testimonial-card">
         <div class="testimonial-header">
           <div class="testimonial-avatar">${testimonial.avatar}</div>
@@ -326,10 +383,10 @@ export function renderTestimonials() {
           <p class="testimonial-role">${testimonial.role} \u2022 ${testimonial.case}</p>
         </div>
       </div>
-    `;
-  });
+    `).join('');
 
-  window.setInterval(() => {
+  window.clearInterval(testimonialsInterval);
+  testimonialsInterval = window.setInterval(() => {
     const card = track.querySelector('.testimonial-card');
     if (!card) return;
 
