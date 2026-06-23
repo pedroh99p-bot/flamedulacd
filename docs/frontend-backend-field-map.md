@@ -38,7 +38,7 @@ Tabela: `patient_cases`
 | --- | --- | --- | --- |
 | Nome do responsavel | `requester_name` | `requester_name` | `requester_name` |
 | Telefone/WhatsApp | `requester_phone` | `requester_phone` | `requester_phone` |
-| E-mail | valor nulo no builder | `requester_email` | `requester_email` |
+| E-mail | `requester_email` | `requester_email` | `requester_email` |
 | Relacao com paciente | `relation_to_patient` | `relation_to_patient` | `relation_to_patient` |
 | Identificacao do paciente | `patient_identifier` | `patient_identifier` | `patient_identifier` |
 | Cidade | `cidade` | `cidade` | `cidade` |

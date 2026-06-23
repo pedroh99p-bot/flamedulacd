@@ -11,7 +11,7 @@ const FLOW_CONFIG = {
     successId: 'success-donor',
     stepFields: [
       ['blood_donor_status'],
-      ['nome', 'telefone', 'cidade', 'estado'],
+      ['nome', 'telefone'],
       ['redome_status'],
       ['contact_preference', 'consent_lgpd'],
     ],
@@ -23,8 +23,8 @@ const FLOW_CONFIG = {
     loadingText: 'Enviando...',
     successId: 'success-patient',
     stepFields: [
-      ['requester_name', 'requester_phone', 'relation_to_patient'],
-      ['patient_identifier', 'cidade', 'estado', 'hospital'],
+      ['requester_name', 'requester_phone'],
+      [],
       ['need_type', 'urgency_level'],
       ['consent_authorized'],
     ],
@@ -255,6 +255,14 @@ function validateStep(flow, stepIndex = state.step) {
     return false;
   }
 
+  const requesterEmail = getFormValue(form, 'requester_email');
+  if (flow === 'patient' && requesterEmail && !isValidEmail(requesterEmail)) {
+    setFieldInvalid(step, 'requester_email', true);
+    setFeedback('Informe um e-mail válido.');
+    focusFirstField(step, ['requester_email']);
+    return false;
+  }
+
   return true;
 }
 
@@ -286,7 +294,7 @@ export function buildPatientPayload(form = getFlowForm('patient')) {
   return {
     requester_name: getFormValue(form, 'requester_name'),
     requester_phone: getFormValue(form, 'requester_phone'),
-    requester_email: null,
+    requester_email: getFormValue(form, 'requester_email') || null,
     relation_to_patient: getFormValue(form, 'relation_to_patient'),
     patient_identifier: getFormValue(form, 'patient_identifier'),
     cidade: getFormValue(form, 'cidade'),
