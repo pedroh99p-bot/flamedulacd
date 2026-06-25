@@ -7,7 +7,6 @@ import { setSubmitting as setButtonSubmitting, applyFieldErrors } from './utils/
 import { hasMinPhoneDigits, onlyDigits } from './utils/formValidation.js';
 
 const PIX_CODE = '00020126360014br.gov.bcb.pix0114530430740001715204000053039865802BR5921ASSOCIACAO FLA MEDULA6014RIO DE JANEIRO622605222RwegBxM8xgNzjcbhgJHeP6304D846';
-const PIX_KEY_RAW = '53043074000171';
 const WHATSAPP_NUMBER = '85999280682';
 const PRE_PIX_STATUS_LABEL = 'Aguardando confirma\u00e7\u00e3o do PIX';
 
@@ -31,7 +30,6 @@ const summaryStatus = document.getElementById('apoieSummaryStatus');
 const whatsappArea = document.getElementById('apoieWhatsappArea');
 const whatsappButton = document.getElementById('apoieWhatsappButton');
 const pixCodeBox = document.getElementById('apoiePixCode');
-const pixKeyRaw = document.getElementById('apoiePixKeyRaw');
 
 const state = {
   isSubmitting: false,
@@ -42,7 +40,6 @@ const state = {
   amount: 0,
   status: 'pending_payment_setup',
   copiedPixCode: false,
-  copiedPixKey: false,
   submissionSnapshot: null,
 };
 
@@ -230,7 +227,7 @@ function buildPrePixPayload() {
 
 function buildWhatsappUrl() {
   const message = `Ol\u00e1! Meu nome \u00e9 ${state.name}. Informei que gostaria de contribuir com ${formatCurrency(state.amount)} para a FlaMedula e realizei o PIX. Gostaria de enviar o comprovante. Cadastro: ${state.submissionId}.`;
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  return `https://api.whatsapp.com/send/?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(message)}&type=phone_number&app_absent=0`;
 }
 
 function setCopiedButtonState(button, copiedLabel) {
@@ -320,7 +317,7 @@ function revealWhatsappArea() {
   });
 }
 
-async function copyValue(value, element, button, successMessage, stateKey, { revealWhatsapp = false } = {}) {
+async function copyValue(value, element, button, successMessage, stateKey, { revealWhatsapp = false, feedbackMessage = successMessage } = {}) {
   let copied = false;
 
   try {
@@ -337,9 +334,9 @@ async function copyValue(value, element, button, successMessage, stateKey, { rev
   }
 
   state[stateKey] = true;
-  setFeedback(successMessage, 'success');
+  setFeedback(feedbackMessage, 'success');
   setCopiedButtonState(button, successMessage);
-  showToast(successMessage, 'success');
+  showToast(feedbackMessage, 'success');
 
   if (revealWhatsapp) {
     revealWhatsappArea();
@@ -350,7 +347,6 @@ async function copyValue(value, element, button, successMessage, stateKey, { rev
 
 function resetCopyState() {
   state.copiedPixCode = false;
-  state.copiedPixKey = false;
   hideWhatsappArea();
 }
 
@@ -412,11 +408,10 @@ function bindCopyButtons() {
       const target = button.dataset.copyTarget;
 
       if (target === 'pix-code') {
-        await copyValue(PIX_CODE, pixCodeBox, button, 'C\u00f3digo PIX copiado', 'copiedPixCode', { revealWhatsapp: true });
-      }
-
-      if (target === 'pix-key') {
-        await copyValue(PIX_KEY_RAW, pixKeyRaw, button, 'Chave PIX copiada', 'copiedPixKey', { revealWhatsapp: true });
+        await copyValue(PIX_CODE, pixCodeBox, button, 'C\u00f3digo PIX copiado', 'copiedPixCode', {
+          revealWhatsapp: true,
+          feedbackMessage: 'C\u00f3digo PIX copiado. Envie o comprovante pelo WhatsApp para confirmar o apoio.',
+        });
       }
     });
   });

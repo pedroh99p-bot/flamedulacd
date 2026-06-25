@@ -529,8 +529,7 @@ body.apoie-page {
     background: white;
 }
 
-.apoie-code-box,
-.apoie-key-box {
+.apoie-code-box {
     padding: 16px;
     border-radius: 16px;
     background: #fff8f5;
@@ -544,22 +543,6 @@ body.apoie-page {
     color: #4a1214;
     overflow-wrap: anywhere;
     word-break: break-word;
-}
-
-.apoie-key-box {
-    display: grid;
-    gap: 8px;
-}
-
-.apoie-key-box strong {
-    font-size: 1.2rem;
-    color: var(--donor-dark);
-}
-
-.apoie-key-box span {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    font-size: 0.92rem;
-    color: var(--text-muted);
 }
 
 .apoie-association-data {
