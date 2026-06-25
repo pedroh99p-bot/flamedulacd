@@ -4,59 +4,39 @@ import './styles/apoie.css';
 
 import { submitDonationIntent } from './services/intakeApi.js';
 import { setSubmitting as setButtonSubmitting, applyFieldErrors } from './utils/formState.js';
-import { hasMinPhoneDigits, isValidCnpj, isValidCpf, isValidEmail, toIsoDateFromBrazilian } from './utils/formValidation.js';
+import { hasMinPhoneDigits, onlyDigits } from './utils/formValidation.js';
+
+const PIX_CODE = '00020126360014br.gov.bcb.pix0114530430740001715204000053039865802BR5921ASSOCIACAO FLA MEDULA6014RIO DE JANEIRO622605222RwegBxM8xgNzjcbhgJHeP6304D846';
+const PIX_KEY_RAW = '53043074000171';
+const WHATSAPP_NUMBER = '85999280682';
+const SUCCESS_MESSAGE = 'Cadastro recebido. Agora voc\u00ea pode realizar sua contribui\u00e7\u00e3o via PIX.';
 
 const form = document.getElementById('apoieForm');
 const feedback = document.getElementById('apoieFeedback');
+const toast = document.getElementById('apoieToast');
 const steps = [...document.querySelectorAll('.apoie-step')];
 const progressSteps = [...document.querySelectorAll('[data-progress-step]')];
 const progressLine = document.querySelector('.apoie-progress-line span');
-const dueDaySelect = document.querySelector('[data-due-day]');
-const paymentPanels = [...document.querySelectorAll('[data-payment-panel]')];
-const preloader = document.getElementById('apoiePreloader');
-const thanksScreen = document.getElementById('apoieThanks');
-let donationCompleted = false;
-let isSubmitting = false;
+const stepOneSubmitButton = document.querySelector('[data-step-one-submit]');
+const stepTwoTitle = document.getElementById('apoieStepTwoTitle');
+const submissionIdOutput = document.getElementById('apoieSubmissionId');
+const whatsappGate = document.getElementById('apoieWhatsappGate');
+const whatsappButton = document.getElementById('apoieWhatsappButton');
+const pixCodeBox = document.getElementById('apoiePixCode');
+const pixKeyRaw = document.getElementById('apoiePixKeyRaw');
 
-function activeDonorType() {
-  return form.elements.donor_type.value;
-}
+const state = {
+  isSubmitting: false,
+  currentStep: 1,
+  submissionId: '',
+  name: '',
+  phone: '',
+  copiedPixCode: false,
+  copiedPixKey: false,
+  submissionSnapshot: null,
+};
 
-function activeFieldset() {
-  return document.querySelector(`[data-donor-fields="${activeDonorType()}"]`);
-}
-
-function setFeedback(message, tone = 'error') {
-  feedback.textContent = message;
-  feedback.dataset.tone = tone;
-}
-
-function clearErrors() {
-  form.querySelectorAll('.is-invalid').forEach((field) => field.classList.remove('is-invalid'));
-  form.querySelectorAll('[aria-invalid="true"]').forEach((field) => field.removeAttribute('aria-invalid'));
-  setFeedback('');
-}
-
-function onlyDigits(value) {
-  return String(value || '').replace(/\D/g, '');
-}
-
-function formatCpf(value) {
-  const digits = onlyDigits(value).slice(0, 11);
-  return digits
-    .replace(/(\d{3})(\d)/, '$1.$2')
-    .replace(/(\d{3})(\d)/, '$1.$2')
-    .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-}
-
-function formatCnpj(value) {
-  const digits = onlyDigits(value).slice(0, 14);
-  return digits
-    .replace(/^(\d{2})(\d)/, '$1.$2')
-    .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
-    .replace(/\.(\d{3})(\d)/, '.$1/$2')
-    .replace(/(\d{4})(\d{1,2})$/, '$1-$2');
-}
+let toastTimeoutId = null;
 
 function formatPhone(value) {
   const digits = onlyDigits(value).slice(0, 11);
@@ -66,325 +46,345 @@ function formatPhone(value) {
   return digits.replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d{1,4})$/, '$1-$2');
 }
 
-function formatDate(value) {
-  return onlyDigits(value).slice(0, 8).replace(/(\d{2})(\d)/, '$1/$2').replace(/(\d{2})(\d)/, '$1/$2');
+function normalizeName(value) {
+  return String(value || '').trim().replace(/\s+/g, ' ');
 }
 
-function showStep(stepNumber) {
-  document.body.classList.toggle('apoie-step-two', stepNumber === 2);
+function getSnapshot() {
+  return {
+    name: normalizeName(form.elements.name.value),
+    phone: onlyDigits(form.elements.phone.value),
+  };
+}
+
+function sameSnapshot(first, second) {
+  return Boolean(
+    first
+    && second
+    && first.name === second.name
+    && first.phone === second.phone,
+  );
+}
+
+function setFeedback(message, tone = 'neutral') {
+  feedback.textContent = message || '';
+  feedback.dataset.tone = tone;
+  feedback.hidden = !message;
+}
+
+function clearErrors() {
+  form.querySelectorAll('.is-invalid').forEach((element) => element.classList.remove('is-invalid'));
+  form.querySelectorAll('[aria-invalid="true"]').forEach((element) => element.removeAttribute('aria-invalid'));
+}
+
+function markInvalid(field) {
+  const target = field.closest('label, .apoie-check') || field;
+  target.classList.add('is-invalid');
+  field.setAttribute('aria-invalid', 'true');
+}
+
+function focusField(field) {
+  if (!field) return;
+  field.focus({ preventScroll: false });
+}
+
+function showStep(stepNumber, { focusTitle = false } = {}) {
+  state.currentStep = stepNumber;
+  document.body.classList.toggle('apoie-step-two-active', stepNumber === 2);
 
   steps.forEach((step) => {
-    const isActive = step.dataset.step === String(stepNumber);
+    const isActive = Number(step.dataset.step) === stepNumber;
     step.hidden = !isActive;
     step.classList.toggle('is-active', isActive);
   });
 
   progressSteps.forEach((step) => {
-    const isActive = Number(step.dataset.progressStep) <= stepNumber;
-    step.classList.toggle('is-active', isActive);
+    step.classList.toggle('is-active', Number(step.dataset.progressStep) <= stepNumber);
   });
 
   if (progressLine) {
     progressLine.style.width = stepNumber === 2 ? '100%' : '0%';
   }
 
-  clearErrors();
-}
-
-function markInvalid(element) {
-  const target = element.closest('label, fieldset') || element;
-  target.classList.add('is-invalid');
-  element.setAttribute?.('aria-invalid', 'true');
-}
-
-function validateRequired(elements, message) {
-  const invalid = elements.filter((element) => !element.value?.trim());
-  invalid.forEach(markInvalid);
-  if (invalid.length) {
-    setFeedback(message);
-    invalid[0].focus?.();
-    return false;
+  if (focusTitle) {
+    const target = stepNumber === 2 ? stepTwoTitle : document.getElementById('apoieStepOneTitle');
+    window.requestAnimationFrame(() => target?.focus({ preventScroll: false }));
   }
-  return true;
-}
-
-function validateRadio(name, message) {
-  if (form.querySelector(`input[name="${name}"]:checked`)) return true;
-
-  const group = form.querySelector(`input[name="${name}"]`)?.closest('fieldset');
-  if (group) group.classList.add('is-invalid');
-  setFeedback(message);
-  return false;
-}
-
-function syncDonorFields() {
-  const type = activeDonorType();
-
-  document.querySelectorAll('[data-donor-fields]').forEach((fieldset) => {
-    const isActive = fieldset.dataset.donorFields === type;
-    fieldset.hidden = !isActive;
-    fieldset.classList.remove('is-invalid');
-    fieldset.querySelectorAll('input').forEach((input) => {
-      input.disabled = !isActive;
-      input.closest('.is-invalid')?.classList.remove('is-invalid');
-    });
-  });
-
-  clearErrors();
 }
 
 function validateStepOne() {
   clearErrors();
+  setFeedback('Validando seus dados...', 'info');
 
-  const fields = [...activeFieldset().querySelectorAll('input[required]')]
-    .filter((input) => !input.disabled);
+  const nameField = form.elements.name;
+  const phoneField = form.elements.phone;
+  const privacyField = form.elements.privacy_accepted;
+  const termsField = form.elements.terms_accepted;
 
-  if (!validateRequired(fields, 'Preencha os dados obrigatórios do apoiador.')) return false;
-
-  const email = activeFieldset().querySelector('input[name="email"]');
-  if (!isValidEmail(email.value)) {
-    markInvalid(email);
-    setFeedback('Informe um e-mail válido.');
-    email.focus();
+  if (!normalizeName(nameField.value)) {
+    markInvalid(nameField);
+    setFeedback('Informe seu nome completo.', 'error');
+    focusField(nameField);
     return false;
   }
 
-  const phone = activeFieldset().querySelector('input[name="phone"]');
-  if (!hasMinPhoneDigits(phone.value)) {
-    markInvalid(phone);
-    setFeedback('Informe um telefone/WhatsApp válido com DDD.');
-    phone.focus();
+  if (!hasMinPhoneDigits(phoneField.value)) {
+    markInvalid(phoneField);
+    setFeedback('Informe um telefone/WhatsApp v\u00e1lido com DDD.', 'error');
+    focusField(phoneField);
     return false;
   }
 
-  const donorType = activeDonorType();
-  const documentField = donorType === 'pessoa_juridica' ? form.elements.cnpj : form.elements.cpf;
-  const validDocument = donorType === 'pessoa_juridica'
-    ? isValidCnpj(documentField.value)
-    : isValidCpf(documentField.value);
-  if (!validDocument) {
-    markInvalid(documentField);
-    setFeedback(donorType === 'pessoa_juridica' ? 'Informe um CNPJ válido.' : 'Informe um CPF válido.');
-    documentField.focus();
+  if (!privacyField.checked) {
+    markInvalid(privacyField);
+    setFeedback('Aceite a Pol\u00edtica de Privacidade para continuar.', 'error');
+    focusField(privacyField);
     return false;
   }
 
-  const birthDate = form.elements.birth_date;
-  if (donorType === 'pessoa_fisica' && birthDate.value && !toIsoDateFromBrazilian(birthDate.value)) {
-    markInvalid(birthDate);
-    setFeedback('Informe uma data de nascimento válida.');
-    birthDate.focus();
-    return false;
-  }
-
-  return validateRadio('contact_preference', 'Escolha uma preferência de contato.');
-}
-
-function validateStepTwo() {
-  clearErrors();
-
-  if (!validateRadio('payment_method', 'Escolha uma forma de pagamento.')) return false;
-  if (!validateRadio('donation_type', 'Escolha o tipo de doação.')) return false;
-  if (!validateRadio('amount', 'Escolha um valor para doar.')) return false;
-
-  const amount = form.querySelector('input[name="amount"]:checked')?.value;
-  const customAmount = form.elements.custom_amount;
-  if (amount === 'custom' && (!customAmount.value || Number(customAmount.value) < 10)) {
-    markInvalid(customAmount);
-    setFeedback('Informe um valor personalizado de pelo menos R$ 10,00.');
-    customAmount.focus();
-    return false;
-  }
-
-  if (!form.elements.privacy_accepted.checked) {
-    markInvalid(form.elements.privacy_accepted);
-    setFeedback('Aceite a Política de Privacidade para continuar.');
-    return false;
-  }
-
-  if (!form.elements.terms_accepted.checked) {
-    markInvalid(form.elements.terms_accepted);
-    setFeedback('Aceite os Termos do Doador para continuar.');
+  if (!termsField.checked) {
+    markInvalid(termsField);
+    setFeedback('Aceite os Termos do Doador para continuar.', 'error');
+    focusField(termsField);
     return false;
   }
 
   return true;
 }
 
-function syncPaymentPanels() {
-  const method = form.querySelector('input[name="payment_method"]:checked')?.value;
+function buildPrePixPayload() {
+  const snapshot = getSnapshot();
 
-  paymentPanels.forEach((panel) => {
-    const isActive = panel.dataset.paymentPanel === method;
-    panel.hidden = false;
-    panel.classList.toggle('is-open', isActive);
-    panel.setAttribute('aria-hidden', String(!isActive));
-    panel.querySelectorAll('input').forEach((input) => {
-      input.disabled = !isActive;
-      if (!isActive) input.value = '';
+  return {
+    submission_mode: 'pre_pix',
+    name: snapshot.name,
+    phone: snapshot.phone,
+    privacy_accepted: form.elements.privacy_accepted.checked,
+    terms_accepted: form.elements.terms_accepted.checked,
+    source: 'apoie_page',
+    source_section: 'support_page',
+    website: form.elements.website.value || '',
+  };
+}
+
+function updateSubmissionMeta() {
+  submissionIdOutput.textContent = state.submissionId || '--';
+}
+
+function buildWhatsappUrl() {
+  const message = `Ol\u00e1! Meu nome \u00e9 ${state.name}. Realizei uma contribui\u00e7\u00e3o via PIX para a FlaMedula e gostaria de enviar o comprovante. Cadastro: ${state.submissionId}.`;
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+}
+
+function unlockWhatsapp() {
+  if (!whatsappGate || (!state.copiedPixCode && !state.copiedPixKey) || !state.submissionId) return;
+
+  whatsappButton.href = buildWhatsappUrl();
+  if (!whatsappGate.hidden) return;
+
+  whatsappGate.hidden = false;
+  window.requestAnimationFrame(() => {
+    whatsappGate.classList.add('is-visible');
+  });
+}
+
+function setCopiedButtonState(button, copiedLabel) {
+  const defaultLabel = button.dataset.defaultLabel || button.textContent;
+  button.dataset.defaultLabel = defaultLabel;
+  button.textContent = copiedLabel;
+  button.dataset.copied = 'true';
+
+  window.setTimeout(() => {
+    button.textContent = defaultLabel;
+    delete button.dataset.copied;
+  }, 2400);
+}
+
+function showToast(message, tone = 'success') {
+  if (!toast) return;
+
+  if (toastTimeoutId) {
+    window.clearTimeout(toastTimeoutId);
+  }
+
+  toast.textContent = message;
+  toast.dataset.tone = tone;
+  toast.hidden = false;
+  toast.classList.add('is-visible');
+
+  toastTimeoutId = window.setTimeout(() => {
+    toast.classList.remove('is-visible');
+    window.setTimeout(() => {
+      toast.hidden = true;
+    }, 180);
+  }, 2600);
+}
+
+function selectElementText(element) {
+  if (!element) return;
+  const selection = window.getSelection();
+  const range = document.createRange();
+  range.selectNodeContents(element);
+  selection?.removeAllRanges();
+  selection?.addRange(range);
+}
+
+function fallbackCopy(text, element) {
+  const helper = document.createElement('textarea');
+  helper.value = text;
+  helper.setAttribute('readonly', 'readonly');
+  helper.style.position = 'fixed';
+  helper.style.opacity = '0';
+  helper.style.pointerEvents = 'none';
+  document.body.appendChild(helper);
+  helper.select();
+
+  let copied = false;
+  try {
+    copied = document.execCommand('copy');
+  } catch {
+    copied = false;
+  }
+
+  document.body.removeChild(helper);
+
+  if (!copied) {
+    selectElementText(element);
+  }
+
+  return copied;
+}
+
+async function copyValue(value, element, button, successMessage, stateKey) {
+  let copied = false;
+
+  try {
+    await navigator.clipboard.writeText(value);
+    copied = true;
+  } catch {
+    copied = fallbackCopy(value, element);
+  }
+
+  if (!copied) {
+    setFeedback('N\u00e3o foi poss\u00edvel copiar. Selecione manualmente.', 'warning');
+    showToast('N\u00e3o foi poss\u00edvel copiar. Selecione manualmente.', 'warning');
+    return;
+  }
+
+  state[stateKey] = true;
+  unlockWhatsapp();
+  setFeedback('Depois do PIX, envie o comprovante pelo WhatsApp.', 'success');
+  setCopiedButtonState(button, successMessage);
+  showToast(successMessage, 'success');
+}
+
+function resetPixUnlock() {
+  state.copiedPixCode = false;
+  state.copiedPixKey = false;
+  if (whatsappGate) {
+    whatsappGate.hidden = true;
+    whatsappGate.classList.remove('is-visible');
+  }
+  if (whatsappButton) {
+    whatsappButton.href = '#';
+  }
+}
+
+async function handleStepOneSubmit() {
+  if (state.isSubmitting) return;
+
+  const snapshot = getSnapshot();
+  if (state.submissionId && sameSnapshot(snapshot, state.submissionSnapshot)) {
+    updateSubmissionMeta();
+    setFeedback(SUCCESS_MESSAGE, 'success');
+    unlockWhatsapp();
+    showStep(2, { focusTitle: true });
+    return;
+  }
+
+  if (!validateStepOne()) return;
+
+  state.isSubmitting = true;
+  clearErrors();
+  resetPixUnlock();
+  setFeedback('Enviando seu cadastro...', 'info');
+  setButtonSubmitting(stepOneSubmitButton, true, 'Enviando cadastro...');
+
+  try {
+    const response = await submitDonationIntent(buildPrePixPayload());
+    const result = response?.data ?? response;
+
+    if (!result?.submissionId || result?.nextStep !== 'pix' || result?.status !== 'pending_payment_setup') {
+      throw new Error('N\u00e3o foi poss\u00edvel confirmar a libera\u00e7\u00e3o do PIX agora.');
+    }
+
+    state.name = snapshot.name;
+    state.phone = snapshot.phone;
+    state.submissionId = result.submissionId;
+    state.submissionSnapshot = snapshot;
+    updateSubmissionMeta();
+    setFeedback(SUCCESS_MESSAGE, 'success');
+    showStep(2, { focusTitle: true });
+  } catch (error) {
+    applyFieldErrors(form, error.fieldErrors);
+    setFeedback(error.message || 'N\u00e3o foi poss\u00edvel enviar. Seus dados continuam preenchidos.', 'error');
+  } finally {
+    state.isSubmitting = false;
+    setButtonSubmitting(stepOneSubmitButton, false);
+  }
+}
+
+function bindCopyButtons() {
+  form.querySelectorAll('[data-copy-target]').forEach((button) => {
+    button.addEventListener('click', async () => {
+      if (button.dataset.copyTarget === 'pix-code') {
+        await copyValue(PIX_CODE, pixCodeBox, button, 'C\u00f3digo PIX copiado', 'copiedPixCode');
+      }
+
+      if (button.dataset.copyTarget === 'pix-key') {
+        await copyValue(PIX_KEY_RAW, pixKeyRaw, button, 'Chave PIX copiada', 'copiedPixKey');
+      }
     });
   });
 }
 
-function syncDonationType() {
-  const isSingle = form.querySelector('input[name="donation_type"]:checked')?.value === 'single';
-  const recurring = document.querySelector('.apoie-recurring-fields');
-
-  recurring.hidden = isSingle;
-  recurring.classList.toggle('is-disabled', isSingle);
-  recurring.querySelectorAll('input, select').forEach((field) => {
-    field.disabled = isSingle;
+function bindBackButton() {
+  const backButton = form.querySelector('[data-action="back"]');
+  backButton?.addEventListener('click', () => {
+    setFeedback(SUCCESS_MESSAGE, 'success');
+    showStep(1, { focusTitle: true });
   });
-}
-
-function syncCustomAmount() {
-  const amount = form.querySelector('input[name="amount"]:checked')?.value;
-  const custom = document.querySelector('.apoie-custom-amount');
-  const input = custom.querySelector('input');
-  const isCustom = amount === 'custom';
-
-  custom.hidden = !isCustom;
-  input.disabled = !isCustom;
-  if (!isCustom) input.value = '';
-}
-
-export function buildDonationIntentPayload() {
-  const data = new FormData(form);
-  const donorType = data.get('donor_type');
-  const isCompany = donorType === 'pessoa_juridica';
-  const documentType = donorType === 'pessoa_juridica' ? 'cnpj' : 'cpf';
-  const amount = data.get('amount');
-  const isSingle = data.get('donation_type') === 'single';
-  const normalizedAmount = amount === 'custom'
-    ? Number(data.get('custom_amount'))
-    : Number(amount);
-
-  // Futuro: gateway de pagamento real. Cartão deve ser tokenizado pelo provedor. Nunca salvar dados sensíveis no Supabase.
-  // Campos visuais de cartão nunca entram neste payload e não devem ser salvos ou logados.
-  return {
-    donor_type: donorType,
-    name: isCompany ? null : data.get('name') || '',
-    company_name: isCompany ? data.get('company_name') || '' : null,
-    responsible_name: isCompany ? data.get('responsible_name') || '' : null,
-    document_type: documentType,
-    document: data.get(documentType) || '',
-    email: data.get('email') || '',
-    phone: data.get('phone') || '',
-    birth_date: isCompany ? null : toIsoDateFromBrazilian(data.get('birth_date')) || null,
-    contact_preference: data.get('contact_preference'),
-    payment_method: data.get('payment_method'),
-    donation_type: data.get('donation_type'),
-    due_day: isSingle ? null : Number(data.get('due_day')),
-    recurrence_period: isSingle ? null : data.get('recurrence_period'),
-    amount: normalizedAmount,
-    custom_amount: amount === 'custom' ? normalizedAmount : null,
-    privacy_accepted: data.get('privacy_accepted') === 'on',
-    terms_accepted: data.get('terms_accepted') === 'on',
-    source: 'apoie_page',
-    website: data.get('website') || '',
-  };
-}
-
-function showDonationThanks() {
-  donationCompleted = true;
-  window.flamedulaDonationCompleted = donationCompleted;
-  document.body.classList.add('apoie-donation-complete');
-  document.body.classList.remove('apoie-step-two');
-  form.hidden = true;
-  thanksScreen.hidden = false;
-  thanksScreen.focus({ preventScroll: true });
-  const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
-  thanksScreen.scrollIntoView({ behavior, block: 'start' });
-}
-
-function populateDueDays() {
-  dueDaySelect.innerHTML = Array.from({ length: 28 }, (_, index) => {
-    const day = index + 1;
-    return `<option value="${day}">${day}</option>`;
-  }).join('');
-}
-
-function initMiniPreloader() {
-  if (!preloader) return;
-
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const duration = reduceMotion ? 250 : 900;
-  const fadeDuration = reduceMotion ? 0 : 260;
-
-  preloader.hidden = false;
-  document.body.classList.add('apoie-preloading');
-
-  window.setTimeout(() => {
-    preloader.classList.add('is-hidden');
-    document.body.classList.remove('apoie-preloading');
-
-    window.setTimeout(() => {
-      preloader.hidden = true;
-    }, fadeDuration);
-  }, duration);
 }
 
 function initApoiePage() {
   if (!form) return;
 
-  initMiniPreloader();
-  populateDueDays();
-  syncDonorFields();
-  syncPaymentPanels();
-  syncDonationType();
-  syncCustomAmount();
-
-  form.addEventListener('change', (event) => {
-    if (event.target.name === 'donor_type') syncDonorFields();
-    if (event.target.name === 'payment_method') syncPaymentPanels();
-    if (event.target.name === 'donation_type') syncDonationType();
-    if (event.target.name === 'amount') syncCustomAmount();
-    event.target.closest('.is-invalid')?.classList.remove('is-invalid');
-  });
+  setFeedback('', 'neutral');
+  updateSubmissionMeta();
+  showStep(1);
+  bindCopyButtons();
+  bindBackButton();
 
   form.addEventListener('input', (event) => {
-    const { name } = event.target;
-    if (name === 'cpf') event.target.value = formatCpf(event.target.value);
-    if (name === 'cnpj') event.target.value = formatCnpj(event.target.value);
-    if (name === 'phone') event.target.value = formatPhone(event.target.value);
-    if (name === 'birth_date') event.target.value = formatDate(event.target.value);
+    const field = event.target;
+    field.closest('.is-invalid')?.classList.remove('is-invalid');
+    field.removeAttribute?.('aria-invalid');
+
+    if (field.name === 'phone') {
+      field.value = formatPhone(field.value);
+    }
+  });
+
+  form.addEventListener('change', (event) => {
     event.target.closest('.is-invalid')?.classList.remove('is-invalid');
+    event.target.removeAttribute?.('aria-invalid');
   });
 
-  form.querySelector('[data-action="next"]').addEventListener('click', () => {
-    if (!validateStepOne()) return;
-    showStep(2);
-  });
-
-  form.querySelector('[data-action="back"]')?.addEventListener('click', () => {
-    showStep(1);
-  });
-
-  form.addEventListener('submit', (event) => {
+  form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    if (isSubmitting) return;
-    if (!validateStepTwo()) return;
-
-    const submitButton = form.querySelector('button[type="submit"]');
-    isSubmitting = true;
-    setButtonSubmitting(submitButton, true);
-    setFeedback('');
-
-    submitDonationIntent(buildDonationIntentPayload())
-      .then(() => {
-        showDonationThanks();
-        form.reset();
-      })
-      .catch((error) => {
-        applyFieldErrors(form, error.fieldErrors);
-        setFeedback(error.message || 'Não foi possível enviar agora. Tente novamente.');
-      })
-      .finally(() => {
-        isSubmitting = false;
-        setButtonSubmitting(submitButton, false);
-      });
+    await handleStepOneSubmit();
   });
 }
 
-window.buildDonationIntentPayload = buildDonationIntentPayload;
+window.buildDonationIntentPayload = buildPrePixPayload;
 initApoiePage();

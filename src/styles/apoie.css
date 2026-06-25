@@ -1,187 +1,174 @@
 body.apoie-page {
     min-height: 100vh;
     background:
-        radial-gradient(circle at 18% 12%, rgba(185, 28, 28, 0.1), transparent 30%),
-        radial-gradient(circle at 82% 20%, rgba(251, 191, 36, 0.18), transparent 28%),
-        var(--bg-page);
+        radial-gradient(circle at top left, rgba(185, 28, 28, 0.12), transparent 28%),
+        radial-gradient(circle at top right, rgba(251, 191, 36, 0.18), transparent 24%),
+        linear-gradient(180deg, #fff5f3 0%, #fffdfa 22%, #fafaf7 100%);
     color: var(--text-main);
     overflow-x: hidden;
 }
 
-body.apoie-preloading .apoie-topbar,
-body.apoie-preloading .apoie-shell {
-    opacity: 0;
-    transform: translateY(8px);
-    pointer-events: none;
+.apoie-header {
+    padding: 20px 16px 10px;
 }
 
-.apoie-preloader {
-    position: fixed;
-    inset: 0;
-    z-index: 2000;
-    display: grid;
-    place-items: center;
-    align-content: center;
-    gap: 18px;
-    padding: 24px;
-    background:
-        radial-gradient(circle at 50% 42%, rgba(185, 28, 28, 0.24), transparent 34%),
-        linear-gradient(135deg, #110606 0%, #2B0708 55%, #090909 100%);
-    color: white;
-    transition: opacity 0.26s ease, visibility 0.26s ease;
-}
-
-.apoie-preloader[hidden] {
-    display: none !important;
-}
-
-.apoie-preloader.is-hidden {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-}
-
-.apoie-preloader-glow {
-    position: absolute;
-    width: min(320px, 72vw);
-    height: min(320px, 72vw);
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(220, 38, 38, 0.28), transparent 68%);
-    filter: blur(8px);
-}
-
-.apoie-preloader-logo {
-    position: relative;
-    width: 112px;
-    height: 92px;
-    object-fit: contain;
-    animation: apoiePulse 1.15s ease-in-out infinite;
-}
-
-.apoie-preloader p {
-    position: relative;
-    color: rgba(255,255,255,0.88);
-    font-weight: 800;
-    text-align: center;
-}
-
-.apoie-preloader-bar {
-    position: relative;
-    width: 190px;
-    height: 4px;
-    border-radius: 999px;
-    overflow: hidden;
-    background: rgba(255,255,255,0.14);
-}
-
-.apoie-preloader-bar span {
-    display: block;
-    width: 100%;
-    height: 100%;
-    border-radius: inherit;
-    background: linear-gradient(90deg, var(--donor-main), #FBBF24);
-    transform-origin: left;
-    animation: apoiePreloaderBar 0.9s ease forwards;
-}
-
-@keyframes apoiePulse {
-    0%, 100% { transform: scale(1); filter: drop-shadow(0 8px 22px rgba(185, 28, 28, 0.22)); }
-    50% { transform: scale(1.045); filter: drop-shadow(0 12px 30px rgba(220, 38, 38, 0.34)); }
-}
-
-@keyframes apoiePreloaderBar {
-    from { transform: scaleX(0); }
-    to { transform: scaleX(1); }
-}
-
-.apoie-topbar {
-    width: min(1120px, calc(100% - 32px));
+.apoie-header-inner,
+.apoie-main,
+.apoie-footer-inner {
+    width: min(1120px, 100%);
     margin: 0 auto;
-    padding: 18px 0 10px;
+}
+
+.apoie-header-inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    transition: opacity 0.26s ease, transform 0.26s ease;
+}
+
+.apoie-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
 }
 
 .apoie-brand img {
-    width: 92px;
-    height: 72px;
+    width: 96px;
+    height: 74px;
     object-fit: contain;
     display: block;
+    flex: 0 0 auto;
+}
+
+.apoie-brand-copy {
+    display: grid;
+    gap: 4px;
+}
+
+.apoie-brand-copy strong {
+    font-family: var(--font-premium);
+    font-size: 1rem;
+    color: var(--donor-dark);
+}
+
+.apoie-brand-kicker,
+.apoie-kicker {
+    display: inline-flex;
+    align-items: center;
+    min-height: 26px;
+    padding: 0 10px;
+    border-radius: var(--radius-full);
+    background: rgba(185, 28, 28, 0.08);
+    color: var(--donor-main);
+    font-size: 0.76rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
 }
 
 .apoie-back {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 42px;
-    padding: 10px 16px;
+    min-height: 44px;
+    padding: 0 16px;
     border: 1px solid rgba(127, 29, 29, 0.14);
     border-radius: var(--radius-full);
-    background: rgba(255,255,255,0.86);
+    background: rgba(255, 255, 255, 0.92);
     color: var(--donor-dark);
-    font-size: 0.9rem;
+    font-size: 0.92rem;
     font-weight: 700;
     box-shadow: 0 10px 24px rgba(17, 24, 39, 0.06);
 }
 
-.apoie-shell {
-    width: min(760px, calc(100% - 28px));
-    margin: 0 auto;
-    padding: 12px 0 52px;
-    transition: opacity 0.26s ease, transform 0.26s ease;
+.apoie-main {
+    padding: 14px 16px 48px;
 }
 
-.apoie-card {
-    background: rgba(255,255,255,0.96);
+.apoie-intro {
+    display: grid;
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.apoie-intro-copy h1 {
+    margin: 12px 0;
+    font-family: var(--font-premium);
+    font-size: clamp(2rem, 6vw, 3.4rem);
+    line-height: 1.04;
+    color: #27090a;
+}
+
+.apoie-intro-copy p,
+.apoie-intro-note p,
+.apoie-panel-head h2,
+.apoie-card-headline p,
+.apoie-step-head p,
+.apoie-step-two-banner p,
+.apoie-feedback,
+.apoie-association-data dd,
+.apoie-institutional-figure figcaption,
+.apoie-footer p {
+    line-height: 1.6;
+}
+
+.apoie-intro-copy p,
+.apoie-intro-note p,
+.apoie-panel-head h2,
+.apoie-step-head p,
+.apoie-card-headline p,
+.apoie-step-two-banner p,
+.apoie-institutional-figure figcaption,
+.apoie-footer p {
+    color: var(--text-muted);
+}
+
+.apoie-intro-note {
+    padding: 18px 20px;
+    border: 1px solid rgba(185, 28, 28, 0.12);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.86);
+    box-shadow: 0 10px 30px rgba(127, 29, 29, 0.06);
+}
+
+.apoie-intro-note strong {
+    display: inline-flex;
+    margin-bottom: 8px;
+    color: var(--donor-dark);
+    font-size: 0.95rem;
+}
+
+.apoie-panel {
     border: 1px solid rgba(185, 28, 28, 0.1);
-    border-radius: 26px;
-    box-shadow: 0 28px 90px rgba(127, 29, 29, 0.14);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 28px 70px rgba(127, 29, 29, 0.12);
     overflow: hidden;
 }
 
-.apoie-card-head {
-    padding: clamp(26px, 5vw, 44px);
+.apoie-panel-head {
+    display: grid;
+    gap: 24px;
+    padding: 24px 20px 18px;
+    border-bottom: 1px solid rgba(185, 28, 28, 0.1);
     background:
         linear-gradient(135deg, rgba(127, 29, 29, 0.96), rgba(185, 28, 28, 0.92)),
-        radial-gradient(circle at 80% 20%, rgba(251, 191, 36, 0.26), transparent 30%);
-    color: #fff;
-    text-align: center;
+        radial-gradient(circle at top right, rgba(251, 191, 36, 0.28), transparent 36%);
+    color: white;
 }
 
-.apoie-kicker {
-    display: inline-flex;
-    margin-bottom: 12px;
-    padding: 6px 12px;
-    border-radius: var(--radius-full);
-    background: rgba(251, 191, 36, 0.16);
-    color: #FDE68A;
-    font-size: 0.78rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.09em;
+.apoie-kicker-panel {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fde68a;
 }
 
-.apoie-card-head h1 {
+.apoie-panel-head h2 {
+    margin-top: 12px;
+    color: rgba(255, 255, 255, 0.94);
     font-family: var(--font-premium);
-    font-size: clamp(2rem, 8vw, 3.4rem);
-    line-height: 1;
-    margin-bottom: 16px;
-}
-
-.apoie-card-head p {
-    max-width: 620px;
-    margin: 0 auto 14px;
-    color: rgba(255,255,255,0.86);
-    line-height: 1.55;
-}
-
-.apoie-card-head strong {
-    display: block;
-    color: #FDE68A;
-    font-size: 0.98rem;
+    font-size: clamp(1.45rem, 4vw, 2.15rem);
+    line-height: 1.18;
 }
 
 .apoie-progress {
@@ -189,45 +176,41 @@ body.apoie-preloading .apoie-shell {
     grid-template-columns: auto 1fr auto;
     align-items: center;
     gap: 12px;
-    padding: 22px clamp(22px, 5vw, 42px);
-    background: #FFF8F5;
-    border-bottom: 1px solid rgba(185, 28, 28, 0.08);
 }
 
 .apoie-progress-step {
     display: grid;
     justify-items: center;
-    gap: 7px;
-    color: var(--text-muted);
-    font-size: 0.78rem;
+    gap: 6px;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.8rem;
     font-weight: 700;
 }
 
 .apoie-progress-step span {
     width: 34px;
     height: 34px;
-    border-radius: 50%;
     display: grid;
     place-items: center;
-    background: #E5E7EB;
-    color: #6B7280;
-    font-weight: 900;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.24);
 }
 
 .apoie-progress-step.is-active {
-    color: var(--donor-dark);
+    color: white;
 }
 
 .apoie-progress-step.is-active span {
-    background: var(--donor-main);
-    color: white;
-    box-shadow: 0 0 0 6px rgba(185, 28, 28, 0.1);
+    background: #fde68a;
+    color: #431407;
+    border-color: transparent;
 }
 
 .apoie-progress-line {
-    height: 4px;
+    height: 2px;
     border-radius: var(--radius-full);
-    background: #E5E7EB;
+    background: rgba(255, 255, 255, 0.16);
     overflow: hidden;
 }
 
@@ -235,600 +218,541 @@ body.apoie-preloading .apoie-shell {
     display: block;
     width: 0%;
     height: 100%;
-    background: var(--donor-main);
-    transition: width 0.25s ease;
-}
-
-body.apoie-step-two .apoie-card > .apoie-progress,
-body.apoie-donation-complete .apoie-card > .apoie-progress {
-    display: none;
+    border-radius: inherit;
+    background: #fde68a;
+    transition: width 0.24s ease;
 }
 
 .apoie-form {
-    padding: clamp(22px, 5vw, 42px);
+    padding: 20px;
 }
 
 .apoie-honeypot {
     position: absolute;
-    left: -10000px;
-    top: auto;
+    left: -9999px;
     width: 1px;
     height: 1px;
     overflow: hidden;
 }
 
-.apoie-fields[hidden],
-.apoie-step[hidden],
-.apoie-custom-amount[hidden],
-.apoie-payment-panel[hidden],
-.apoie-recurring-fields[hidden],
-.apoie-thanks[hidden] {
-    display: none !important;
-}
-
-.apoie-step h2 {
-    font-family: var(--font-premium);
-    font-size: 1.45rem;
-    margin-bottom: 20px;
-}
-
-.apoie-step-progress {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 22px;
-    padding: 14px;
-    border-radius: 16px;
-    background: #FFF8F5;
-    border: 1px solid rgba(185, 28, 28, 0.08);
-}
-
-.apoie-step-progress .apoie-progress-line span {
-    width: 100%;
-}
-
 .apoie-feedback {
-    display: none;
+    min-height: 24px;
     margin-bottom: 18px;
-    padding: 12px 14px;
-    border-radius: 12px;
-    font-size: 0.9rem;
-    font-weight: 700;
+    font-size: 0.95rem;
+    font-weight: 600;
 }
 
-.apoie-feedback:not(:empty) {
-    display: block;
+.apoie-feedback[hidden] {
+    display: none;
 }
 
 .apoie-feedback[data-tone="error"] {
-    background: rgba(185, 28, 28, 0.08);
-    color: var(--donor-dark);
-    border: 1px solid rgba(185, 28, 28, 0.14);
+    color: #b91c1c;
 }
 
 .apoie-feedback[data-tone="success"] {
-    background: rgba(22, 163, 74, 0.1);
     color: #166534;
-    border: 1px solid rgba(22, 163, 74, 0.18);
 }
 
-.apoie-segment,
-.apoie-pill-row,
-.apoie-amount-grid {
+.apoie-feedback[data-tone="info"] {
+    color: #1d4ed8;
+}
+
+.apoie-feedback[data-tone="warning"] {
+    color: #92400e;
+}
+
+.apoie-step {
     display: grid;
-    gap: 10px;
+    gap: 18px;
 }
 
-.apoie-segment {
-    grid-template-columns: 1fr 1fr;
-    margin-bottom: 22px;
-    padding: 6px;
-    border-radius: 18px;
-    background: #F3F4F6;
+.apoie-step-head {
+    display: grid;
+    gap: 8px;
 }
 
-.apoie-segment label,
-.apoie-pill-row label,
-.apoie-amount-grid label {
-    cursor: pointer;
+.apoie-step-head h3,
+.apoie-step-two-banner h3 {
+    font-family: var(--font-premium);
+    font-size: clamp(1.4rem, 3vw, 1.85rem);
+    line-height: 1.18;
+    color: #220809;
 }
 
-.apoie-segment input,
-.apoie-pill-row input,
-.apoie-amount-grid input {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-}
-
-.apoie-segment span,
-.apoie-pill-row span,
-.apoie-amount-grid span {
-    display: flex;
-    min-height: 46px;
-    align-items: center;
-    justify-content: center;
-    padding: 10px 14px;
-    border-radius: 14px;
-    background: white;
-    border: 1px solid rgba(17, 24, 39, 0.08);
-    color: var(--text-main);
-    font-weight: 800;
-    text-align: center;
-}
-
-.apoie-segment input:checked + span,
-.apoie-pill-row input:checked + span,
-.apoie-amount-grid input:checked + span {
-    background: var(--donor-main);
-    border-color: var(--donor-main);
-    color: white;
-    box-shadow: 0 10px 22px rgba(185, 28, 28, 0.18);
+#apoieStepTwoTitle:focus,
+#apoieStepOneTitle:focus {
+    outline: 3px solid rgba(59, 130, 246, 0.35);
+    outline-offset: 6px;
+    border-radius: 8px;
 }
 
 .apoie-fields {
     display: grid;
-    grid-template-columns: 1fr 1fr;
     gap: 14px;
 }
 
-.apoie-fields label,
-.apoie-custom-amount,
-.apoie-recurring-fields > label {
+.apoie-field {
     display: grid;
-    gap: 7px;
-    color: var(--donor-main);
-    font-size: 0.82rem;
-    font-weight: 800;
+    gap: 8px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--donor-dark);
 }
 
-.apoie-fields label:first-child,
-.apoie-fields label:nth-child(3),
-.apoie-option-group,
-.apoie-custom-amount,
-.apoie-check,
-.apoie-captcha {
-    grid-column: 1 / -1;
-}
-
-.apoie-fields input,
-.apoie-custom-amount input,
-.apoie-recurring-fields select {
+.apoie-field input {
     width: 100%;
-    min-height: 48px;
-    padding: 12px 14px;
-    border: 1px solid rgba(17, 24, 39, 0.12);
+    min-height: 54px;
+    padding: 0 16px;
+    border: 1px solid rgba(127, 29, 29, 0.14);
     border-radius: 14px;
     background: #fff;
     color: var(--text-main);
     font: inherit;
+    font-weight: 500;
+    box-shadow: inset 0 1px 2px rgba(17, 24, 39, 0.04);
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.apoie-field input:focus,
+.apoie-check input:focus {
     outline: none;
 }
 
-.apoie-fields input:focus,
-.apoie-custom-amount input:focus,
-.apoie-recurring-fields select:focus {
-    border-color: var(--donor-main);
-    box-shadow: 0 0 0 4px rgba(185, 28, 28, 0.08);
+.apoie-field input:focus-visible {
+    border-color: rgba(185, 28, 28, 0.48);
+    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.12);
 }
 
-.apoie-option-group {
-    margin: 22px 0 0;
-    padding: 0;
-    border: 0;
-}
-
-.apoie-option-group legend {
-    margin-bottom: 10px;
-    color: var(--donor-main);
-    font-size: 0.84rem;
-    font-weight: 900;
-}
-
-.apoie-pill-row {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.apoie-pill-row.compact {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.apoie-primary,
-.apoie-secondary {
-    border: 0;
-    border-radius: var(--radius-full);
-    min-height: 54px;
-    padding: 14px 22px;
-    font: inherit;
-    font-weight: 900;
-    cursor: pointer;
-}
-
-.apoie-primary {
-    width: 100%;
-    margin-top: 28px;
-    background: linear-gradient(135deg, var(--donor-main), var(--donor-dark));
-    color: white;
-    box-shadow: 0 16px 36px rgba(185, 28, 28, 0.22);
-}
-
-.apoie-secondary {
-    background: #F3F4F6;
-    color: var(--text-main);
-}
-
-.apoie-destination-image {
-    display: block;
-    width: 100%;
-    height: auto;
-    margin: 0 0 20px;
-    border-radius: 12px;
-    object-fit: contain;
-    animation: apoieFadeUp 0.35s ease both;
-}
-
-.apoie-card-flags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 12px;
-}
-
-.apoie-card-flags span {
-    padding: 6px 10px;
-    border-radius: 10px;
-    background: #111827;
-    color: white;
-    font-size: 0.76rem;
-    font-weight: 800;
-}
-
-.apoie-payment-panel {
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    transform: translateY(-6px);
-    margin-top: 0;
-    padding: 0 16px;
-    border: 0 solid transparent;
-    border-radius: 16px;
-    background: #FFF8F5;
-    transition: max-height 0.32s ease, opacity 0.24s ease, transform 0.24s ease, margin-top 0.24s ease, padding 0.24s ease, border-color 0.24s ease;
-}
-
-.apoie-payment-panel.is-open {
-    max-height: 620px;
-    opacity: 1;
-    transform: translateY(0);
-    margin-top: 14px;
-    padding: 16px;
-    border-width: 1px;
-    border-color: rgba(185, 28, 28, 0.12);
-}
-
-.apoie-payment-panel h3 {
-    margin-bottom: 6px;
-    color: var(--donor-dark);
-    font-size: 1rem;
-}
-
-.apoie-payment-panel p {
-    color: var(--text-muted);
-    font-size: 0.86rem;
-    line-height: 1.5;
-}
-
-.apoie-pix-placeholder {
-    float: left;
-    width: 76px;
-    height: 76px;
-    margin: 0 14px 6px 0;
-    border-radius: 14px;
-    background:
-        linear-gradient(90deg, rgba(17,24,39,0.12) 2px, transparent 2px),
-        linear-gradient(rgba(17,24,39,0.12) 2px, transparent 2px),
-        white;
-    background-size: 14px 14px;
-    border: 1px solid rgba(17, 24, 39, 0.12);
-    display: grid;
-    place-items: center;
-}
-
-.apoie-pix-placeholder span {
-    width: 32px;
-    height: 32px;
-    border-radius: 9px;
-    background: var(--donor-main);
-}
-
-.apoie-card-panel-head {
+.apoie-checklist {
     display: grid;
     gap: 12px;
-    margin-bottom: 14px;
-}
-
-.apoie-payment-safety-note {
-    display: grid;
-    gap: 6px;
-    padding: 14px 16px;
-    border: 1px solid rgba(17, 24, 39, 0.1);
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.78);
-}
-
-.apoie-payment-safety-note strong {
-    color: var(--donor-main);
-    font-size: 0.9rem;
-}
-
-.apoie-payment-safety-note span {
-    color: var(--text-muted);
-    font-size: 0.88rem;
-    line-height: 1.45;
-}
-
-.apoie-recurring-fields {
-    display: grid;
-    grid-template-columns: minmax(130px, 0.55fr) 1fr;
-    gap: 16px;
-    align-items: end;
-    margin-top: 18px;
-    animation: apoieSlideDown 0.24s ease both;
-}
-
-.apoie-recurring-fields.is-disabled {
-    opacity: 0.42;
-}
-
-.apoie-amount-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.apoie-custom-amount {
-    margin-top: 12px;
-    animation: apoieSlideDown 0.22s ease both;
 }
 
 .apoie-check {
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-    margin-top: 16px;
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    line-height: 1.45;
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    align-items: start;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1px solid rgba(127, 29, 29, 0.12);
+    border-radius: 16px;
+    background: #fffaf8;
+    font-size: 0.95rem;
+    color: var(--text-main);
 }
 
 .apoie-check input {
     margin-top: 2px;
-    width: 18px;
-    height: 18px;
     accent-color: var(--donor-main);
 }
 
-.apoie-captcha {
+.apoie-step-actions {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 18px;
-    padding: 14px;
-    border: 1px dashed rgba(17, 24, 39, 0.18);
-    border-radius: 14px;
-    background: #FAFAFA;
-    color: var(--text-muted);
-    font-weight: 700;
+    flex-wrap: wrap;
+    gap: 12px;
 }
 
-.apoie-captcha span {
-    width: 22px;
-    height: 22px;
-    border: 2px solid var(--border-light);
-    border-radius: 6px;
-    background: white;
-}
-
-.apoie-actions {
-    display: grid;
-    grid-template-columns: 1fr;
-    margin-top: 22px;
-}
-
-.apoie-actions .apoie-primary {
-    margin-top: 0;
-}
-
-.is-invalid input,
-.is-invalid select,
-.is-invalid span {
-    border-color: var(--donor-main) !important;
-    box-shadow: 0 0 0 4px rgba(185, 28, 28, 0.08);
-}
-
-.apoie-thanks {
-    padding: clamp(24px, 5vw, 44px);
-    animation: apoieThanksIn 0.32s ease both;
-}
-
-.apoie-thanks-card {
-    max-width: 620px;
-    margin: 0 auto;
-    padding: clamp(24px, 5vw, 42px);
-    border-radius: 22px;
-    background:
-        radial-gradient(circle at 88% 10%, rgba(251, 191, 36, 0.22), transparent 34%),
-        linear-gradient(135deg, #FFFFFF, #FFF8F5);
-    border: 1px solid rgba(185, 28, 28, 0.12);
-    text-align: center;
-    box-shadow: 0 18px 54px rgba(127, 29, 29, 0.12);
-}
-
-.apoie-thanks-icon {
-    display: grid;
-    place-items: center;
-    width: 62px;
-    height: 62px;
-    margin: 0 auto 18px;
-    border-radius: 50%;
-    background: #FBBF24;
-    color: #78350F;
-    font-size: 1.9rem;
-    box-shadow: 0 14px 30px rgba(251, 191, 36, 0.28);
-}
-
-.apoie-thanks h2 {
-    margin-bottom: 14px;
-    color: var(--donor-dark);
-    font-family: var(--font-premium);
-    font-size: clamp(1.7rem, 5vw, 2.45rem);
-    line-height: 1.1;
-}
-
-.apoie-thanks p {
-    color: var(--text-muted);
-    line-height: 1.62;
-}
-
-.apoie-thanks strong {
-    display: block;
-    margin-top: 16px;
-    color: var(--donor-main);
-    line-height: 1.45;
-}
-
-.apoie-thanks-actions {
-    display: grid;
-    gap: 10px;
-    margin-top: 26px;
-}
-
-.apoie-thanks-actions a {
+.apoie-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 50px;
-    padding: 13px 18px;
-    border-radius: var(--radius-full);
-    font-weight: 900;
+    width: 100%;
+    min-height: 52px;
+    padding: 0 18px;
+    border: 1px solid transparent;
+    border-radius: 14px;
+    font-size: 0.98rem;
+    font-weight: 800;
     text-align: center;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
 }
 
-.apoie-thanks-primary {
-    background: linear-gradient(135deg, var(--donor-main), var(--donor-dark));
+.apoie-button:focus-visible {
+    outline: 3px solid rgba(59, 130, 246, 0.28);
+    outline-offset: 3px;
+}
+
+.apoie-button:disabled {
+    cursor: wait;
+    opacity: 0.8;
+}
+
+.apoie-button-primary {
+    background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
     color: white;
-    box-shadow: 0 14px 30px rgba(185, 28, 28, 0.2);
+    box-shadow: 0 18px 30px rgba(185, 28, 28, 0.18);
 }
 
-.apoie-thanks-whatsapp {
-    border: 1px solid rgba(22, 163, 74, 0.32);
-    background: rgba(22, 163, 74, 0.1);
+.apoie-button-secondary {
+    background: #fff;
+    border-color: rgba(127, 29, 29, 0.14);
+    color: var(--donor-dark);
+}
+
+.apoie-button-secondary[data-copied="true"] {
+    border-color: rgba(22, 101, 52, 0.18);
+    background: #f0fdf4;
     color: #166534;
 }
 
-.apoie-thanks-secondary {
-    background: #F3F4F6;
-    color: var(--text-main);
+.apoie-button-tertiary {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(127, 29, 29, 0.12);
+    color: var(--donor-dark);
 }
 
-@keyframes apoieFadeUp {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.apoie-button-whatsapp {
+    background: #16a34a;
+    color: white;
+    box-shadow: 0 18px 30px rgba(22, 163, 74, 0.18);
 }
 
-@keyframes apoieSlideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-6px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.apoie-button:not(:disabled):hover {
+    transform: translateY(-1px);
 }
 
-@keyframes apoieThanksIn {
-    from {
-        opacity: 0;
-        transform: scale(0.98) translateY(8px);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
+.apoie-step-two-banner,
+.apoie-pix-card,
+.apoie-whatsapp-gate {
+    border: 1px solid rgba(127, 29, 29, 0.1);
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0 12px 26px rgba(127, 29, 29, 0.06);
 }
 
-@media (max-width: 720px) {
-    .apoie-topbar {
-        width: min(100% - 22px, 760px);
+.apoie-step-two-banner {
+    display: grid;
+    gap: 14px;
+    padding: 18px;
+    background: linear-gradient(180deg, #fff7ed 0%, #fff 100%);
+}
+
+.apoie-success-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    min-height: 30px;
+    padding: 0 12px;
+    border-radius: var(--radius-full);
+    background: rgba(22, 163, 74, 0.1);
+    color: #166534;
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.apoie-submission-meta {
+    margin: 0;
+}
+
+.apoie-submission-meta div {
+    display: grid;
+    gap: 4px;
+}
+
+.apoie-submission-meta dt {
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+}
+
+.apoie-submission-meta dd {
+    margin: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.94rem;
+    color: var(--donor-dark);
+    word-break: break-word;
+}
+
+.apoie-step-two-layout {
+    display: grid;
+    gap: 18px;
+}
+
+.apoie-step-two-primary,
+.apoie-step-two-aside {
+    display: grid;
+    gap: 18px;
+}
+
+.apoie-pix-card,
+.apoie-whatsapp-gate {
+    padding: 18px;
+}
+
+.apoie-card-headline {
+    display: grid;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.apoie-card-headline h4 {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #210809;
+}
+
+.apoie-qr-card {
+    display: grid;
+    gap: 18px;
+}
+
+.apoie-qr-frame {
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    border: 2px solid rgba(185, 28, 28, 0.18);
+    border-radius: 18px;
+    background: white;
+    box-shadow: 0 10px 22px rgba(17, 24, 39, 0.05);
+}
+
+.apoie-qr-image {
+    display: block;
+    width: min(100%, 320px);
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    background: white;
+}
+
+.apoie-code-box,
+.apoie-key-box {
+    padding: 16px;
+    border-radius: 16px;
+    background: #fff8f5;
+    border: 1px solid rgba(127, 29, 29, 0.1);
+}
+
+.apoie-code-box {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.92rem;
+    line-height: 1.65;
+    color: #4a1214;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.apoie-key-box {
+    display: grid;
+    gap: 8px;
+}
+
+.apoie-key-box strong {
+    font-size: 1.2rem;
+    color: var(--donor-dark);
+}
+
+.apoie-key-box span {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.92rem;
+    color: var(--text-muted);
+}
+
+.apoie-association-data {
+    display: grid;
+    gap: 12px;
+}
+
+.apoie-association-data div {
+    display: grid;
+    gap: 4px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(127, 29, 29, 0.08);
+}
+
+.apoie-association-data div:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+.apoie-association-data dt {
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+}
+
+.apoie-association-data dd {
+    margin: 0;
+    font-size: 1rem;
+    color: #2d0e10;
+}
+
+.apoie-whatsapp-gate {
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.apoie-whatsapp-gate[hidden] {
+    display: none !important;
+}
+
+.apoie-whatsapp-gate.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.apoie-step-actions-bottom {
+    padding-top: 2px;
+}
+
+.apoie-institutional-figure {
+    display: grid;
+    gap: 10px;
+}
+
+.apoie-institutional-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1166 / 1654;
+    object-fit: cover;
+    border-radius: 20px;
+    box-shadow: 0 18px 42px rgba(17, 24, 39, 0.12);
+}
+
+.apoie-footer {
+    padding: 0 16px 24px;
+}
+
+.apoie-footer-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 10px;
+    font-size: 0.92rem;
+}
+
+.apoie-footer a {
+    color: var(--donor-dark);
+    font-weight: 700;
+}
+
+.apoie-toast {
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    z-index: 40;
+    display: grid;
+    place-items: center;
+    min-height: 52px;
+    padding: 12px 16px;
+    border-radius: 16px;
+    background: rgba(17, 24, 39, 0.94);
+    color: white;
+    font-size: 0.92rem;
+    font-weight: 700;
+    box-shadow: 0 18px 44px rgba(17, 24, 39, 0.24);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.apoie-toast[hidden] {
+    display: none !important;
+}
+
+.apoie-toast.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.apoie-toast[data-tone="success"] {
+    background: rgba(22, 101, 52, 0.96);
+}
+
+.apoie-toast[data-tone="warning"] {
+    background: rgba(146, 64, 14, 0.96);
+}
+
+.is-invalid input,
+.is-invalid {
+    border-color: rgba(185, 28, 28, 0.44) !important;
+    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
+}
+
+@media (min-width: 640px) {
+    .apoie-header {
+        padding-top: 24px;
     }
 
-    .apoie-brand img {
-        width: 76px;
-        height: 60px;
+    .apoie-main {
+        padding-top: 18px;
     }
 
-    .apoie-shell {
-        width: min(100% - 22px, 760px);
-        padding-bottom: 32px;
+    .apoie-intro {
+        grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.9fr);
+        align-items: end;
     }
 
-    .apoie-card {
-        border-radius: 20px;
-    }
-
-    .apoie-progress {
-        gap: 8px;
-        padding-inline: 18px;
-    }
-
-    .apoie-progress-step small {
-        font-size: 0.72rem;
-    }
-
-    .apoie-fields,
-    .apoie-recurring-fields,
-    .apoie-actions {
-        grid-template-columns: 1fr;
-    }
-
-    .apoie-segment,
-    .apoie-pill-row,
-    .apoie-pill-row.compact,
-    .apoie-amount-grid {
-        grid-template-columns: 1fr;
-    }
-
+    .apoie-panel-head,
     .apoie-form {
-        padding: 22px 18px 26px;
+        padding-left: 28px;
+        padding-right: 28px;
     }
 
-    .apoie-step-progress {
-        gap: 8px;
-        padding: 12px;
+    .apoie-fields {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .apoie-button {
+        width: auto;
+        min-width: 220px;
+    }
+
+    .apoie-step-two-banner {
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: start;
+    }
+
+    .apoie-submission-meta {
+        justify-self: end;
+        text-align: right;
+    }
+
+    .apoie-footer-inner {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .apoie-toast {
+        left: auto;
+        width: min(420px, calc(100vw - 32px));
+    }
+}
+
+@media (min-width: 900px) {
+    .apoie-panel-head {
+        grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.9fr);
+        align-items: end;
+    }
+
+    .apoie-step-two-layout {
+        grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.72fr);
+        align-items: start;
+    }
+
+    .apoie-step-two-aside {
+        position: sticky;
+        top: 24px;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .apoie-button,
     .apoie-progress-line span,
-    .apoie-payment-panel,
-    .apoie-topbar,
-    .apoie-shell,
-    .apoie-preloader {
+    .apoie-whatsapp-gate,
+    .apoie-toast {
         transition: none;
-    }
-
-    .apoie-preloader-logo,
-    .apoie-preloader-bar span,
-    .apoie-destination-image,
-    .apoie-recurring-fields,
-    .apoie-custom-amount,
-    .apoie-thanks {
-        animation: none;
     }
 }

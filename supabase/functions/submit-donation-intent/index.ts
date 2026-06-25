@@ -5,7 +5,12 @@ import { ADMIN_FIELDS, isValidCnpj, isValidCpf, isValidEmail, isValidPhone, logR
 import { createSupabaseAdmin } from "../_shared/supabaseAdmin.ts";
 
 const FUNCTION_NAME = "submit-donation-intent";
+const PRE_PIX_MODE = "pre_pix";
+const PRE_PIX_STATUS = "pending_payment_setup";
+const PRE_PIX_SOURCE_SECTION = "support_page";
+const PRE_PIX_AMOUNT_PLACEHOLDER = 1;
 const ALLOWED_FIELDS = [
+  "submission_mode",
   "donor_type",
   "name",
   "company_name",
@@ -25,6 +30,7 @@ const ALLOWED_FIELDS = [
   "privacy_accepted",
   "terms_accepted",
   "source",
+  "source_section",
   "website",
 ];
 const DONOR_TYPES = ["pessoa_fisica", "pessoa_juridica"];
@@ -34,6 +40,49 @@ const PAYMENT = ["pix", "credit_card"];
 const DONATION = ["monthly", "single"];
 const RECURRENCE = ["6_months", "12_months", "indefinite"];
 
+function buildCpfCheckDigit(base: string) {
+  const factors = base.length === 9
+    ? [10, 9, 8, 7, 6, 5, 4, 3, 2]
+    : [11, 10, 9, 8, 7, 6, 5, 4, 3, 2];
+  const sum = factors.reduce((total, factor, index) => total + Number(base[index]) * factor, 0);
+  const remainder = 11 - (sum % 11);
+  return remainder >= 10 ? "0" : String(remainder);
+}
+
+function buildSyntheticCpf(seed: string) {
+  let hash = 0;
+  for (const char of seed || `${Date.now()}`) {
+    hash = (hash * 31 + char.charCodeAt(0)) % 1_000_000_000;
+  }
+
+  let base = String(hash).padStart(9, "0").slice(0, 9);
+  if (/^(\d)\1+$/.test(base)) {
+    base = "123456789";
+  }
+
+  const firstDigit = buildCpfCheckDigit(base);
+  const secondDigit = buildCpfCheckDigit(`${base}${firstDigit}`);
+  return `${base}${firstDigit}${secondDigit}`;
+}
+
+function buildPrePixEmail(phone: string) {
+  const suffix = phone || String(Date.now());
+  return `prepix+${suffix}@flamedula.invalid`;
+}
+
+function buildSuccessPayload(data: { id: string; created_at: string }, isPrePix: boolean) {
+  if (!isPrePix) {
+    return { submissionId: data.id, submittedAt: data.created_at };
+  }
+
+  return {
+    submissionId: data.id,
+    submittedAt: data.created_at,
+    status: PRE_PIX_STATUS,
+    nextStep: "pix",
+  };
+}
+
 Deno.serve(async (req) => {
   const cors = handleCors(req);
   if (cors.response) return cors.response;
@@ -42,87 +91,124 @@ Deno.serve(async (req) => {
   if (response) return response;
 
   const sensitive = hasForbiddenKeys(payload, SENSITIVE_PAYMENT_FIELDS);
-  if (sensitive) return errorResponse("SENSITIVE_PAYMENT_DATA", "Dados sensíveis de pagamento não devem ser enviados.", 400, { [sensitive]: "Campo proibido." }, headers);
+  if (sensitive) return errorResponse("SENSITIVE_PAYMENT_DATA", "Dados sensiveis de pagamento nao devem ser enviados.", 400, { [sensitive]: "Campo proibido." }, headers);
   const forbidden = hasForbiddenKeys(payload, [...ADMIN_FIELDS, "provider_name", "provider_reference"]);
-  if (forbidden) return errorResponse("VALIDATION_ERROR", "Revise os campos informados.", 400, { [forbidden]: "Campo não permitido." }, headers);
+  if (forbidden) return errorResponse("VALIDATION_ERROR", "Revise os campos informados.", 400, { [forbidden]: "Campo nao permitido." }, headers);
   const unknown = hasUnknownKeys(payload, ALLOWED_FIELDS);
-  if (unknown.length) return errorResponse("VALIDATION_ERROR", "Revise os campos informados.", 400, Object.fromEntries(unknown.map((key) => [key, "Campo não permitido."])), headers);
+  if (unknown.length) return errorResponse("VALIDATION_ERROR", "Revise os campos informados.", 400, Object.fromEntries(unknown.map((key) => [key, "Campo nao permitido."])), headers);
   if (cleanString(payload.website, 100)) {
     return successResponse({ submissionId: crypto.randomUUID(), submittedAt: new Date().toISOString() }, headers);
   }
 
-  const donorType = cleanString(payload.donor_type, 30);
-  const documentType = cleanString(payload.document_type, 10);
-  const donationType = cleanString(payload.donation_type, 30);
-  const amount = Number(payload.amount);
-  const row = {
-    donor_type: donorType,
-    name: cleanString(payload.name, 160),
-    company_name: cleanString(payload.company_name, 180),
-    responsible_name: cleanString(payload.responsible_name, 160),
-    document_type: documentType,
-    document: onlyDigits(payload.document),
-    email: cleanEmail(payload.email),
-    phone: onlyDigits(payload.phone),
-    birth_date: cleanString(payload.birth_date, 10),
-    contact_preference: cleanString(payload.contact_preference, 30),
-    payment_method: cleanString(payload.payment_method, 40),
-    donation_type: donationType,
-    due_day: payload.due_day === null || payload.due_day === undefined ? null : Number(payload.due_day),
-    recurrence_period: cleanString(payload.recurrence_period, 40),
-    amount,
-    custom_amount: payload.custom_amount === null || payload.custom_amount === undefined ? null : Number(payload.custom_amount),
-    privacy_accepted: payload.privacy_accepted === true,
-    terms_accepted: payload.terms_accepted === true,
-    source: "apoie_page",
-    status: "pending_payment_setup",
-    consent_at: new Date().toISOString(),
-    is_test: false,
-    provider_name: null,
-    provider_reference: null,
-  };
+  const submissionMode = cleanString(payload.submission_mode, 30);
+  const isPrePix = submissionMode === PRE_PIX_MODE;
+  const row = isPrePix
+    ? {
+      donor_type: "pessoa_fisica",
+      name: cleanString(payload.name, 160),
+      company_name: null,
+      responsible_name: null,
+      document_type: "cpf",
+      document: buildSyntheticCpf(`${onlyDigits(payload.phone)}:${cleanString(payload.name, 160)}`),
+      email: buildPrePixEmail(onlyDigits(payload.phone)),
+      phone: onlyDigits(payload.phone),
+      birth_date: null,
+      contact_preference: "whatsapp",
+      payment_method: "pix",
+      donation_type: "single",
+      due_day: null,
+      recurrence_period: null,
+      amount: PRE_PIX_AMOUNT_PLACEHOLDER,
+      custom_amount: null,
+      privacy_accepted: payload.privacy_accepted === true,
+      terms_accepted: payload.terms_accepted === true,
+      source: "apoie_page",
+      status: PRE_PIX_STATUS,
+      consent_at: new Date().toISOString(),
+      is_test: false,
+      provider_name: null,
+      provider_reference: null,
+      internal_notes: `pre_pix; source_section=${cleanString(payload.source_section, 80) || PRE_PIX_SOURCE_SECTION}; pix_amount_defined_outside_form=true`,
+    }
+    : {
+      donor_type: cleanString(payload.donor_type, 30),
+      name: cleanString(payload.name, 160),
+      company_name: cleanString(payload.company_name, 180),
+      responsible_name: cleanString(payload.responsible_name, 160),
+      document_type: cleanString(payload.document_type, 10),
+      document: onlyDigits(payload.document),
+      email: cleanEmail(payload.email),
+      phone: onlyDigits(payload.phone),
+      birth_date: cleanString(payload.birth_date, 10),
+      contact_preference: cleanString(payload.contact_preference, 30),
+      payment_method: cleanString(payload.payment_method, 40),
+      donation_type: cleanString(payload.donation_type, 30),
+      due_day: payload.due_day === null || payload.due_day === undefined ? null : Number(payload.due_day),
+      recurrence_period: cleanString(payload.recurrence_period, 40),
+      amount: Number(payload.amount),
+      custom_amount: payload.custom_amount === null || payload.custom_amount === undefined ? null : Number(payload.custom_amount),
+      privacy_accepted: payload.privacy_accepted === true,
+      terms_accepted: payload.terms_accepted === true,
+      source: "apoie_page",
+      status: PRE_PIX_STATUS,
+      consent_at: new Date().toISOString(),
+      is_test: false,
+      provider_name: null,
+      provider_reference: null,
+      internal_notes: null,
+    };
 
   const fieldErrors: Record<string, string> = {};
-  if (!DONOR_TYPES.includes(row.donor_type || "")) fieldErrors.donor_type = "Valor inválido.";
-  if (!DOCUMENT_TYPES.includes(row.document_type || "")) fieldErrors.document_type = "Valor inválido.";
-  if (!row.email || !isValidEmail(row.email)) fieldErrors.email = "Informe um e-mail válido.";
-  if (!isValidPhone(row.phone)) fieldErrors.phone = "Informe um telefone válido.";
-  if (row.contact_preference && !CONTACT.includes(row.contact_preference)) fieldErrors.contact_preference = "Valor inválido.";
-  if (!PAYMENT.includes(row.payment_method || "")) fieldErrors.payment_method = "Valor inválido.";
-  if (!DONATION.includes(row.donation_type || "")) fieldErrors.donation_type = "Valor inválido.";
-  if (!Number.isFinite(row.amount) || row.amount <= 0) fieldErrors.amount = "Informe um valor maior que zero.";
-
-  if (row.donor_type === "pessoa_fisica") {
-    if (!row.name) fieldErrors.name = "Informe o nome.";
-    if (row.document_type !== "cpf" || !isValidCpf(row.document)) fieldErrors.document = "Informe um CPF válido.";
-    row.company_name = null;
-    row.responsible_name = null;
-  }
-
-  if (row.donor_type === "pessoa_juridica") {
-    if (!row.company_name) fieldErrors.company_name = "Informe a razão social.";
-    if (!row.responsible_name) fieldErrors.responsible_name = "Informe o responsável.";
-    if (row.document_type !== "cnpj" || !isValidCnpj(row.document)) fieldErrors.document = "Informe um CNPJ válido.";
-    row.birth_date = null;
-    row.name = null;
-  }
-
-  if (row.donation_type === "monthly") {
-    if (!Number.isInteger(row.due_day) || row.due_day < 1 || row.due_day > 28) fieldErrors.due_day = "Escolha um dia entre 1 e 28.";
-    if (!row.recurrence_period || !RECURRENCE.includes(row.recurrence_period)) fieldErrors.recurrence_period = "Escolha a recorrência.";
-  }
-
-  if (row.donation_type === "single") {
-    row.due_day = null;
-    row.recurrence_period = null;
-  }
+  if (payload.submission_mode !== undefined && !isPrePix) fieldErrors.submission_mode = "Valor invalido.";
 
   if (payload.privacy_accepted !== true || payload.terms_accepted !== true) {
-    return errorResponse("CONSENT_REQUIRED", "É necessário aceitar os termos para continuar.", 400, {
-      privacy_accepted: payload.privacy_accepted === true ? "" : "Aceite obrigatório.",
-      terms_accepted: payload.terms_accepted === true ? "" : "Aceite obrigatório.",
+    return errorResponse("CONSENT_REQUIRED", "E necessario aceitar os termos para continuar.", 400, {
+      privacy_accepted: payload.privacy_accepted === true ? "" : "Aceite obrigatorio.",
+      terms_accepted: payload.terms_accepted === true ? "" : "Aceite obrigatorio.",
     }, headers);
   }
+
+  if (isPrePix) {
+    if (!row.name) fieldErrors.name = "Informe o nome.";
+    if (!isValidPhone(row.phone)) fieldErrors.phone = "Informe um telefone valido.";
+    if (!isValidCpf(row.document)) fieldErrors.document = "Nao foi possivel preparar o cadastro agora.";
+    if (!row.email || !isValidEmail(row.email)) fieldErrors.email = "Nao foi possivel preparar o cadastro agora.";
+  } else {
+    if (!DONOR_TYPES.includes(row.donor_type || "")) fieldErrors.donor_type = "Valor invalido.";
+    if (!DOCUMENT_TYPES.includes(row.document_type || "")) fieldErrors.document_type = "Valor invalido.";
+    if (!row.email || !isValidEmail(row.email)) fieldErrors.email = "Informe um e-mail valido.";
+    if (!isValidPhone(row.phone)) fieldErrors.phone = "Informe um telefone valido.";
+    if (row.contact_preference && !CONTACT.includes(row.contact_preference)) fieldErrors.contact_preference = "Valor invalido.";
+    if (!PAYMENT.includes(row.payment_method || "")) fieldErrors.payment_method = "Valor invalido.";
+    if (!DONATION.includes(row.donation_type || "")) fieldErrors.donation_type = "Valor invalido.";
+    if (!Number.isFinite(row.amount) || row.amount <= 0) fieldErrors.amount = "Informe um valor maior que zero.";
+
+    if (row.donor_type === "pessoa_fisica") {
+      if (!row.name) fieldErrors.name = "Informe o nome.";
+      if (row.document_type !== "cpf" || !isValidCpf(row.document)) fieldErrors.document = "Informe um CPF valido.";
+      row.company_name = null;
+      row.responsible_name = null;
+    }
+
+    if (row.donor_type === "pessoa_juridica") {
+      if (!row.company_name) fieldErrors.company_name = "Informe a razao social.";
+      if (!row.responsible_name) fieldErrors.responsible_name = "Informe o responsavel.";
+      if (row.document_type !== "cnpj" || !isValidCnpj(row.document)) fieldErrors.document = "Informe um CNPJ valido.";
+      row.birth_date = null;
+      row.name = null;
+    }
+
+    if (row.donation_type === "monthly") {
+      if (!Number.isInteger(row.due_day) || row.due_day < 1 || row.due_day > 28) fieldErrors.due_day = "Escolha um dia entre 1 e 28.";
+      if (!row.recurrence_period || !RECURRENCE.includes(row.recurrence_period)) fieldErrors.recurrence_period = "Escolha a recorrencia.";
+    }
+
+    if (row.donation_type === "single") {
+      row.due_day = null;
+      row.recurrence_period = null;
+    }
+  }
+
   if (Object.keys(fieldErrors).length) return errorResponse("VALIDATION_ERROR", "Revise os campos informados.", 400, fieldErrors, headers);
 
   const supabase = createSupabaseAdmin();
@@ -137,7 +223,7 @@ Deno.serve(async (req) => {
 
   if (duplicate.data?.id) {
     logResult(FUNCTION_NAME, 201, "DUPLICATE_SUBMISSION", duplicate.data.id);
-    return successResponse({ submissionId: duplicate.data.id, submittedAt: duplicate.data.created_at }, headers);
+    return successResponse(buildSuccessPayload(duplicate.data, isPrePix), headers);
   }
 
   const { data, error } = await supabase
@@ -148,9 +234,9 @@ Deno.serve(async (req) => {
 
   if (error) {
     logResult(FUNCTION_NAME, 500, "DATABASE_ERROR");
-    return errorResponse("DATABASE_ERROR", "Não foi possível registrar a intenção de apoio agora.", 500, {}, headers);
+    return errorResponse("DATABASE_ERROR", "Nao foi possivel registrar a intencao de apoio agora.", 500, {}, headers);
   }
 
   logResult(FUNCTION_NAME, 201, "OK", data.id);
-  return successResponse({ submissionId: data.id, submittedAt: data.created_at }, headers);
+  return successResponse(buildSuccessPayload(data, isPrePix), headers);
 });

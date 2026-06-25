@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Apoie a FlaMedula</title>
-    <meta name="description" content="FlaMedula, rede de doação, medula e mobilização.">
+    <meta name="description" content="FlaMedula, rede de doa&ccedil;&atilde;o, medula e mobiliza&ccedil;&atilde;o.">
     <meta property="og:type" content="website">
     <meta property="og:title" content="FlaMedula">
-    <meta property="og:description" content="FlaMedula, rede de doação, medula e mobilização.">
+    <meta property="og:description" content="FlaMedula, rede de doa&ccedil;&atilde;o, medula e mobiliza&ccedil;&atilde;o.">
     <meta property="og:image" content="https://res.cloudinary.com/dm9mnc97u/image/upload/c_pad,w_512,h_512,b_white/v1781279524/Untitled_design_17_1_x7qbdx.webp">
     <meta property="og:image:secure_url" content="https://res.cloudinary.com/dm9mnc97u/image/upload/c_pad,w_512,h_512,b_white/v1781279524/Untitled_design_17_1_x7qbdx.webp">
     <meta property="og:image:type" content="image/webp">
@@ -16,7 +16,7 @@
     <meta property="og:image:alt" content="Logo da FlaMedula">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="FlaMedula">
-    <meta name="twitter:description" content="FlaMedula, rede de doação, medula e mobilização.">
+    <meta name="twitter:description" content="FlaMedula, rede de doa&ccedil;&atilde;o, medula e mobiliza&ccedil;&atilde;o.">
     <meta name="twitter:image" content="https://res.cloudinary.com/dm9mnc97u/image/upload/c_pad,w_512,h_512,b_white/v1781279524/Untitled_design_17_1_x7qbdx.webp">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,38 +25,48 @@
     <script type="module" src="/src/apoie.js"></script>
 </head>
 <body class="apoie-page">
-    <div class="apoie-preloader" id="apoiePreloader" hidden aria-live="polite">
-        <div class="apoie-preloader-glow" aria-hidden="true"></div>
-        <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781279524/Untitled_design_17_1_x7qbdx.webp" alt="FlaMedula" class="apoie-preloader-logo">
-        <p>Preparando sua forma de apoio...</p>
-        <div class="apoie-preloader-bar" aria-hidden="true"><span></span></div>
-    </div>
-
-    <header class="apoie-topbar">
-        <a href="/" class="apoie-brand" aria-label="Voltar para a página inicial da FlaMedula">
-            <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781279524/Untitled_design_17_1_x7qbdx.webp" alt="FlaMedula">
-        </a>
-        <a href="/" class="apoie-back">Voltar para o site</a>
+    <header class="apoie-header">
+        <div class="apoie-header-inner">
+            <a href="/" class="apoie-brand" aria-label="Voltar para a p&aacute;gina inicial da FlaMedula">
+                <img src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781279524/Untitled_design_17_1_x7qbdx.webp" alt="Logo da FlaMedula" width="108" height="84">
+                <div class="apoie-brand-copy">
+                    <span class="apoie-brand-kicker">Apoie a FlaMedula</span>
+                    <strong>Fluxo seguro via PIX</strong>
+                </div>
+            </a>
+            <a href="/" class="apoie-back">Voltar para o site</a>
+        </div>
     </header>
 
-    <main class="apoie-shell">
-        <section class="apoie-card" aria-labelledby="apoieTitle">
-            <div class="apoie-card-head">
-                <span class="apoie-kicker">Apoio financeiro</span>
-                <h1 id="apoieTitle">Apoie a FlaMedula</h1>
-                <p>Sua contribuição ajuda a manter campanhas, tecnologia, comunicação e mobilização.</p>
-                <strong>Estrutura para a solidariedade acontecer.</strong>
+    <main class="apoie-main">
+        <section class="apoie-intro" aria-labelledby="apoieIntroTitle">
+            <div class="apoie-intro-copy">
+                <span class="apoie-kicker">Cadastro antes do PIX</span>
+                <h1 id="apoieIntroTitle">Contribua com a FlaMedula em duas etapas simples.</h1>
+                <p>Primeiro recebemos seu cadastro m&iacute;nimo. Depois liberamos os dados oficiais para a transfer&ecirc;ncia via PIX e o envio do comprovante.</p>
             </div>
+            <div class="apoie-intro-note">
+                <strong>Fluxo atual</strong>
+                <p>Sem cart&atilde;o, sem checkout falso e sem confirma&ccedil;&atilde;o autom&aacute;tica de pagamento.</p>
+            </div>
+        </section>
 
-            <div class="apoie-progress" aria-label="Progresso do cadastro">
-                <div class="apoie-progress-step is-active" data-progress-step="1">
-                    <span>1</span>
-                    <small>Seus dados</small>
+        <section class="apoie-panel" aria-labelledby="apoieFlowTitle">
+            <div class="apoie-panel-head">
+                <div>
+                    <span class="apoie-kicker apoie-kicker-panel">Apoio financeiro</span>
+                    <h2 id="apoieFlowTitle">Apoie a rede que mobiliza campanhas, orienta fam&iacute;lias e mant&eacute;m a causa ativa.</h2>
                 </div>
-                <div class="apoie-progress-line"><span></span></div>
-                <div class="apoie-progress-step" data-progress-step="2">
-                    <span>2</span>
-                    <small>Doação</small>
+                <div class="apoie-progress" aria-label="Etapas do apoio">
+                    <div class="apoie-progress-step is-active" data-progress-step="1">
+                        <span>1</span>
+                        <small>Cadastro</small>
+                    </div>
+                    <div class="apoie-progress-line" aria-hidden="true"><span></span></div>
+                    <div class="apoie-progress-step" data-progress-step="2">
+                        <span>2</span>
+                        <small>PIX</small>
+                    </div>
                 </div>
             </div>
 
@@ -64,189 +74,169 @@
                 <label class="apoie-honeypot" aria-hidden="true">Website
                     <input type="text" name="website" tabindex="-1" autocomplete="off">
                 </label>
+
                 <div class="apoie-feedback" id="apoieFeedback" role="status" aria-live="polite"></div>
 
-                <section class="apoie-step is-active" data-step="1" aria-labelledby="stepOneTitle">
-                    <h2 id="stepOneTitle">Dados do apoiador</h2>
-
-                    <div class="apoie-segment" role="radiogroup" aria-label="Tipo de apoiador">
-                        <label>
-                            <input type="radio" name="donor_type" value="pessoa_fisica" checked>
-                            <span>Pessoa Física</span>
-                        </label>
-                        <label>
-                            <input type="radio" name="donor_type" value="pessoa_juridica">
-                            <span>Pessoa Jurídica</span>
-                        </label>
+                <section class="apoie-step is-active" data-step="1" aria-labelledby="apoieStepOneTitle">
+                    <div class="apoie-step-head">
+                        <h3 id="apoieStepOneTitle" tabindex="-1">Cadastre-se para apoiar</h3>
+                        <p>Ap&oacute;s o cadastro, exibimos o QR Code PIX, o c&oacute;digo copia e cola e o canal oficial para envio do comprovante.</p>
                     </div>
 
-                    <div class="apoie-fields" data-donor-fields="pessoa_fisica">
-                        <label>Nome completo *
+                    <div class="apoie-fields">
+                        <label class="apoie-field">
+                            <span>Nome completo *</span>
                             <input type="text" name="name" autocomplete="name" required>
                         </label>
-                        <label>CPF *
-                            <input type="text" name="cpf" inputmode="numeric" required>
-                        </label>
-                        <label>E-mail *
-                            <input type="email" name="email" autocomplete="email" required>
-                        </label>
-                        <label>Telefone / WhatsApp *
-                            <input type="tel" name="phone" autocomplete="tel" required>
-                        </label>
-                        <label>Data de nascimento
-                            <input type="text" name="birth_date" placeholder="dd/mm/aaaa" inputmode="numeric">
+
+                        <label class="apoie-field">
+                            <span>Telefone / WhatsApp *</span>
+                            <input type="tel" name="phone" autocomplete="tel" inputmode="tel" required>
                         </label>
                     </div>
 
-                    <div class="apoie-fields" data-donor-fields="pessoa_juridica" hidden>
-                        <label>Razão social *
-                            <input type="text" name="company_name" autocomplete="organization" required>
+                    <div class="apoie-checklist">
+                        <label class="apoie-check">
+                            <input type="checkbox" name="privacy_accepted" required>
+                            <span>Li e concordo com a Pol&iacute;tica de Privacidade.</span>
                         </label>
-                        <label>CNPJ *
-                            <input type="text" name="cnpj" inputmode="numeric" required>
-                        </label>
-                        <label>Nome do responsável *
-                            <input type="text" name="responsible_name" autocomplete="name" required>
-                        </label>
-                        <label>E-mail *
-                            <input type="email" name="email" autocomplete="email" required>
-                        </label>
-                        <label>Telefone / WhatsApp *
-                            <input type="tel" name="phone" autocomplete="tel" required>
+
+                        <label class="apoie-check">
+                            <input type="checkbox" name="terms_accepted" required>
+                            <span>Concordo com os Termos do Doador.</span>
                         </label>
                     </div>
 
-                    <fieldset class="apoie-option-group">
-                        <legend>Preferência de contato *</legend>
-                        <div class="apoie-pill-row">
-                            <label><input type="radio" name="contact_preference" value="email"><span>Email</span></label>
-                            <label><input type="radio" name="contact_preference" value="whatsapp"><span>WhatsApp</span></label>
-                            <label><input type="radio" name="contact_preference" value="telefone"><span>Telefone</span></label>
-                        </div>
-                    </fieldset>
-
-                    <button type="button" class="apoie-primary" data-action="next">Continuar para doação</button>
+                    <div class="apoie-step-actions">
+                        <button type="submit" class="apoie-button apoie-button-primary" data-step-one-submit>Continuar para o PIX</button>
+                    </div>
                 </section>
 
-                <section class="apoie-step" data-step="2" aria-labelledby="stepTwoTitle" hidden>
-                    <img class="apoie-destination-image" src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1781888492/Captura_de_tela_2026-06-19_140107_l6r1o1.webp" alt="Destinações do apoio financeiro FlaMedula">
-
-                    <h2 id="stepTwoTitle">Doação</h2>
-
-                    <div class="apoie-step-progress" aria-label="Progresso do cadastro na etapa de doação">
-                        <div class="apoie-progress-step is-active">
-                            <span>1</span>
-                            <small>Seus dados</small>
+                <section class="apoie-step" data-step="2" id="apoieStepTwo" aria-labelledby="apoieStepTwoTitle" hidden tabindex="-1">
+                    <div class="apoie-step-two-banner">
+                        <span class="apoie-success-pill">Cadastro recebido</span>
+                        <div>
+                            <h3 id="apoieStepTwoTitle" tabindex="-1">Agora voc&ecirc; pode realizar sua contribui&ccedil;&atilde;o via PIX.</h3>
+                            <p>Confira os dados oficiais abaixo. Depois do PIX, envie o comprovante pelo canal liberado nesta tela.</p>
                         </div>
-                        <div class="apoie-progress-line"><span></span></div>
-                        <div class="apoie-progress-step is-active">
-                            <span>2</span>
-                            <small>Doação</small>
-                        </div>
-                    </div>
-
-                    <fieldset class="apoie-option-group">
-                        <legend>Forma de pagamento *</legend>
-                        <div class="apoie-pill-row">
-                            <label><input type="radio" name="payment_method" value="pix"><span>PIX</span></label>
-                            <label><input type="radio" name="payment_method" value="credit_card"><span>Cartão de crédito</span></label>
-                        </div>
-                        <div class="apoie-payment-panel" data-payment-panel="pix" hidden aria-hidden="true">
-                            <div class="apoie-pix-placeholder" aria-hidden="true">
-                                <span></span>
-                            </div>
+                        <dl class="apoie-submission-meta">
                             <div>
-                                <h3>Pagamento via Pix</h3>
-                                <p>Na integração final, um QR Code Pix será gerado de forma segura.</p>
+                                <dt>Cadastro</dt>
+                                <dd id="apoieSubmissionId">--</dd>
                             </div>
-                        </div>
-                        <div class="apoie-payment-panel" data-payment-panel="credit_card" hidden aria-hidden="true">
-                            <div class="apoie-card-panel-head">
-                                <div>
-                                    <h3>Cartão de crédito</h3>
-                                    <p>Os dados do cartão não são coletados nesta etapa. A equipe orientará o pagamento em ambiente seguro.</p>
-                                </div>
-                                <div class="apoie-card-flags">
-                                    <span>Visa</span><span>Mastercard</span><span>Elo</span><span>Amex</span><span>Hipercard</span>
-                                </div>
-                            </div>
-                            <div class="apoie-payment-safety-note">
-                                <strong>Sem dados sensíveis no site</strong>
-                                <span>A intenção de apoio registra apenas contato, valor e preferência de pagamento.</span>
-                            </div>
-                        </div>
-                    </fieldset>
-
-                    <fieldset class="apoie-option-group">
-                        <legend>Tipo de doação *</legend>
-                        <div class="apoie-pill-row">
-                            <label><input type="radio" name="donation_type" value="monthly" checked><span>Mensal</span></label>
-                            <label><input type="radio" name="donation_type" value="single"><span>Única</span></label>
-                        </div>
-                    </fieldset>
-
-                    <div class="apoie-recurring-fields">
-                        <label>Dia de vencimento
-                            <select name="due_day" data-due-day></select>
-                        </label>
-                        <fieldset class="apoie-option-group">
-                            <legend>Período de recorrência</legend>
-                            <div class="apoie-pill-row compact">
-                                <label><input type="radio" name="recurrence_period" value="6_months"><span>6 meses</span></label>
-                                <label><input type="radio" name="recurrence_period" value="12_months"><span>12 meses</span></label>
-                                <label><input type="radio" name="recurrence_period" value="indefinite" checked><span>Indeterminado</span></label>
-                            </div>
-                        </fieldset>
+                        </dl>
                     </div>
 
-                    <fieldset class="apoie-option-group">
-                        <legend>Valor a doar *</legend>
-                        <div class="apoie-amount-grid">
-                            <label><input type="radio" name="amount" value="50"><span>R$ 50,00</span></label>
-                            <label><input type="radio" name="amount" value="75"><span>R$ 75,00</span></label>
-                            <label><input type="radio" name="amount" value="100"><span>R$ 100,00</span></label>
-                            <label><input type="radio" name="amount" value="custom"><span>Outro valor</span></label>
+                    <div class="apoie-step-two-layout">
+                        <div class="apoie-step-two-primary">
+                            <section class="apoie-pix-card apoie-qr-card" aria-labelledby="apoieQrTitle">
+                                <div class="apoie-card-headline">
+                                    <h4 id="apoieQrTitle">QR Code PIX</h4>
+                                    <p>Use a c&acirc;mera do app do seu banco para concluir a transfer&ecirc;ncia.</p>
+                                </div>
+                                <div class="apoie-qr-frame">
+                                    <img
+                                        src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1782412026/Captura_de_tela_2026-06-25_142326_fnobuk.webp"
+                                        alt="QR Code PIX da Associa&ccedil;&atilde;o Fla Medula"
+                                        class="apoie-qr-image"
+                                        decoding="async"
+                                    >
+                                </div>
+                            </section>
+
+                            <section class="apoie-pix-card" aria-labelledby="apoiePixCodeTitle">
+                                <div class="apoie-card-headline">
+                                    <h4 id="apoiePixCodeTitle">PIX copia e cola</h4>
+                                    <p>Copie o c&oacute;digo exato e cole no app do seu banco.</p>
+                                </div>
+                                <div class="apoie-code-box" id="apoiePixCode" tabindex="0">00020126360014br.gov.bcb.pix0114530430740001715204000053039865802BR5921ASSOCIACAO FLA MEDULA6014RIO DE JANEIRO622605222RwegBxM8xgNzjcbhgJHeP6304D846</div>
+                                <button type="button" class="apoie-button apoie-button-secondary" data-copy-target="pix-code">Copiar c&oacute;digo PIX</button>
+                            </section>
+
+                            <section class="apoie-pix-card" aria-labelledby="apoiePixKeyTitle">
+                                <div class="apoie-card-headline">
+                                    <h4 id="apoiePixKeyTitle">Chave PIX CNPJ</h4>
+                                    <p>Ao copiar, enviamos somente os d&iacute;gitos da chave.</p>
+                                </div>
+                                <div class="apoie-key-box">
+                                    <strong id="apoiePixKeyDisplay">53.043.074/0001-71</strong>
+                                    <span id="apoiePixKeyRaw">53043074000171</span>
+                                </div>
+                                <button type="button" class="apoie-button apoie-button-secondary" data-copy-target="pix-key">Copiar chave PIX</button>
+                            </section>
+
+                            <section class="apoie-pix-card" aria-labelledby="apoieAssociationTitle">
+                                <div class="apoie-card-headline">
+                                    <h4 id="apoieAssociationTitle">Dados oficiais da associa&ccedil;&atilde;o</h4>
+                                    <p>Confira os dados antes de concluir a transfer&ecirc;ncia.</p>
+                                </div>
+                                <dl class="apoie-association-data">
+                                    <div>
+                                        <dt>Favorecido</dt>
+                                        <dd>Associa&ccedil;&atilde;o Fla Medula</dd>
+                                    </div>
+                                    <div>
+                                        <dt>CNPJ</dt>
+                                        <dd>53.043.074/0001-71</dd>
+                                    </div>
+                                    <div>
+                                        <dt>Ag&ecirc;ncia</dt>
+                                        <dd>0001</dd>
+                                    </div>
+                                    <div>
+                                        <dt>Conta</dt>
+                                        <dd>4827049-1</dd>
+                                    </div>
+                                </dl>
+                            </section>
+
+                            <section class="apoie-whatsapp-gate" id="apoieWhatsappGate" hidden aria-labelledby="apoieWhatsappTitle">
+                                <div class="apoie-card-headline">
+                                    <h4 id="apoieWhatsappTitle">Envio do comprovante</h4>
+                                    <p>Depois de concluir o PIX, envie o comprovante para nossa equipe.</p>
+                                </div>
+                                <a
+                                    href="#"
+                                    class="apoie-button apoie-button-whatsapp"
+                                    id="apoieWhatsappButton"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    Enviar comprovante pelo WhatsApp
+                                </a>
+                            </section>
+
+                            <div class="apoie-step-actions apoie-step-actions-bottom">
+                                <button type="button" class="apoie-button apoie-button-tertiary" data-action="back">Voltar</button>
+                            </div>
                         </div>
-                        <label class="apoie-custom-amount" hidden>Outro valor
-                            <input type="number" name="custom_amount" min="10" step="1" inputmode="decimal" placeholder="Digite o valor">
-                        </label>
-                    </fieldset>
 
-                    <label class="apoie-check">
-                        <input type="checkbox" name="privacy_accepted" required>
-                        <span>Li e concordo com a Política de Privacidade.</span>
-                    </label>
-                    <label class="apoie-check">
-                        <input type="checkbox" name="terms_accepted" required>
-                        <span>Concordo com os Termos do Doador.</span>
-                    </label>
-
-                    <div class="apoie-captcha" aria-label="Verificação de segurança">
-                        <span></span>
-                        Verificação de segurança
-                    </div>
-
-                    <div class="apoie-actions">
-                        <button type="submit" class="apoie-primary">Doe agora</button>
+                        <aside class="apoie-step-two-aside">
+                            <figure class="apoie-institutional-figure">
+                                <img
+                                    src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1782411944/flamedula_1_eppcqk.webp"
+                                    alt="Foto institucional da FlaMedula em a&ccedil;&atilde;o social"
+                                    width="1166"
+                                    height="1654"
+                                    loading="lazy"
+                                    decoding="async"
+                                >
+                                <figcaption>A rede segue ativa com mobiliza&ccedil;&atilde;o, comunica&ccedil;&atilde;o e apoio presencial.</figcaption>
+                            </figure>
+                        </aside>
                     </div>
                 </section>
             </form>
-
-            <section class="apoie-thanks" id="apoieThanks" hidden aria-labelledby="apoieThanksTitle" tabindex="-1">
-                <div class="apoie-thanks-card">
-                    <span class="apoie-thanks-icon" aria-hidden="true">💛</span>
-                    <h2 id="apoieThanksTitle">Obrigado por apoiar a FlaMedula</h2>
-                    <p>Intenção de apoio recebida. Nossa equipe entrará em contato para orientar a contribuição de forma segura.</p>
-                    <strong>Sua ajuda fortalece campanhas, comunicação e mobilização por quem precisa.</strong>
-                    <div class="apoie-thanks-actions">
-                        <a href="/" class="apoie-thanks-primary">Voltar para o site</a>
-                        <!-- Configurar WhatsApp oficial da FlaMedula aqui. -->
-                        <a href="#" class="apoie-thanks-whatsapp">Falar com a FlaMedula</a>
-                        <a href="/#hub-cadastro" class="apoie-thanks-secondary">Também quero me cadastrar como doador/paciente</a>
-                    </div>
-                </div>
-            </section>
         </section>
     </main>
+
+    <footer class="apoie-footer">
+        <div class="apoie-footer-inner">
+            <p>FlaMedula &middot; Associa&ccedil;&atilde;o Fla Medula &middot; CNPJ 53.043.074/0001-71</p>
+            <a href="/">Voltar para a p&aacute;gina principal</a>
+        </div>
+    </footer>
+
+    <div class="apoie-toast" id="apoieToast" role="status" aria-live="polite" hidden></div>
 </body>
 </html>
