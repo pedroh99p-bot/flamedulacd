@@ -60,17 +60,12 @@
                 <div class="apoie-progress" aria-label="Etapas do apoio">
                     <div class="apoie-progress-step is-active" data-progress-step="1">
                         <span>1</span>
-                        <small>Cadastro</small>
+                        <small>Seus dados</small>
                     </div>
                     <div class="apoie-progress-line" aria-hidden="true"><span></span></div>
                     <div class="apoie-progress-step" data-progress-step="2">
                         <span>2</span>
                         <small>PIX</small>
-                    </div>
-                    <div class="apoie-progress-line" aria-hidden="true"><span></span></div>
-                    <div class="apoie-progress-step" data-progress-step="3">
-                        <span>3</span>
-                        <small>Comprovante</small>
                     </div>
                 </div>
             </div>
@@ -82,9 +77,9 @@
 
                 <div class="apoie-feedback" id="apoieFeedback" role="status" aria-live="polite"></div>
 
-                <section class="apoie-step is-active" data-step="1" aria-labelledby="apoieStepOneTitle">
+                <section class="apoie-step is-active" data-step="1" id="supportStep1" aria-labelledby="apoieStepOneTitle" aria-hidden="false">
                     <div class="apoie-step-head">
-                        <h3 id="apoieStepOneTitle" tabindex="-1">Cadastre seu apoio</h3>
+                        <h3 id="apoieStepOneTitle" tabindex="-1">Apoie a FlaMedula</h3>
                         <p>Informe seus dados e o valor que deseja doar. Em seguida, o PIX ser&aacute; exibido.</p>
                     </div>
 
@@ -122,12 +117,7 @@
                     </div>
                 </section>
 
-                <section class="apoie-step" data-step="2" id="apoieStepTwo" aria-labelledby="apoieStepTwoTitle" hidden>
-                    <div class="apoie-step-head">
-                        <h3 id="apoieStepTwoTitle" tabindex="-1">PIX para concluir seu apoio</h3>
-                        <p>O QR e os demais dados s&oacute; aparecem ap&oacute;s a confirma&ccedil;&atilde;o real do cadastro.</p>
-                    </div>
-
+                <section class="apoie-step is-hidden" data-step="2" id="supportStep2" aria-labelledby="apoieStepTwoTitle" aria-hidden="true" hidden>
                     <figure class="apoie-institutional-figure apoie-institutional-figure-step">
                         <img
                             src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1782411944/flamedula_1_eppcqk.webp"
@@ -140,10 +130,15 @@
                         <figcaption>A rede segue ativa com mobiliza&ccedil;&atilde;o, comunica&ccedil;&atilde;o e apoio presencial.</figcaption>
                     </figure>
 
+                    <div class="apoie-step-head">
+                        <h3 id="apoieStepTwoTitle" tabindex="-1">Cadastro recebido</h3>
+                        <p>Agora voc&ecirc; j&aacute; pode concluir sua contribui&ccedil;&atilde;o via PIX.</p>
+                    </div>
+
                     <section class="apoie-card apoie-summary-card" aria-labelledby="apoieSummaryTitle">
                         <div class="apoie-card-headline">
-                            <h4 id="apoieSummaryTitle">Resumo do apoio</h4>
-                            <p>Cadastro recebido. Sua contribui&ccedil;&atilde;o est&aacute; aguardando confirma&ccedil;&atilde;o do PIX.</p>
+                            <h4 id="apoieSummaryTitle">Resumo</h4>
+                            <p>O valor pretendido fica apenas nesta p&aacute;gina e ajuda voc&ecirc; a conferir o PIX.</p>
                         </div>
                         <dl class="apoie-summary-grid">
                             <div>
@@ -157,10 +152,6 @@
                             <div>
                                 <dt>Status</dt>
                                 <dd id="apoieSummaryStatus">Aguardando confirma&ccedil;&atilde;o do PIX</dd>
-                            </div>
-                            <div>
-                                <dt>Cadastro</dt>
-                                <dd id="apoieSubmissionId">--</dd>
                             </div>
                         </dl>
                     </section>
@@ -226,32 +217,11 @@
                         </dl>
                     </section>
 
-                    <div class="apoie-step-actions">
-                        <button type="button" class="apoie-button apoie-button-tertiary" data-action="back-step-one">Voltar</button>
-                    </div>
-                </section>
-
-                <section class="apoie-step" data-step="3" id="apoieStepThree" aria-labelledby="apoieStepThreeTitle" hidden>
-                    <div class="apoie-step-head">
-                        <h3 id="apoieStepThreeTitle" tabindex="-1">Obrigado por apoiar a FlaMedula</h3>
-                        <p>O envio do comprovante acontece apenas depois de uma c&oacute;pia bem-sucedida do PIX.</p>
-                    </div>
-
-                    <section class="apoie-card apoie-thanks-card" aria-labelledby="apoieThanksTitle">
+                    <section class="apoie-card apoie-whatsapp-area" id="apoieWhatsappArea" aria-labelledby="apoieWhatsappTitle" aria-hidden="true" hidden>
                         <div class="apoie-card-headline">
-                            <h4 id="apoieThanksTitle">Envio do comprovante</h4>
-                            <p id="apoieStepThreeMessage">Depois de concluir o PIX, envie o comprovante para nossa equipe pelo WhatsApp.</p>
+                            <h4 id="apoieWhatsappTitle">Envio do comprovante</h4>
+                            <p>Depois de realizar o PIX, envie o comprovante para nossa equipe.</p>
                         </div>
-                        <dl class="apoie-summary-grid apoie-summary-grid-compact">
-                            <div>
-                                <dt>Status</dt>
-                                <dd>Aguardando confirma&ccedil;&atilde;o do PIX</dd>
-                            </div>
-                            <div>
-                                <dt>Cadastro</dt>
-                                <dd id="apoieStepThreeSubmission">--</dd>
-                            </div>
-                        </dl>
                         <a
                             href="#"
                             class="apoie-button apoie-button-whatsapp"
@@ -267,11 +237,11 @@
                             </span>
                             <span>Enviar comprovante pelo WhatsApp</span>
                         </a>
-                        <div class="apoie-step-actions apoie-step-actions-stacked">
-                            <button type="button" class="apoie-button apoie-button-secondary" data-copy-target="pix-code-again">Copiar PIX novamente</button>
-                            <a href="/" class="apoie-button apoie-button-tertiary">Voltar ao site</a>
-                        </div>
                     </section>
+
+                    <div class="apoie-step-actions">
+                        <button type="button" class="apoie-button apoie-button-tertiary" data-action="back-step-one">Voltar</button>
+                    </div>
                 </section>
             </form>
         </section>

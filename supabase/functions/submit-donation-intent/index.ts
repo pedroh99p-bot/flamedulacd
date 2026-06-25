@@ -8,6 +8,7 @@ const FUNCTION_NAME = "submit-donation-intent";
 const PRE_PIX_MODE = "pre_pix";
 const PRE_PIX_STATUS = "pending_payment_setup";
 const PRE_PIX_SOURCE_SECTION = "support_page";
+const PRE_PIX_AMOUNT_SCHEMA_PLACEHOLDER = 1;
 const ALLOWED_FIELDS = [
   "submission_mode",
   "donor_type",
@@ -69,7 +70,7 @@ function buildPrePixEmail(phone: string) {
   return `prepix+${suffix}@flamedula.invalid`;
 }
 
-function buildSuccessPayload(data: { id: string; created_at: string }, isPrePix: boolean, amount?: number | null) {
+function buildSuccessPayload(data: { id: string; created_at: string }, isPrePix: boolean) {
   if (!isPrePix) {
     return { submissionId: data.id, submittedAt: data.created_at };
   }
@@ -79,7 +80,6 @@ function buildSuccessPayload(data: { id: string; created_at: string }, isPrePix:
     submittedAt: data.created_at,
     status: PRE_PIX_STATUS,
     nextStep: "pix",
-    amount: amount ?? null,
   };
 }
 
@@ -102,7 +102,6 @@ Deno.serve(async (req) => {
 
   const submissionMode = cleanString(payload.submission_mode, 30);
   const isPrePix = submissionMode === PRE_PIX_MODE;
-  const prePixAmount = Number(payload.amount);
   const row = isPrePix
     ? {
       donor_type: "pessoa_fisica",
@@ -119,7 +118,7 @@ Deno.serve(async (req) => {
       donation_type: "single",
       due_day: null,
       recurrence_period: null,
-      amount: prePixAmount,
+      amount: PRE_PIX_AMOUNT_SCHEMA_PLACEHOLDER,
       custom_amount: null,
       privacy_accepted: payload.privacy_accepted === true,
       terms_accepted: payload.terms_accepted === true,
@@ -129,7 +128,7 @@ Deno.serve(async (req) => {
       is_test: false,
       provider_name: null,
       provider_reference: null,
-      internal_notes: `pre_pix; source_section=${cleanString(payload.source_section, 80) || PRE_PIX_SOURCE_SECTION}`,
+      internal_notes: `pre_pix; source_section=${cleanString(payload.source_section, 80) || PRE_PIX_SOURCE_SECTION}; intended_amount_local_only=true`,
     }
     : {
       donor_type: cleanString(payload.donor_type, 30),
@@ -172,7 +171,6 @@ Deno.serve(async (req) => {
   if (isPrePix) {
     if (!row.name) fieldErrors.name = "Informe o nome.";
     if (!isValidPhone(row.phone)) fieldErrors.phone = "Informe um telefone valido.";
-    if (!Number.isFinite(row.amount) || row.amount <= 0) fieldErrors.amount = "Informe um valor maior que zero.";
     if (!isValidCpf(row.document)) fieldErrors.document = "Nao foi possivel preparar o cadastro agora.";
     if (!row.email || !isValidEmail(row.email)) fieldErrors.email = "Nao foi possivel preparar o cadastro agora.";
   } else {
@@ -217,7 +215,7 @@ Deno.serve(async (req) => {
   const since = new Date(Date.now() - 45_000).toISOString();
   const duplicate = await supabase
     .from("donation_intents")
-    .select("id, created_at, amount")
+    .select("id, created_at")
     .or(`phone.eq.${row.phone},email.eq.${row.email}`)
     .gte("created_at", since)
     .order("created_at", { ascending: false })
@@ -225,12 +223,8 @@ Deno.serve(async (req) => {
     .maybeSingle();
 
   if (duplicate.data?.id) {
-    const duplicateAmount = Number(duplicate.data.amount);
-    const isSamePrePix = isPrePix && Number.isFinite(duplicateAmount) && duplicateAmount === row.amount;
-    if (!isPrePix || isSamePrePix) {
-      logResult(FUNCTION_NAME, 201, "DUPLICATE_SUBMISSION", duplicate.data.id);
-      return successResponse(buildSuccessPayload(duplicate.data, isPrePix, duplicateAmount), headers);
-    }
+    logResult(FUNCTION_NAME, 201, "DUPLICATE_SUBMISSION", duplicate.data.id);
+    return successResponse(buildSuccessPayload(duplicate.data, isPrePix), headers);
   }
 
   const { data, error } = await supabase
@@ -245,5 +239,5 @@ Deno.serve(async (req) => {
   }
 
   logResult(FUNCTION_NAME, 201, "OK", data.id);
-  return successResponse(buildSuccessPayload(data, isPrePix, row.amount), headers);
+  return successResponse(buildSuccessPayload(data, isPrePix), headers);
 });

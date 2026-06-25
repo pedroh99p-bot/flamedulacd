@@ -25,12 +25,10 @@ const progressSteps = [...document.querySelectorAll('[data-progress-step]')];
 const progressLines = [...document.querySelectorAll('.apoie-progress-line span')];
 const stepOneSubmitButton = document.querySelector('[data-step-one-submit]');
 const amountField = form?.elements.amount_display;
-const submissionIdOutput = document.getElementById('apoieSubmissionId');
 const summaryName = document.getElementById('apoieSummaryName');
 const summaryAmount = document.getElementById('apoieSummaryAmount');
 const summaryStatus = document.getElementById('apoieSummaryStatus');
-const stepThreeMessage = document.getElementById('apoieStepThreeMessage');
-const stepThreeSubmission = document.getElementById('apoieStepThreeSubmission');
+const whatsappArea = document.getElementById('apoieWhatsappArea');
 const whatsappButton = document.getElementById('apoieWhatsappButton');
 const pixCodeBox = document.getElementById('apoiePixCode');
 const pixKeyRaw = document.getElementById('apoiePixKeyRaw');
@@ -91,8 +89,7 @@ function sameSnapshot(first, second) {
     first
     && second
     && first.name === second.name
-    && first.phone === second.phone
-    && first.amount === second.amount,
+    && first.phone === second.phone,
   );
 }
 
@@ -121,12 +118,12 @@ function focusField(field) {
 function updateProgress(stepNumber) {
   progressSteps.forEach((step) => {
     step.classList.toggle('is-active', Number(step.dataset.progressStep) <= stepNumber);
+    step.classList.toggle('is-complete', Number(step.dataset.progressStep) < stepNumber);
   });
 
   const widths = {
-    1: ['0%', '0%'],
-    2: ['100%', '0%'],
-    3: ['100%', '100%'],
+    1: ['0%'],
+    2: ['100%'],
   };
 
   progressLines.forEach((line, index) => {
@@ -141,7 +138,9 @@ function showStep(stepNumber, { focusTitle = false } = {}) {
   steps.forEach((step) => {
     const isActive = Number(step.dataset.step) === stepNumber;
     step.hidden = !isActive;
+    step.setAttribute('aria-hidden', String(!isActive));
     step.classList.toggle('is-active', isActive);
+    step.classList.toggle('is-hidden', !isActive);
   });
 
   updateProgress(stepNumber);
@@ -151,21 +150,19 @@ function showStep(stepNumber, { focusTitle = false } = {}) {
   const target = document.getElementById(
     stepNumber === 1
       ? 'apoieStepOneTitle'
-      : stepNumber === 2
-        ? 'apoieStepTwoTitle'
-        : 'apoieStepThreeTitle',
+      : 'apoieStepTwoTitle',
   );
 
-  window.requestAnimationFrame(() => target?.focus({ preventScroll: false }));
+  window.requestAnimationFrame(() => {
+    target?.focus({ preventScroll: false });
+    document.querySelector('.apoie-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
 }
 
 function updateSummary() {
   summaryName.textContent = state.name || '--';
   summaryAmount.textContent = formatCurrency(state.amount);
   summaryStatus.textContent = PRE_PIX_STATUS_LABEL;
-  submissionIdOutput.textContent = state.submissionId || '--';
-  stepThreeSubmission.textContent = state.submissionId || '--';
-  stepThreeMessage.textContent = `O valor informado foi ${formatCurrency(state.amount)}. Depois de concluir o PIX, envie o comprovante para nossa equipe pelo WhatsApp.`;
 }
 
 function validateStepOne() {
@@ -223,7 +220,6 @@ function buildPrePixPayload() {
     submission_mode: 'pre_pix',
     name: snapshot.name,
     phone: snapshot.phone,
-    amount: snapshot.amount,
     privacy_accepted: form.elements.privacy_accepted.checked,
     terms_accepted: form.elements.terms_accepted.checked,
     source: 'apoie_page',
@@ -233,7 +229,7 @@ function buildPrePixPayload() {
 }
 
 function buildWhatsappUrl() {
-  const message = `Ol\u00e1! Meu nome \u00e9 ${state.name}. Informei uma contribui\u00e7\u00e3o de ${formatCurrency(state.amount)} para a FlaMedula e realizei o PIX. Gostaria de enviar o comprovante. Cadastro: ${state.submissionId}.`;
+  const message = `Ol\u00e1! Meu nome \u00e9 ${state.name}. Informei que gostaria de contribuir com ${formatCurrency(state.amount)} para a FlaMedula e realizei o PIX. Gostaria de enviar o comprovante. Cadastro: ${state.submissionId}.`;
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 }
 
@@ -307,7 +303,24 @@ function fallbackCopy(text, element) {
   return false;
 }
 
-async function copyValue(value, element, button, successMessage, stateKey, { advanceToStepThree = false } = {}) {
+function hideWhatsappArea() {
+  if (!whatsappArea) return;
+  whatsappArea.hidden = true;
+  whatsappArea.setAttribute('aria-hidden', 'true');
+  whatsappArea.classList.remove('is-visible');
+}
+
+function revealWhatsappArea() {
+  if (!whatsappArea || !state.submissionId) return;
+  whatsappButton.href = buildWhatsappUrl();
+  whatsappArea.hidden = false;
+  whatsappArea.setAttribute('aria-hidden', 'false');
+  window.requestAnimationFrame(() => {
+    whatsappArea.classList.add('is-visible');
+  });
+}
+
+async function copyValue(value, element, button, successMessage, stateKey, { revealWhatsapp = false } = {}) {
   let copied = false;
 
   try {
@@ -328,9 +341,8 @@ async function copyValue(value, element, button, successMessage, stateKey, { adv
   setCopiedButtonState(button, successMessage);
   showToast(successMessage, 'success');
 
-  if (advanceToStepThree) {
-    updateSummary();
-    showStep(3, { focusTitle: true });
+  if (revealWhatsapp) {
+    revealWhatsappArea();
   }
 
   return true;
@@ -339,6 +351,7 @@ async function copyValue(value, element, button, successMessage, stateKey, { adv
 function resetCopyState() {
   state.copiedPixCode = false;
   state.copiedPixKey = false;
+  hideWhatsappArea();
 }
 
 async function handleStepOneSubmit() {
@@ -347,6 +360,7 @@ async function handleStepOneSubmit() {
   const snapshot = getSnapshot();
 
   if (state.submissionId && sameSnapshot(snapshot, state.submissionSnapshot)) {
+    state.amount = snapshot.amount;
     updateSummary();
     setFeedback(`Cadastro recebido. Sua contribui\u00e7\u00e3o de ${formatCurrency(state.amount)} est\u00e1 aguardando confirma\u00e7\u00e3o do PIX.`, 'success');
     showStep(2, { focusTitle: true });
@@ -374,7 +388,10 @@ async function handleStepOneSubmit() {
     state.amount = snapshot.amount;
     state.status = result.status || 'pending_payment_setup';
     state.submissionId = result.submissionId;
-    state.submissionSnapshot = snapshot;
+    state.submissionSnapshot = {
+      name: snapshot.name,
+      phone: snapshot.phone,
+    };
 
     whatsappButton.href = buildWhatsappUrl();
     updateSummary();
@@ -395,15 +412,11 @@ function bindCopyButtons() {
       const target = button.dataset.copyTarget;
 
       if (target === 'pix-code') {
-        await copyValue(PIX_CODE, pixCodeBox, button, 'C\u00f3digo PIX copiado', 'copiedPixCode', { advanceToStepThree: true });
+        await copyValue(PIX_CODE, pixCodeBox, button, 'C\u00f3digo PIX copiado', 'copiedPixCode', { revealWhatsapp: true });
       }
 
       if (target === 'pix-key') {
-        await copyValue(PIX_KEY_RAW, pixKeyRaw, button, 'Chave PIX copiada', 'copiedPixKey', { advanceToStepThree: true });
-      }
-
-      if (target === 'pix-code-again') {
-        await copyValue(PIX_CODE, pixCodeBox, button, 'C\u00f3digo PIX copiado', 'copiedPixCode');
+        await copyValue(PIX_KEY_RAW, pixKeyRaw, button, 'Chave PIX copiada', 'copiedPixKey', { revealWhatsapp: true });
       }
     });
   });
@@ -411,6 +424,7 @@ function bindCopyButtons() {
 
 function bindNavigation() {
   form.querySelector('[data-action="back-step-one"]')?.addEventListener('click', () => {
+    resetCopyState();
     setFeedback(`Cadastro recebido. Sua contribui\u00e7\u00e3o de ${formatCurrency(state.amount)} est\u00e1 aguardando confirma\u00e7\u00e3o do PIX.`, 'success');
     showStep(1, { focusTitle: true });
   });
@@ -423,6 +437,7 @@ function initApoiePage() {
   updateSummary();
   updateProgress(1);
   showStep(1);
+  hideWhatsappArea();
   bindCopyButtons();
   bindNavigation();
 
