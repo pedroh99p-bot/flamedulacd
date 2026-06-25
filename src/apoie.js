@@ -9,6 +9,7 @@ import { hasMinPhoneDigits, onlyDigits } from './utils/formValidation.js';
 const PIX_CODE = '00020126360014br.gov.bcb.pix0114530430740001715204000053039865802BR5921ASSOCIACAO FLA MEDULA6014RIO DE JANEIRO622605222RwegBxM8xgNzjcbhgJHeP6304D846';
 const WHATSAPP_NUMBER = '85999280682';
 const PRE_PIX_STATUS_LABEL = 'Aguardando confirma\u00e7\u00e3o do PIX';
+const STEP_TRANSITION_MS = 170;
 
 const currencyFormatter = new Intl.NumberFormat('pt-BR', {
   style: 'currency',
@@ -44,6 +45,7 @@ const state = {
 };
 
 let toastTimeoutId = null;
+let stepTransitionTimer = null;
 
 function formatPhone(value) {
   const digits = onlyDigits(value).slice(0, 11);
@@ -91,9 +93,19 @@ function sameSnapshot(first, second) {
 }
 
 function setFeedback(message, tone = 'neutral') {
+  if (!feedback) return;
   feedback.textContent = message || '';
   feedback.dataset.tone = tone;
   feedback.hidden = !message;
+}
+
+function setSubmitState(status = 'idle') {
+  if (!form) return;
+  form.dataset.submitState = status;
+}
+
+function prefersReducedMotion() {
+  return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 }
 
 function clearErrors() {
@@ -128,7 +140,20 @@ function updateProgress(stepNumber) {
   });
 }
 
-function showStep(stepNumber, { focusTitle = false } = {}) {
+function focusStepTitle(stepNumber) {
+  const target = document.getElementById(
+    stepNumber === 1
+      ? 'apoieStepOneTitle'
+      : 'apoieStepTwoTitle',
+  );
+
+  window.requestAnimationFrame(() => {
+    target?.focus({ preventScroll: true });
+    document.querySelector('.apoie-panel')?.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
+  });
+}
+
+function applyStep(stepNumber, { focusTitle = false } = {}) {
   state.currentStep = stepNumber;
   document.body.dataset.activeStep = String(stepNumber);
 
@@ -142,18 +167,30 @@ function showStep(stepNumber, { focusTitle = false } = {}) {
 
   updateProgress(stepNumber);
 
-  if (!focusTitle) return;
+  if (focusTitle) focusStepTitle(stepNumber);
+}
 
-  const target = document.getElementById(
-    stepNumber === 1
-      ? 'apoieStepOneTitle'
-      : 'apoieStepTwoTitle',
-  );
+function showStep(stepNumber, { focusTitle = false } = {}) {
+  if (stepTransitionTimer) {
+    window.clearTimeout(stepTransitionTimer);
+    stepTransitionTimer = null;
+  }
 
-  window.requestAnimationFrame(() => {
-    target?.focus({ preventScroll: false });
-    document.querySelector('.apoie-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
+  if (stepNumber === state.currentStep || prefersReducedMotion()) {
+    applyStep(stepNumber, { focusTitle });
+    return;
+  }
+
+  const currentStep = steps.find((step) => Number(step.dataset.step) === state.currentStep);
+  form?.classList.add('is-switching-step');
+  currentStep?.classList.add('is-exiting');
+
+  stepTransitionTimer = window.setTimeout(() => {
+    currentStep?.classList.remove('is-exiting');
+    form?.classList.remove('is-switching-step');
+    applyStep(stepNumber, { focusTitle });
+    stepTransitionTimer = null;
+  }, STEP_TRANSITION_MS);
 }
 
 function updateSummary() {
@@ -164,6 +201,7 @@ function updateSummary() {
 
 function validateStepOne() {
   clearErrors();
+  setSubmitState('validating');
   setFeedback('Validando seus dados...', 'info');
 
   const nameField = form.elements.name;
@@ -208,6 +246,16 @@ function validateStepOne() {
   }
 
   return true;
+}
+
+function setStepOneLocked(locked) {
+  const stepOne = document.getElementById('supportStep1');
+  if (!stepOne) return;
+
+  stepOne.querySelectorAll('input, button, select, textarea').forEach((control) => {
+    if (control.name === 'website') return;
+    control.disabled = locked;
+  });
 }
 
 function buildPrePixPayload() {
@@ -358,16 +406,22 @@ async function handleStepOneSubmit() {
   if (state.submissionId && sameSnapshot(snapshot, state.submissionSnapshot)) {
     state.amount = snapshot.amount;
     updateSummary();
+    setSubmitState('success');
     setFeedback(`Cadastro recebido. Sua contribui\u00e7\u00e3o de ${formatCurrency(state.amount)} est\u00e1 aguardando confirma\u00e7\u00e3o do PIX.`, 'success');
     showStep(2, { focusTitle: true });
     return;
   }
 
-  if (!validateStepOne()) return;
+  if (!validateStepOne()) {
+    setSubmitState('error');
+    return;
+  }
 
   state.isSubmitting = true;
   clearErrors();
   resetCopyState();
+  setStepOneLocked(true);
+  setSubmitState('sending');
   setFeedback('Enviando seu cadastro...', 'info');
   setButtonSubmitting(stepOneSubmitButton, true, 'Enviando cadastro...');
 
@@ -391,13 +445,16 @@ async function handleStepOneSubmit() {
 
     whatsappButton.href = buildWhatsappUrl();
     updateSummary();
+    setSubmitState('success');
     setFeedback(`Cadastro recebido. Sua contribui\u00e7\u00e3o de ${formatCurrency(state.amount)} est\u00e1 aguardando confirma\u00e7\u00e3o do PIX.`, 'success');
     showStep(2, { focusTitle: true });
   } catch (error) {
     applyFieldErrors(form, error.fieldErrors);
+    setSubmitState('error');
     setFeedback(error.message || 'N\u00e3o foi poss\u00edvel enviar. Seus dados continuam preenchidos.', 'error');
   } finally {
     state.isSubmitting = false;
+    setStepOneLocked(false);
     setButtonSubmitting(stepOneSubmitButton, false);
   }
 }
@@ -429,6 +486,7 @@ function initApoiePage() {
   if (!form) return;
 
   setFeedback('', 'neutral');
+  setSubmitState('idle');
   updateSummary();
   updateProgress(1);
   showStep(1);

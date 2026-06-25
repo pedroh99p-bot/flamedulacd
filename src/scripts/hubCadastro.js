@@ -39,7 +39,12 @@ const state = {
   flow: 'choice',
   step: 0,
   submitting: false,
+  selectionLocked: false,
+  selectionTimer: null,
 };
+
+const FLOW_SELECTION_DELAY_MS = 320;
+const SUPPORT_PAGE_URL = '/apoie/';
 
 function getMiniApp() {
   return document.getElementById('hubMiniApp');
@@ -90,7 +95,69 @@ function setFeedback(message = '', type = 'error') {
 
   feedback.textContent = message;
   feedback.classList.toggle('is-error', Boolean(message) && type === 'error');
+  feedback.classList.toggle('is-info', Boolean(message) && type === 'info');
+  feedback.classList.toggle('is-success', Boolean(message) && type === 'success');
   feedback.hidden = !message;
+}
+
+function prefersReducedMotion() {
+  return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+}
+
+function getChoiceCards() {
+  return [...document.querySelectorAll('[data-action="choose-flow"]')];
+}
+
+function resetChoiceSelection() {
+  if (state.selectionTimer) {
+    window.clearTimeout(state.selectionTimer);
+    state.selectionTimer = null;
+  }
+
+  state.selectionLocked = false;
+  getMiniApp()?.classList.remove('is-choosing-flow');
+  getChoiceCards().forEach((card) => {
+    card.disabled = false;
+    card.classList.remove('is-selected', 'is-dimmed', 'is-pending');
+    card.removeAttribute('aria-current');
+  });
+}
+
+function runSelectedFlow(flow) {
+  resetChoiceSelection();
+
+  if (flow === 'support') {
+    window.location.href = SUPPORT_PAGE_URL;
+    return;
+  }
+
+  startFlow(flow);
+}
+
+function chooseFlowWithTransition(button) {
+  const flow = button?.dataset.flow;
+  if (!FLOW_CONFIG[flow] || state.selectionLocked) return;
+
+  state.selectionLocked = true;
+  getMiniApp()?.classList.add('is-choosing-flow');
+
+  getChoiceCards().forEach((card) => {
+    const isSelected = card === button;
+    card.disabled = !isSelected;
+    card.classList.toggle('is-selected', isSelected);
+    card.classList.toggle('is-pending', isSelected);
+    card.classList.toggle('is-dimmed', !isSelected);
+    if (isSelected) card.setAttribute('aria-current', 'true');
+    else card.removeAttribute('aria-current');
+  });
+
+  setFeedback(
+    flow === 'support' ? 'Preparando a página de apoio...' : 'Abrindo cadastro...',
+    'info',
+  );
+
+  const delay = prefersReducedMotion() ? 0 : FLOW_SELECTION_DELAY_MS;
+  state.selectionTimer = window.setTimeout(() => runSelectedFlow(flow), delay);
 }
 
 function setFieldInvalid(container, name, invalid) {
@@ -364,6 +431,8 @@ function updateFooter(flow) {
 }
 
 function showOnlyActiveFlow() {
+  resetChoiceSelection();
+
   const choice = document.getElementById('hubGrid');
   const successDonor = document.getElementById('success-donor');
   const successPatient = document.getElementById('success-patient');
@@ -481,6 +550,17 @@ export function openPanel(type) {
     return;
   }
 
+  if (type === 'support') {
+    const supportCard = document.querySelector('[data-action="choose-flow"][data-flow="support"]');
+    if (state.flow === 'choice' && supportCard) {
+      chooseFlowWithTransition(supportCard);
+      return;
+    }
+
+    window.location.href = SUPPORT_PAGE_URL;
+    return;
+  }
+
   startFlow(type);
 }
 
@@ -503,7 +583,8 @@ function handleHubClick(event) {
   const action = actionTarget.dataset.action;
 
   if (action === 'choose-flow') {
-    startFlow(actionTarget.dataset.flow);
+    chooseFlowWithTransition(actionTarget);
+    return;
   }
 
   if (action === 'switch-flow') {

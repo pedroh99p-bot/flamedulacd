@@ -1,5 +1,7 @@
 body.apoie-page {
     min-height: 100vh;
+    min-height: 100svh;
+    font-size: 16px;
     background:
         radial-gradient(circle at top left, rgba(185, 28, 28, 0.12), transparent 28%),
         radial-gradient(circle at top right, rgba(251, 191, 36, 0.18), transparent 24%),
@@ -8,8 +10,14 @@ body.apoie-page {
     overflow-x: hidden;
 }
 
+@supports (min-height: 100dvh) {
+    body.apoie-page {
+        min-height: 100dvh;
+    }
+}
+
 .apoie-header {
-    padding: 20px 16px 10px;
+    padding: calc(20px + env(safe-area-inset-top)) max(16px, env(safe-area-inset-left)) 10px max(16px, env(safe-area-inset-right));
 }
 
 .apoie-header-inner,
@@ -83,7 +91,7 @@ body.apoie-page {
 }
 
 .apoie-main {
-    padding: 14px 16px 48px;
+    padding: 14px max(16px, env(safe-area-inset-left)) calc(48px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-right));
 }
 
 .apoie-intro {
@@ -143,6 +151,20 @@ body.apoie-page {
     background: rgba(255, 255, 255, 0.95);
     box-shadow: 0 28px 70px rgba(127, 29, 29, 0.12);
     overflow: hidden;
+}
+
+.apoie-header,
+.apoie-intro,
+.apoie-panel {
+    animation: apoieEnter 0.34s ease both;
+}
+
+.apoie-intro {
+    animation-delay: 0.04s;
+}
+
+.apoie-panel {
+    animation-delay: 0.08s;
 }
 
 .apoie-panel-head {
@@ -233,6 +255,7 @@ body.apoie-page {
 
 .apoie-form {
     padding: 20px;
+    min-width: 0;
 }
 
 .apoie-honeypot {
@@ -273,6 +296,15 @@ body.apoie-page {
 .apoie-step {
     display: grid;
     gap: 18px;
+    min-width: 0;
+}
+
+.apoie-step.is-active {
+    animation: apoieStepIn 0.24s ease both;
+}
+
+.apoie-step.is-exiting {
+    animation: apoieStepOut 0.17s ease both;
 }
 
 .apoie-step[hidden],
@@ -324,6 +356,11 @@ body.apoie-page {
     font-weight: 500;
     box-shadow: inset 0 1px 2px rgba(17, 24, 39, 0.04);
     transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.apoie-field input:disabled,
+.apoie-check input:disabled {
+    cursor: wait;
 }
 
 .apoie-field input:focus,
@@ -395,6 +432,17 @@ body.apoie-page {
     opacity: 0.82;
 }
 
+.apoie-form[data-submit-state="sending"] [data-step-one-submit]::before {
+    content: '';
+    width: 16px;
+    height: 16px;
+    flex: 0 0 auto;
+    border: 2px solid rgba(255, 255, 255, 0.42);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: apoieSpin 0.72s linear infinite;
+}
+
 .apoie-button-primary {
     background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
     color: white;
@@ -445,6 +493,7 @@ body.apoie-page {
 }
 
 .apoie-card {
+    min-width: 0;
     border: 1px solid rgba(127, 29, 29, 0.1);
     border-radius: 20px;
     background: #fff;
@@ -522,7 +571,8 @@ body.apoie-page {
 
 .apoie-qr-image {
     display: block;
-    width: min(100%, 320px);
+    width: clamp(220px, 78vw, 360px);
+    max-width: 100%;
     height: auto;
     aspect-ratio: 1 / 1;
     object-fit: contain;
@@ -530,6 +580,8 @@ body.apoie-page {
 }
 
 .apoie-code-box {
+    max-width: 100%;
+    min-width: 0;
     padding: 16px;
     border-radius: 16px;
     background: #fff8f5;
@@ -538,11 +590,12 @@ body.apoie-page {
 
 .apoie-code-box {
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    font-size: 0.92rem;
+    font-size: clamp(0.82rem, 3.4vw, 0.92rem);
     line-height: 1.65;
     color: #4a1214;
     overflow-wrap: anywhere;
     word-break: break-word;
+    white-space: normal;
 }
 
 .apoie-association-data {
@@ -591,6 +644,7 @@ body.apoie-page {
 
 .apoie-whatsapp-area {
     background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%);
+    overflow: hidden;
     opacity: 0;
     transform: translateY(8px);
     transition: opacity 0.2s ease, transform 0.2s ease;
@@ -603,10 +657,11 @@ body.apoie-page {
 .apoie-whatsapp-area.is-visible {
     opacity: 1;
     transform: translateY(0);
+    animation: apoieRevealBlock 0.24s ease both;
 }
 
 .apoie-footer {
-    padding: 0 16px 24px;
+    padding: 0 max(16px, env(safe-area-inset-left)) calc(24px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-right));
 }
 
 .apoie-footer-inner {
@@ -626,7 +681,7 @@ body.apoie-page {
     position: fixed;
     left: 16px;
     right: 16px;
-    bottom: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom));
     z-index: 40;
     display: grid;
     place-items: center;
@@ -664,6 +719,105 @@ body.apoie-page {
 .is-invalid {
     border-color: rgba(185, 28, 28, 0.44) !important;
     box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
+}
+
+@keyframes apoieEnter {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes apoieStepIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes apoieStepOut {
+    to {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+}
+
+@keyframes apoieRevealBlock {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes apoieSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 480px) {
+    .apoie-brand {
+        gap: 10px;
+    }
+
+    .apoie-brand img {
+        width: 72px;
+        height: 56px;
+    }
+
+    .apoie-brand-copy strong {
+        font-size: 0.9rem;
+    }
+
+    .apoie-back {
+        min-height: 40px;
+        padding-inline: 12px;
+        font-size: 0.86rem;
+    }
+
+    .apoie-main {
+        padding-top: 8px;
+    }
+
+    .apoie-intro-copy h1 {
+        font-size: clamp(1.75rem, 9vw, 2.25rem);
+    }
+
+    .apoie-panel {
+        border-radius: 18px;
+    }
+
+    .apoie-panel-head,
+    .apoie-form {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .apoie-card {
+        padding: 16px;
+        border-radius: 16px;
+    }
+
+    .apoie-qr-frame {
+        padding: 10px;
+    }
+
+    .apoie-button {
+        min-height: 54px;
+        font-size: 1rem;
+    }
 }
 
 @media (min-width: 640px) {
@@ -738,10 +892,17 @@ body.apoie-page {
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .apoie-header,
+    .apoie-intro,
+    .apoie-panel,
+    .apoie-step.is-active,
+    .apoie-step.is-exiting,
+    .apoie-form[data-submit-state="sending"] [data-step-one-submit]::before,
     .apoie-button,
     .apoie-progress-line span,
     .apoie-whatsapp-area,
     .apoie-toast {
+        animation: none;
         transition: none;
     }
 }

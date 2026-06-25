@@ -275,8 +275,9 @@
     display: flex;
     flex-direction: column;
     width: min(100%, 900px);
-    height: min(720px, calc(100vh - 54px));
-    min-height: min(620px, calc(100vh - 54px));
+    height: auto;
+    min-height: min(620px, calc(100svh - 54px));
+    max-height: none;
     margin: 0 auto;
     padding: 28px;
     border: 1px solid rgba(17, 24, 39, 0.08);
@@ -284,6 +285,11 @@
     background: rgba(255,255,255,0.94);
     box-shadow: 0 24px 70px rgba(17, 24, 39, 0.12);
     animation: slideUp 0.4s ease forwards;
+}
+@supports (min-height: 100dvh) {
+    .hub-mini-app {
+        min-height: min(620px, calc(100dvh - 54px));
+    }
 }
 .hub-mini-app [hidden] {
     display: none !important;
@@ -461,6 +467,16 @@
     background: rgba(254, 226, 226, 0.82);
     color: #7F1D1D;
 }
+.form-feedback.is-info {
+    border: 1px solid rgba(37, 99, 235, 0.2);
+    background: rgba(239, 246, 255, 0.9);
+    color: #1D4ED8;
+}
+.form-feedback.is-success {
+    border: 1px solid rgba(22, 101, 52, 0.2);
+    background: rgba(240, 253, 244, 0.9);
+    color: #166534;
+}
 .form-honeypot {
     position: absolute;
     left: -10000px;
@@ -489,6 +505,7 @@
 .mini-flow-form[hidden],
 .success-msg[hidden] { display: none; }
 .hub-card {
+    position: relative;
     width: 100%;
     min-height: 220px;
     padding: 22px;
@@ -501,7 +518,7 @@
     align-items: flex-start;
     text-align: left;
     overflow: hidden;
-    transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease;
+    transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease, opacity 0.24s ease;
     cursor: pointer;
 }
 .hub-mini-app.flow-neutral .hub-card {
@@ -536,6 +553,35 @@
 .hub-card:focus-visible {
     transform: translateY(-3px);
     box-shadow: var(--shadow-md);
+}
+.hub-card:disabled {
+    cursor: wait;
+}
+.hub-card.is-selected {
+    transform: translateY(-2px) scale(1.01);
+    border-color: rgba(251, 191, 36, 0.62);
+    box-shadow: 0 16px 34px rgba(17, 24, 39, 0.12);
+}
+.hub-card.is-dimmed {
+    opacity: 0.62;
+    transform: scale(0.985);
+}
+.hub-card.is-selected::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--flow-main), #FBBF24);
+    transform: scaleX(0);
+    transform-origin: left center;
+    animation: hubChoiceProgress 0.32s ease forwards;
+}
+.hub-mini-app.is-choosing-flow .hub-card:not(.is-selected):hover,
+.hub-mini-app.is-choosing-flow .hub-card:not(.is-selected):focus-visible {
+    transform: scale(0.985);
+    box-shadow: var(--shadow-sm);
 }
 .hub-card:focus-visible { outline: 3px solid rgba(251, 191, 36, 0.7); outline-offset: 4px; }
 .card-donor { border-top: 4px solid var(--donor-main); }
@@ -934,6 +980,34 @@ textarea.form-control {
 .success-msg p {
     max-width: 560px;
     margin: 10px auto 24px;
+}
+
+@keyframes hubChoiceProgress {
+    to {
+        transform: scaleX(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hub-mini-app,
+    .hub-card,
+    .mini-progress span,
+    .mini-step {
+        animation: none;
+        transition: none;
+    }
+
+    .hub-card.is-selected,
+    .hub-card.is-dimmed,
+    .hub-mini-app.is-choosing-flow .hub-card:not(.is-selected):hover,
+    .hub-mini-app.is-choosing-flow .hub-card:not(.is-selected):focus-visible {
+        transform: none;
+    }
+
+    .hub-card.is-selected::before {
+        animation: none;
+        transform: scaleX(1);
+    }
 }
 
 
