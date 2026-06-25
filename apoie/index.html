@@ -41,13 +41,13 @@
     <main class="apoie-main">
         <section class="apoie-intro" aria-labelledby="apoieIntroTitle">
             <div class="apoie-intro-copy">
-                <span class="apoie-kicker">Cadastro antes do PIX</span>
-                <h1 id="apoieIntroTitle">Contribua com a FlaMedula em duas etapas simples.</h1>
-                <p>Primeiro recebemos seu cadastro m&iacute;nimo. Depois liberamos os dados oficiais para a transfer&ecirc;ncia via PIX e o envio do comprovante.</p>
+                <span class="apoie-kicker">Cadastro, PIX e comprovante</span>
+                <h1 id="apoieIntroTitle">Apoie a FlaMedula em 3 etapas claras e sequenciais.</h1>
+                <p>Primeiro registramos seu apoio com o valor pretendido. Depois exibimos o PIX e, por fim, liberamos o envio do comprovante.</p>
             </div>
             <div class="apoie-intro-note">
-                <strong>Fluxo atual</strong>
-                <p>Sem cart&atilde;o, sem checkout falso e sem confirma&ccedil;&atilde;o autom&aacute;tica de pagamento.</p>
+                <strong>Como o fluxo funciona</strong>
+                <p>O valor informado representa uma inten&ccedil;&atilde;o de apoio pendente de confirma&ccedil;&atilde;o do PIX.</p>
             </div>
         </section>
 
@@ -55,7 +55,7 @@
             <div class="apoie-panel-head">
                 <div>
                     <span class="apoie-kicker apoie-kicker-panel">Apoio financeiro</span>
-                    <h2 id="apoieFlowTitle">Apoie a rede que mobiliza campanhas, orienta fam&iacute;lias e mant&eacute;m a causa ativa.</h2>
+                    <h2 id="apoieFlowTitle">Informe seus dados, registre o valor pretendido e conclua o envio do comprovante no momento certo.</h2>
                 </div>
                 <div class="apoie-progress" aria-label="Etapas do apoio">
                     <div class="apoie-progress-step is-active" data-progress-step="1">
@@ -66,6 +66,11 @@
                     <div class="apoie-progress-step" data-progress-step="2">
                         <span>2</span>
                         <small>PIX</small>
+                    </div>
+                    <div class="apoie-progress-line" aria-hidden="true"><span></span></div>
+                    <div class="apoie-progress-step" data-progress-step="3">
+                        <span>3</span>
+                        <small>Comprovante</small>
                     </div>
                 </div>
             </div>
@@ -79,8 +84,8 @@
 
                 <section class="apoie-step is-active" data-step="1" aria-labelledby="apoieStepOneTitle">
                     <div class="apoie-step-head">
-                        <h3 id="apoieStepOneTitle" tabindex="-1">Cadastre-se para apoiar</h3>
-                        <p>Ap&oacute;s o cadastro, exibimos o QR Code PIX, o c&oacute;digo copia e cola e o canal oficial para envio do comprovante.</p>
+                        <h3 id="apoieStepOneTitle" tabindex="-1">Cadastre seu apoio</h3>
+                        <p>Informe seus dados e o valor que deseja doar. Em seguida, o PIX ser&aacute; exibido.</p>
                     </div>
 
                     <div class="apoie-fields">
@@ -92,6 +97,11 @@
                         <label class="apoie-field">
                             <span>Telefone / WhatsApp *</span>
                             <input type="tel" name="phone" autocomplete="tel" inputmode="tel" required>
+                        </label>
+
+                        <label class="apoie-field apoie-field-full">
+                            <span>Valor que deseja doar *</span>
+                            <input type="text" name="amount_display" inputmode="numeric" autocomplete="off" placeholder="R$ 0,00" required>
                         </label>
                     </div>
 
@@ -112,119 +122,156 @@
                     </div>
                 </section>
 
-                <section class="apoie-step" data-step="2" id="apoieStepTwo" aria-labelledby="apoieStepTwoTitle" hidden tabindex="-1">
-                    <div class="apoie-step-two-banner">
-                        <span class="apoie-success-pill">Cadastro recebido</span>
-                        <div>
-                            <h3 id="apoieStepTwoTitle" tabindex="-1">Agora voc&ecirc; pode realizar sua contribui&ccedil;&atilde;o via PIX.</h3>
-                            <p>Confira os dados oficiais abaixo. Depois do PIX, envie o comprovante pelo canal liberado nesta tela.</p>
+                <section class="apoie-step" data-step="2" id="apoieStepTwo" aria-labelledby="apoieStepTwoTitle" hidden>
+                    <div class="apoie-step-head">
+                        <h3 id="apoieStepTwoTitle" tabindex="-1">PIX para concluir seu apoio</h3>
+                        <p>O QR e os demais dados s&oacute; aparecem ap&oacute;s a confirma&ccedil;&atilde;o real do cadastro.</p>
+                    </div>
+
+                    <figure class="apoie-institutional-figure apoie-institutional-figure-step">
+                        <img
+                            src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1782411944/flamedula_1_eppcqk.webp"
+                            alt="Foto institucional da FlaMedula em a&ccedil;&atilde;o social"
+                            width="1166"
+                            height="1654"
+                            loading="lazy"
+                            decoding="async"
+                        >
+                        <figcaption>A rede segue ativa com mobiliza&ccedil;&atilde;o, comunica&ccedil;&atilde;o e apoio presencial.</figcaption>
+                    </figure>
+
+                    <section class="apoie-card apoie-summary-card" aria-labelledby="apoieSummaryTitle">
+                        <div class="apoie-card-headline">
+                            <h4 id="apoieSummaryTitle">Resumo do apoio</h4>
+                            <p>Cadastro recebido. Sua contribui&ccedil;&atilde;o est&aacute; aguardando confirma&ccedil;&atilde;o do PIX.</p>
                         </div>
-                        <dl class="apoie-submission-meta">
+                        <dl class="apoie-summary-grid">
+                            <div>
+                                <dt>Nome</dt>
+                                <dd id="apoieSummaryName">--</dd>
+                            </div>
+                            <div>
+                                <dt>Valor pretendido</dt>
+                                <dd id="apoieSummaryAmount">R$ 0,00</dd>
+                            </div>
+                            <div>
+                                <dt>Status</dt>
+                                <dd id="apoieSummaryStatus">Aguardando confirma&ccedil;&atilde;o do PIX</dd>
+                            </div>
                             <div>
                                 <dt>Cadastro</dt>
                                 <dd id="apoieSubmissionId">--</dd>
                             </div>
                         </dl>
-                    </div>
+                    </section>
 
-                    <div class="apoie-step-two-layout">
-                        <div class="apoie-step-two-primary">
-                            <section class="apoie-pix-card apoie-qr-card" aria-labelledby="apoieQrTitle">
-                                <div class="apoie-card-headline">
-                                    <h4 id="apoieQrTitle">QR Code PIX</h4>
-                                    <p>Use a c&acirc;mera do app do seu banco para concluir a transfer&ecirc;ncia.</p>
-                                </div>
-                                <div class="apoie-qr-frame">
-                                    <img
-                                        src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1782412026/Captura_de_tela_2026-06-25_142326_fnobuk.webp"
-                                        alt="QR Code PIX da Associa&ccedil;&atilde;o Fla Medula"
-                                        class="apoie-qr-image"
-                                        decoding="async"
-                                    >
-                                </div>
-                            </section>
-
-                            <section class="apoie-pix-card" aria-labelledby="apoiePixCodeTitle">
-                                <div class="apoie-card-headline">
-                                    <h4 id="apoiePixCodeTitle">PIX copia e cola</h4>
-                                    <p>Copie o c&oacute;digo exato e cole no app do seu banco.</p>
-                                </div>
-                                <div class="apoie-code-box" id="apoiePixCode" tabindex="0">00020126360014br.gov.bcb.pix0114530430740001715204000053039865802BR5921ASSOCIACAO FLA MEDULA6014RIO DE JANEIRO622605222RwegBxM8xgNzjcbhgJHeP6304D846</div>
-                                <button type="button" class="apoie-button apoie-button-secondary" data-copy-target="pix-code">Copiar c&oacute;digo PIX</button>
-                            </section>
-
-                            <section class="apoie-pix-card" aria-labelledby="apoiePixKeyTitle">
-                                <div class="apoie-card-headline">
-                                    <h4 id="apoiePixKeyTitle">Chave PIX CNPJ</h4>
-                                    <p>Ao copiar, enviamos somente os d&iacute;gitos da chave.</p>
-                                </div>
-                                <div class="apoie-key-box">
-                                    <strong id="apoiePixKeyDisplay">53.043.074/0001-71</strong>
-                                    <span id="apoiePixKeyRaw">53043074000171</span>
-                                </div>
-                                <button type="button" class="apoie-button apoie-button-secondary" data-copy-target="pix-key">Copiar chave PIX</button>
-                            </section>
-
-                            <section class="apoie-pix-card" aria-labelledby="apoieAssociationTitle">
-                                <div class="apoie-card-headline">
-                                    <h4 id="apoieAssociationTitle">Dados oficiais da associa&ccedil;&atilde;o</h4>
-                                    <p>Confira os dados antes de concluir a transfer&ecirc;ncia.</p>
-                                </div>
-                                <dl class="apoie-association-data">
-                                    <div>
-                                        <dt>Favorecido</dt>
-                                        <dd>Associa&ccedil;&atilde;o Fla Medula</dd>
-                                    </div>
-                                    <div>
-                                        <dt>CNPJ</dt>
-                                        <dd>53.043.074/0001-71</dd>
-                                    </div>
-                                    <div>
-                                        <dt>Ag&ecirc;ncia</dt>
-                                        <dd>0001</dd>
-                                    </div>
-                                    <div>
-                                        <dt>Conta</dt>
-                                        <dd>4827049-1</dd>
-                                    </div>
-                                </dl>
-                            </section>
-
-                            <section class="apoie-whatsapp-gate" id="apoieWhatsappGate" hidden aria-labelledby="apoieWhatsappTitle">
-                                <div class="apoie-card-headline">
-                                    <h4 id="apoieWhatsappTitle">Envio do comprovante</h4>
-                                    <p>Depois de concluir o PIX, envie o comprovante para nossa equipe.</p>
-                                </div>
-                                <a
-                                    href="#"
-                                    class="apoie-button apoie-button-whatsapp"
-                                    id="apoieWhatsappButton"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    Enviar comprovante pelo WhatsApp
-                                </a>
-                            </section>
-
-                            <div class="apoie-step-actions apoie-step-actions-bottom">
-                                <button type="button" class="apoie-button apoie-button-tertiary" data-action="back">Voltar</button>
-                            </div>
+                    <section class="apoie-card apoie-qr-card" aria-labelledby="apoieQrTitle">
+                        <div class="apoie-card-headline">
+                            <h4 id="apoieQrTitle">QR Code PIX</h4>
+                            <p>Use a c&acirc;mera do app do seu banco para concluir a transfer&ecirc;ncia.</p>
                         </div>
+                        <div class="apoie-qr-frame">
+                            <img
+                                src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1782412026/Captura_de_tela_2026-06-25_142326_fnobuk.webp"
+                                alt="QR Code PIX da Associa&ccedil;&atilde;o Fla Medula"
+                                class="apoie-qr-image"
+                                decoding="async"
+                            >
+                        </div>
+                    </section>
 
-                        <aside class="apoie-step-two-aside">
-                            <figure class="apoie-institutional-figure">
-                                <img
-                                    src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1782411944/flamedula_1_eppcqk.webp"
-                                    alt="Foto institucional da FlaMedula em a&ccedil;&atilde;o social"
-                                    width="1166"
-                                    height="1654"
-                                    loading="lazy"
-                                    decoding="async"
-                                >
-                                <figcaption>A rede segue ativa com mobiliza&ccedil;&atilde;o, comunica&ccedil;&atilde;o e apoio presencial.</figcaption>
-                            </figure>
-                        </aside>
+                    <section class="apoie-card" aria-labelledby="apoiePixCodeTitle">
+                        <div class="apoie-card-headline">
+                            <h4 id="apoiePixCodeTitle">PIX copia e cola</h4>
+                            <p>Copie o c&oacute;digo exato e cole no app do seu banco.</p>
+                        </div>
+                        <div class="apoie-code-box" id="apoiePixCode" tabindex="0">00020126360014br.gov.bcb.pix0114530430740001715204000053039865802BR5921ASSOCIACAO FLA MEDULA6014RIO DE JANEIRO622605222RwegBxM8xgNzjcbhgJHeP6304D846</div>
+                        <button type="button" class="apoie-button apoie-button-secondary" data-copy-target="pix-code">Copiar c&oacute;digo PIX</button>
+                    </section>
+
+                    <section class="apoie-card" aria-labelledby="apoiePixKeyTitle">
+                        <div class="apoie-card-headline">
+                            <h4 id="apoiePixKeyTitle">Chave PIX CNPJ</h4>
+                            <p>Ao copiar, enviamos somente os d&iacute;gitos da chave.</p>
+                        </div>
+                        <div class="apoie-key-box">
+                            <strong>53.043.074/0001-71</strong>
+                            <span id="apoiePixKeyRaw">53043074000171</span>
+                        </div>
+                        <button type="button" class="apoie-button apoie-button-secondary" data-copy-target="pix-key">Copiar chave PIX</button>
+                    </section>
+
+                    <section class="apoie-card" aria-labelledby="apoieAssociationTitle">
+                        <div class="apoie-card-headline">
+                            <h4 id="apoieAssociationTitle">Dados da associa&ccedil;&atilde;o</h4>
+                            <p>Confira os dados antes de concluir a transfer&ecirc;ncia.</p>
+                        </div>
+                        <dl class="apoie-association-data">
+                            <div>
+                                <dt>Favorecido</dt>
+                                <dd>Associa&ccedil;&atilde;o Fla Medula</dd>
+                            </div>
+                            <div>
+                                <dt>CNPJ</dt>
+                                <dd>53.043.074/0001-71</dd>
+                            </div>
+                            <div>
+                                <dt>Ag&ecirc;ncia</dt>
+                                <dd>0001</dd>
+                            </div>
+                            <div>
+                                <dt>Conta</dt>
+                                <dd>4827049-1</dd>
+                            </div>
+                        </dl>
+                    </section>
+
+                    <div class="apoie-step-actions">
+                        <button type="button" class="apoie-button apoie-button-tertiary" data-action="back-step-one">Voltar</button>
                     </div>
+                </section>
+
+                <section class="apoie-step" data-step="3" id="apoieStepThree" aria-labelledby="apoieStepThreeTitle" hidden>
+                    <div class="apoie-step-head">
+                        <h3 id="apoieStepThreeTitle" tabindex="-1">Obrigado por apoiar a FlaMedula</h3>
+                        <p>O envio do comprovante acontece apenas depois de uma c&oacute;pia bem-sucedida do PIX.</p>
+                    </div>
+
+                    <section class="apoie-card apoie-thanks-card" aria-labelledby="apoieThanksTitle">
+                        <div class="apoie-card-headline">
+                            <h4 id="apoieThanksTitle">Envio do comprovante</h4>
+                            <p id="apoieStepThreeMessage">Depois de concluir o PIX, envie o comprovante para nossa equipe pelo WhatsApp.</p>
+                        </div>
+                        <dl class="apoie-summary-grid apoie-summary-grid-compact">
+                            <div>
+                                <dt>Status</dt>
+                                <dd>Aguardando confirma&ccedil;&atilde;o do PIX</dd>
+                            </div>
+                            <div>
+                                <dt>Cadastro</dt>
+                                <dd id="apoieStepThreeSubmission">--</dd>
+                            </div>
+                        </dl>
+                        <a
+                            href="#"
+                            class="apoie-button apoie-button-whatsapp"
+                            id="apoieWhatsappButton"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <span class="apoie-button-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                                    <path d="M20 11.5a8.5 8.5 0 0 1-12.57 7.48L4 20l1.12-3.24A8.5 8.5 0 1 1 20 11.5Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+                                    <path d="M9.7 8.85c-.2-.45-.42-.46-.62-.47-.16-.01-.34-.01-.52-.01-.18 0-.48.07-.73.35-.25.28-.95.93-.95 2.27 0 1.34.98 2.64 1.12 2.82.14.19 1.92 3.07 4.74 4.18 2.34.92 2.82.74 3.33.69.51-.05 1.64-.67 1.87-1.31.23-.64.23-1.19.16-1.31-.07-.12-.26-.19-.55-.33-.29-.14-1.72-.86-1.99-.96-.26-.1-.45-.14-.64.14-.19.28-.74.96-.91 1.16-.17.19-.34.21-.63.07-.29-.14-1.23-.45-2.35-1.44-.87-.77-1.46-1.73-1.63-2.02-.17-.28-.02-.43.12-.57.12-.12.29-.31.43-.46.14-.16.19-.28.29-.47.1-.19.05-.35-.02-.5-.07-.14-.64-1.63-.89-2.18Z" fill="currentColor"></path>
+                                </svg>
+                            </span>
+                            <span>Enviar comprovante pelo WhatsApp</span>
+                        </a>
+                        <div class="apoie-step-actions apoie-step-actions-stacked">
+                            <button type="button" class="apoie-button apoie-button-secondary" data-copy-target="pix-code-again">Copiar PIX novamente</button>
+                            <a href="/" class="apoie-button apoie-button-tertiary">Voltar ao site</a>
+                        </div>
+                    </section>
                 </section>
             </form>
         </section>

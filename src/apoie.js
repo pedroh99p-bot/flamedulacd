@@ -9,18 +9,28 @@ import { hasMinPhoneDigits, onlyDigits } from './utils/formValidation.js';
 const PIX_CODE = '00020126360014br.gov.bcb.pix0114530430740001715204000053039865802BR5921ASSOCIACAO FLA MEDULA6014RIO DE JANEIRO622605222RwegBxM8xgNzjcbhgJHeP6304D846';
 const PIX_KEY_RAW = '53043074000171';
 const WHATSAPP_NUMBER = '85999280682';
-const SUCCESS_MESSAGE = 'Cadastro recebido. Agora voc\u00ea pode realizar sua contribui\u00e7\u00e3o via PIX.';
+const PRE_PIX_STATUS_LABEL = 'Aguardando confirma\u00e7\u00e3o do PIX';
+
+const currencyFormatter = new Intl.NumberFormat('pt-BR', {
+  style: 'currency',
+  currency: 'BRL',
+  minimumFractionDigits: 2,
+});
 
 const form = document.getElementById('apoieForm');
 const feedback = document.getElementById('apoieFeedback');
 const toast = document.getElementById('apoieToast');
 const steps = [...document.querySelectorAll('.apoie-step')];
 const progressSteps = [...document.querySelectorAll('[data-progress-step]')];
-const progressLine = document.querySelector('.apoie-progress-line span');
+const progressLines = [...document.querySelectorAll('.apoie-progress-line span')];
 const stepOneSubmitButton = document.querySelector('[data-step-one-submit]');
-const stepTwoTitle = document.getElementById('apoieStepTwoTitle');
+const amountField = form?.elements.amount_display;
 const submissionIdOutput = document.getElementById('apoieSubmissionId');
-const whatsappGate = document.getElementById('apoieWhatsappGate');
+const summaryName = document.getElementById('apoieSummaryName');
+const summaryAmount = document.getElementById('apoieSummaryAmount');
+const summaryStatus = document.getElementById('apoieSummaryStatus');
+const stepThreeMessage = document.getElementById('apoieStepThreeMessage');
+const stepThreeSubmission = document.getElementById('apoieStepThreeSubmission');
 const whatsappButton = document.getElementById('apoieWhatsappButton');
 const pixCodeBox = document.getElementById('apoiePixCode');
 const pixKeyRaw = document.getElementById('apoiePixKeyRaw');
@@ -31,6 +41,8 @@ const state = {
   submissionId: '',
   name: '',
   phone: '',
+  amount: 0,
+  status: 'pending_payment_setup',
   copiedPixCode: false,
   copiedPixKey: false,
   submissionSnapshot: null,
@@ -46,6 +58,22 @@ function formatPhone(value) {
   return digits.replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d{1,4})$/, '$1-$2');
 }
 
+function formatCurrency(value) {
+  return currencyFormatter.format(Number(value || 0));
+}
+
+function formatCurrencyInput(value) {
+  const digits = onlyDigits(value).slice(0, 12);
+  if (!digits) return '';
+  return formatCurrency(Number(digits) / 100);
+}
+
+function parseCurrencyInput(value) {
+  const digits = onlyDigits(value);
+  if (!digits) return 0;
+  return Number((Number(digits) / 100).toFixed(2));
+}
+
 function normalizeName(value) {
   return String(value || '').trim().replace(/\s+/g, ' ');
 }
@@ -54,6 +82,7 @@ function getSnapshot() {
   return {
     name: normalizeName(form.elements.name.value),
     phone: onlyDigits(form.elements.phone.value),
+    amount: parseCurrencyInput(form.elements.amount_display.value),
   };
 }
 
@@ -62,7 +91,8 @@ function sameSnapshot(first, second) {
     first
     && second
     && first.name === second.name
-    && first.phone === second.phone,
+    && first.phone === second.phone
+    && first.amount === second.amount,
   );
 }
 
@@ -88,9 +118,25 @@ function focusField(field) {
   field.focus({ preventScroll: false });
 }
 
+function updateProgress(stepNumber) {
+  progressSteps.forEach((step) => {
+    step.classList.toggle('is-active', Number(step.dataset.progressStep) <= stepNumber);
+  });
+
+  const widths = {
+    1: ['0%', '0%'],
+    2: ['100%', '0%'],
+    3: ['100%', '100%'],
+  };
+
+  progressLines.forEach((line, index) => {
+    line.style.width = widths[stepNumber]?.[index] || '0%';
+  });
+}
+
 function showStep(stepNumber, { focusTitle = false } = {}) {
   state.currentStep = stepNumber;
-  document.body.classList.toggle('apoie-step-two-active', stepNumber === 2);
+  document.body.dataset.activeStep = String(stepNumber);
 
   steps.forEach((step) => {
     const isActive = Number(step.dataset.step) === stepNumber;
@@ -98,18 +144,28 @@ function showStep(stepNumber, { focusTitle = false } = {}) {
     step.classList.toggle('is-active', isActive);
   });
 
-  progressSteps.forEach((step) => {
-    step.classList.toggle('is-active', Number(step.dataset.progressStep) <= stepNumber);
-  });
+  updateProgress(stepNumber);
 
-  if (progressLine) {
-    progressLine.style.width = stepNumber === 2 ? '100%' : '0%';
-  }
+  if (!focusTitle) return;
 
-  if (focusTitle) {
-    const target = stepNumber === 2 ? stepTwoTitle : document.getElementById('apoieStepOneTitle');
-    window.requestAnimationFrame(() => target?.focus({ preventScroll: false }));
-  }
+  const target = document.getElementById(
+    stepNumber === 1
+      ? 'apoieStepOneTitle'
+      : stepNumber === 2
+        ? 'apoieStepTwoTitle'
+        : 'apoieStepThreeTitle',
+  );
+
+  window.requestAnimationFrame(() => target?.focus({ preventScroll: false }));
+}
+
+function updateSummary() {
+  summaryName.textContent = state.name || '--';
+  summaryAmount.textContent = formatCurrency(state.amount);
+  summaryStatus.textContent = PRE_PIX_STATUS_LABEL;
+  submissionIdOutput.textContent = state.submissionId || '--';
+  stepThreeSubmission.textContent = state.submissionId || '--';
+  stepThreeMessage.textContent = `O valor informado foi ${formatCurrency(state.amount)}. Depois de concluir o PIX, envie o comprovante para nossa equipe pelo WhatsApp.`;
 }
 
 function validateStepOne() {
@@ -120,6 +176,7 @@ function validateStepOne() {
   const phoneField = form.elements.phone;
   const privacyField = form.elements.privacy_accepted;
   const termsField = form.elements.terms_accepted;
+  const parsedAmount = parseCurrencyInput(amountField.value);
 
   if (!normalizeName(nameField.value)) {
     markInvalid(nameField);
@@ -132,6 +189,13 @@ function validateStepOne() {
     markInvalid(phoneField);
     setFeedback('Informe um telefone/WhatsApp v\u00e1lido com DDD.', 'error');
     focusField(phoneField);
+    return false;
+  }
+
+  if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
+    markInvalid(amountField);
+    setFeedback('Informe um valor maior que zero.', 'error');
+    focusField(amountField);
     return false;
   }
 
@@ -159,6 +223,7 @@ function buildPrePixPayload() {
     submission_mode: 'pre_pix',
     name: snapshot.name,
     phone: snapshot.phone,
+    amount: snapshot.amount,
     privacy_accepted: form.elements.privacy_accepted.checked,
     terms_accepted: form.elements.terms_accepted.checked,
     source: 'apoie_page',
@@ -167,25 +232,9 @@ function buildPrePixPayload() {
   };
 }
 
-function updateSubmissionMeta() {
-  submissionIdOutput.textContent = state.submissionId || '--';
-}
-
 function buildWhatsappUrl() {
-  const message = `Ol\u00e1! Meu nome \u00e9 ${state.name}. Realizei uma contribui\u00e7\u00e3o via PIX para a FlaMedula e gostaria de enviar o comprovante. Cadastro: ${state.submissionId}.`;
+  const message = `Ol\u00e1! Meu nome \u00e9 ${state.name}. Informei uma contribui\u00e7\u00e3o de ${formatCurrency(state.amount)} para a FlaMedula e realizei o PIX. Gostaria de enviar o comprovante. Cadastro: ${state.submissionId}.`;
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-}
-
-function unlockWhatsapp() {
-  if (!whatsappGate || (!state.copiedPixCode && !state.copiedPixKey) || !state.submissionId) return;
-
-  whatsappButton.href = buildWhatsappUrl();
-  if (!whatsappGate.hidden) return;
-
-  whatsappGate.hidden = false;
-  window.requestAnimationFrame(() => {
-    whatsappGate.classList.add('is-visible');
-  });
 }
 
 function setCopiedButtonState(button, copiedLabel) {
@@ -221,23 +270,27 @@ function showToast(message, tone = 'success') {
 }
 
 function selectElementText(element) {
-  if (!element) return;
+  if (!element) return false;
   const selection = window.getSelection();
   const range = document.createRange();
   range.selectNodeContents(element);
   selection?.removeAllRanges();
   selection?.addRange(range);
+  return Boolean(selection?.toString());
 }
 
 function fallbackCopy(text, element) {
   const helper = document.createElement('textarea');
   helper.value = text;
-  helper.setAttribute('readonly', 'readonly');
   helper.style.position = 'fixed';
+  helper.style.left = '-9999px';
+  helper.style.top = '0';
   helper.style.opacity = '0';
   helper.style.pointerEvents = 'none';
   document.body.appendChild(helper);
+  helper.focus();
   helper.select();
+  helper.setSelectionRange(0, helper.value.length);
 
   let copied = false;
   try {
@@ -248,14 +301,13 @@ function fallbackCopy(text, element) {
 
   document.body.removeChild(helper);
 
-  if (!copied) {
-    selectElementText(element);
-  }
+  if (copied) return true;
 
-  return copied;
+  selectElementText(element);
+  return false;
 }
 
-async function copyValue(value, element, button, successMessage, stateKey) {
+async function copyValue(value, element, button, successMessage, stateKey, { advanceToStepThree = false } = {}) {
   let copied = false;
 
   try {
@@ -268,36 +320,35 @@ async function copyValue(value, element, button, successMessage, stateKey) {
   if (!copied) {
     setFeedback('N\u00e3o foi poss\u00edvel copiar. Selecione manualmente.', 'warning');
     showToast('N\u00e3o foi poss\u00edvel copiar. Selecione manualmente.', 'warning');
-    return;
+    return false;
   }
 
   state[stateKey] = true;
-  unlockWhatsapp();
-  setFeedback('Depois do PIX, envie o comprovante pelo WhatsApp.', 'success');
+  setFeedback(successMessage, 'success');
   setCopiedButtonState(button, successMessage);
   showToast(successMessage, 'success');
+
+  if (advanceToStepThree) {
+    updateSummary();
+    showStep(3, { focusTitle: true });
+  }
+
+  return true;
 }
 
-function resetPixUnlock() {
+function resetCopyState() {
   state.copiedPixCode = false;
   state.copiedPixKey = false;
-  if (whatsappGate) {
-    whatsappGate.hidden = true;
-    whatsappGate.classList.remove('is-visible');
-  }
-  if (whatsappButton) {
-    whatsappButton.href = '#';
-  }
 }
 
 async function handleStepOneSubmit() {
   if (state.isSubmitting) return;
 
   const snapshot = getSnapshot();
+
   if (state.submissionId && sameSnapshot(snapshot, state.submissionSnapshot)) {
-    updateSubmissionMeta();
-    setFeedback(SUCCESS_MESSAGE, 'success');
-    unlockWhatsapp();
+    updateSummary();
+    setFeedback(`Cadastro recebido. Sua contribui\u00e7\u00e3o de ${formatCurrency(state.amount)} est\u00e1 aguardando confirma\u00e7\u00e3o do PIX.`, 'success');
     showStep(2, { focusTitle: true });
     return;
   }
@@ -306,7 +357,7 @@ async function handleStepOneSubmit() {
 
   state.isSubmitting = true;
   clearErrors();
-  resetPixUnlock();
+  resetCopyState();
   setFeedback('Enviando seu cadastro...', 'info');
   setButtonSubmitting(stepOneSubmitButton, true, 'Enviando cadastro...');
 
@@ -314,16 +365,20 @@ async function handleStepOneSubmit() {
     const response = await submitDonationIntent(buildPrePixPayload());
     const result = response?.data ?? response;
 
-    if (!result?.submissionId || result?.nextStep !== 'pix' || result?.status !== 'pending_payment_setup') {
+    if (!result?.submissionId || result?.status !== 'pending_payment_setup') {
       throw new Error('N\u00e3o foi poss\u00edvel confirmar a libera\u00e7\u00e3o do PIX agora.');
     }
 
     state.name = snapshot.name;
     state.phone = snapshot.phone;
+    state.amount = snapshot.amount;
+    state.status = result.status || 'pending_payment_setup';
     state.submissionId = result.submissionId;
     state.submissionSnapshot = snapshot;
-    updateSubmissionMeta();
-    setFeedback(SUCCESS_MESSAGE, 'success');
+
+    whatsappButton.href = buildWhatsappUrl();
+    updateSummary();
+    setFeedback(`Cadastro recebido. Sua contribui\u00e7\u00e3o de ${formatCurrency(state.amount)} est\u00e1 aguardando confirma\u00e7\u00e3o do PIX.`, 'success');
     showStep(2, { focusTitle: true });
   } catch (error) {
     applyFieldErrors(form, error.fieldErrors);
@@ -337,21 +392,26 @@ async function handleStepOneSubmit() {
 function bindCopyButtons() {
   form.querySelectorAll('[data-copy-target]').forEach((button) => {
     button.addEventListener('click', async () => {
-      if (button.dataset.copyTarget === 'pix-code') {
-        await copyValue(PIX_CODE, pixCodeBox, button, 'C\u00f3digo PIX copiado', 'copiedPixCode');
+      const target = button.dataset.copyTarget;
+
+      if (target === 'pix-code') {
+        await copyValue(PIX_CODE, pixCodeBox, button, 'C\u00f3digo PIX copiado', 'copiedPixCode', { advanceToStepThree: true });
       }
 
-      if (button.dataset.copyTarget === 'pix-key') {
-        await copyValue(PIX_KEY_RAW, pixKeyRaw, button, 'Chave PIX copiada', 'copiedPixKey');
+      if (target === 'pix-key') {
+        await copyValue(PIX_KEY_RAW, pixKeyRaw, button, 'Chave PIX copiada', 'copiedPixKey', { advanceToStepThree: true });
+      }
+
+      if (target === 'pix-code-again') {
+        await copyValue(PIX_CODE, pixCodeBox, button, 'C\u00f3digo PIX copiado', 'copiedPixCode');
       }
     });
   });
 }
 
-function bindBackButton() {
-  const backButton = form.querySelector('[data-action="back"]');
-  backButton?.addEventListener('click', () => {
-    setFeedback(SUCCESS_MESSAGE, 'success');
+function bindNavigation() {
+  form.querySelector('[data-action="back-step-one"]')?.addEventListener('click', () => {
+    setFeedback(`Cadastro recebido. Sua contribui\u00e7\u00e3o de ${formatCurrency(state.amount)} est\u00e1 aguardando confirma\u00e7\u00e3o do PIX.`, 'success');
     showStep(1, { focusTitle: true });
   });
 }
@@ -360,10 +420,11 @@ function initApoiePage() {
   if (!form) return;
 
   setFeedback('', 'neutral');
-  updateSubmissionMeta();
+  updateSummary();
+  updateProgress(1);
   showStep(1);
   bindCopyButtons();
-  bindBackButton();
+  bindNavigation();
 
   form.addEventListener('input', (event) => {
     const field = event.target;
@@ -372,6 +433,10 @@ function initApoiePage() {
 
     if (field.name === 'phone') {
       field.value = formatPhone(field.value);
+    }
+
+    if (field.name === 'amount_display') {
+      field.value = formatCurrencyInput(field.value);
     }
   });
 
@@ -387,4 +452,5 @@ function initApoiePage() {
 }
 
 window.buildDonationIntentPayload = buildPrePixPayload;
+window.parseCurrencyInput = parseCurrencyInput;
 initApoiePage();
