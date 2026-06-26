@@ -17,6 +17,6 @@ export const faqItems = [
     },
     {
         "question": "Como posso apoiar financeiramente?",
-        "answer": "A landing principal apenas direciona para a página futura de apoio. Não há Pix, checkout ou pagamento direto nesta página."
+        "answer": "A landing principal direciona para a página Apoie, onde você informa os dados, copia o PIX e envia o comprovante pelo WhatsApp oficial."
     }
 ];

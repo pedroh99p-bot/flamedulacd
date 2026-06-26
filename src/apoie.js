@@ -7,7 +7,7 @@ import { applyFieldErrors } from './utils/formState.js';
 import { hasMinPhoneDigits, onlyDigits } from './utils/formValidation.js';
 
 const PIX_CODE = '00020126360014br.gov.bcb.pix0114530430740001715204000053039865802BR5921ASSOCIACAO FLA MEDULA6014RIO DE JANEIRO622605222RwegBxM8xgNzjcbhgJHeP6304D846';
-const WHATSAPP_NUMBER = '85999280682';
+const WHATSAPP_NUMBER = '558599280682';
 const PRE_PIX_STATUS_LABEL = 'Aguardando confirma\u00e7\u00e3o do PIX';
 const STEP_TRANSITION_MS = 220;
 const MEDIA_READY_TIMEOUT_MS = 900;
