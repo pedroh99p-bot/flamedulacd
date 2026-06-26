@@ -46,6 +46,8 @@ const state = {
 const FLOW_SELECTION_DELAY_MS = 320;
 const SUPPORT_NAVIGATION_DELAY_MS = 280;
 const SUPPORT_PAGE_URL = '/apoie/';
+const TECHNICAL_SUBMISSION_ERROR_MESSAGE = 'N\u00e3o foi poss\u00edvel concluir o cadastro. Tente novamente.';
+const DEVELOPMENT_HOSTS = new Set(['localhost', '127.0.0.1']);
 
 function getMiniApp() {
   return document.getElementById('hubMiniApp');
@@ -580,6 +582,23 @@ function setSubmitting(flow, submitting) {
   button.textContent = submitting ? FLOW_CONFIG[flow].loadingText : FLOW_CONFIG[flow].submitText;
 }
 
+function getFieldNamesWithoutInputs(form, fieldErrors = {}) {
+  const fields = [...(form?.querySelectorAll('[name]') || [])];
+  return Object.keys(fieldErrors).filter((name) => !fields.some((field) => field.name === name));
+}
+
+function logTechnicalSubmissionError(flow, error, technicalFields) {
+  if (!DEVELOPMENT_HOSTS.has(window.location.hostname)) return;
+
+  console.warn('[FlaMedula intake]', {
+    flow,
+    code: error.code,
+    technicalFields,
+    fieldErrors: error.fieldErrors,
+    response: error.response,
+  });
+}
+
 async function submitFlow(flow) {
   const payload = flow === 'donor'
     ? buildDonorPayload()
@@ -604,7 +623,13 @@ async function submitFlow(flow) {
     form.reset?.();
   } catch (error) {
     applyFieldErrors(form, error.fieldErrors);
-    setFeedback(error.message || 'Não foi possível enviar agora. Tente novamente.');
+    const technicalFields = getFieldNamesWithoutInputs(form, error.fieldErrors);
+    if (technicalFields.length) {
+      logTechnicalSubmissionError(flow, error, technicalFields);
+      setFeedback(TECHNICAL_SUBMISSION_ERROR_MESSAGE);
+    } else {
+      setFeedback(error.message || 'N\u00e3o foi poss\u00edvel enviar agora. Tente novamente.');
+    }
   } finally {
     state.submitting = false;
     setSubmitting(flow, false);
