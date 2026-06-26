@@ -55,11 +55,11 @@ Campos aceitos:
 - `contact_preference`: `email`, `whatsapp`, `telefone`.
 - `consent_lgpd` obrigatorio como `true`.
 - `consent_updates` opcional booleano.
-- `origem`, `source_section` e `website`.
+- `source`, `origem`, `source_section` e `website`.
 
 Campos forcados no backend:
 
-- `origem`: `pagina_principal`
+- `origem`: usa `source` quando enviado; fallback para `origem`; padrao final `pagina_principal`
 - `source_section`: `hub_cadastro_doador`
 - `status`: `novo`
 - `consent_at`: data/hora do servidor
@@ -82,14 +82,14 @@ Campos aceitos:
 - `estado` opcional, UF com 2 letras.
 - `hospital` opcional.
 - `need_type`: `doacao_sangue`, `cadastro_medula`, `divulgacao`, `orientacao`, `outro`.
-- `urgency_level`: `baixa`, `media`, `alta`, `urgente`.
+- `urgency_level`: `baixa`, `media`, `alta`, `urgente` somente por compatibilidade legada.
 - `campaign_context` opcional, ate 1200 caracteres.
 - `consent_authorized` obrigatorio como `true`.
-- `origem`, `source_section` e `website`.
+- `source`, `origem`, `source_section` e `website`.
 
 Campos forcados no backend:
 
-- `origem`: `pagina_principal`
+- `origem`: usa `source` quando enviado; fallback para `origem`; padrao final `pagina_principal`
 - `source_section`: `hub_cadastro_paciente`
 - `status`: `novo`
 - `consent_at`: data/hora do servidor
@@ -101,7 +101,35 @@ Endpoint: `/submit-donation-intent`
 
 Tabela: `donation_intents`
 
-Campos aceitos:
+Campos aceitos no modo publico `/apoie/` (`submission_mode = "pre_pix"`):
+
+- `submission_mode`: `pre_pix`.
+- `name` obrigatorio.
+- `phone` obrigatorio, 10 ou 11 digitos.
+- `privacy_accepted` obrigatorio como `true`.
+- `terms_accepted` obrigatorio como `true`.
+- `source`, `source_section` e `website`.
+- O valor pretendido fica somente no estado da pagina e nao e enviado ao backend.
+
+Campos preenchidos pelo backend no modo `pre_pix`:
+
+- `donor_type`: `pessoa_fisica`
+- `document_type`: `cpf`
+- `document`: CPF tecnico valido sintetizado a partir de nome/telefone.
+- `email`: e-mail tecnico `prepix+...@flamedula.invalid`.
+- `contact_preference`: `whatsapp`
+- `payment_method`: `pix`
+- `donation_type`: `single`
+- `amount`: `1` como placeholder tecnico para satisfazer a constraint do schema.
+- `source`: `apoie_page`
+- `status`: `pending_payment_setup`
+- `consent_at`: data/hora do servidor
+- `is_test`: `false`
+- `provider_name`: `null`
+- `provider_reference`: `null`
+- `internal_notes`: registra `pre_pix`, `source_section` e `intended_amount_local_only=true`.
+
+Campos aceitos no modo legado completo (sem `submission_mode`):
 
 - `donor_type`: `pessoa_fisica` ou `pessoa_juridica`.
 - `name`: obrigatorio para pessoa fisica.
@@ -121,9 +149,9 @@ Campos aceitos:
 - `custom_amount`: numero ou `null`.
 - `privacy_accepted` obrigatorio como `true`.
 - `terms_accepted` obrigatorio como `true`.
-- `source` e `website`.
+- `source`, `source_section` e `website`.
 
-Campos forcados no backend:
+Campos forcados no backend no modo legado completo:
 
 - `source`: `apoie_page`
 - `status`: `pending_payment_setup`
@@ -136,3 +164,10 @@ Campos explicitamente proibidos:
 
 - Numero de cartao, CVV, validade, senha, token, segredo e campos equivalentes.
 - Qualquer campo administrativo ou de provedor de pagamento.
+
+Observacao sobre PIX na pagina `/apoie/`:
+
+- O cadastro minimo e gravado antes de exibir o PIX.
+- O QR Code, o codigo copia e cola e o botao de comprovante via WhatsApp ficam no frontend.
+- Copiar o PIX revela o bloco de envio do comprovante; isso nao altera o status no Supabase.
+- Nenhum dado sensivel de pagamento, comprovante ou dado de provedor e salvo por esse fluxo.

@@ -22,11 +22,13 @@ Tabela: `donor_leads`
 | Consentimento LGPD | `consent_lgpd` | `consent_lgpd` | `consent_lgpd` |
 | Atualizacoes | `consent_updates` | `consent_updates` | `consent_updates` |
 | Honeypot invisivel | `website` | `website` | nao grava quando preenchido |
-| Origem publica | valor fixo no builder | `origem` | `origem` |
+| Origem publica | valor fixo no builder | `source` | `origem` |
 | Secao publica | valor fixo no builder | `source_section` | `source_section` |
 | Status | backend | nao enviado pelo frontend | `status = novo` |
 | Data de consentimento | backend | nao enviado pelo frontend | `consent_at` |
 | Marcador de teste | backend | nao enviado pelo frontend | `is_test = false` |
+
+Campos como `idade`, `peso` e `tipo_sanguineo` nao entram no fluxo publico de doadores porque nao existem no schema real de `donor_leads`.
 
 ## Pagina principal - pedido/apoio a paciente
 
@@ -45,15 +47,17 @@ Tabela: `patient_cases`
 | Estado | `estado` | `estado` | `estado` |
 | Hospital | `hospital` | `hospital` | `hospital` |
 | Tipo de necessidade | `need_type` | `need_type` | `need_type` |
-| Urgencia | `urgency_level` | `urgency_level` | `urgency_level` |
+| Urgencia | legado opcional | `urgency_level` | `urgency_level` |
 | Contexto da campanha | `campaign_context` | `campaign_context` | `campaign_context` |
 | Autorizacao de contato | `consent_authorized` | `consent_authorized` | `consent_authorized` |
 | Honeypot invisivel | `website` | `website` | nao grava quando preenchido |
-| Origem publica | valor fixo no builder | `origem` | `origem` |
+| Origem publica | valor fixo no builder | `source` | `origem` |
 | Secao publica | valor fixo no builder | `source_section` | `source_section` |
 | Status | backend | nao enviado pelo frontend | `status = novo` |
 | Data de consentimento | backend | nao enviado pelo frontend | `consent_at` |
 | Marcador de teste | backend | nao enviado pelo frontend | `is_test = false` |
+
+O formulario publico de pacientes nao envia `urgency_level` por padrao. O endpoint ainda aceita esse campo apenas para compatibilidade legada, e nao existe suporte real para `tipo_sanguineo` no schema auditado.
 
 ## Pagina `/apoie/` - intencao de apoio financeiro
 
@@ -63,31 +67,36 @@ Tabela: `donation_intents`
 
 | Campo visual | `name`/origem no frontend | Campo no payload | Coluna Supabase |
 | --- | --- | --- | --- |
-| Tipo de doador | `donor_type` | `donor_type` | `donor_type` |
+| Modo de submissao | valor fixo no builder | `submission_mode = pre_pix` | nao grava |
+| Tipo de doador | backend | nao enviado no modo `pre_pix` | `donor_type = pessoa_fisica` |
 | Nome | `name` | `name` | `name` |
-| Razao social | `company_name` | `company_name` | `company_name` |
-| Responsavel | `responsible_name` | `responsible_name` | `responsible_name` |
-| Tipo de documento | derivado de `donor_type` | `document_type` | `document_type` |
-| CPF/CNPJ | `cpf` ou `cnpj` | `document` | `document` |
-| E-mail | `email` | `email` | `email` |
+| Razao social | backend | nao enviado no modo `pre_pix` | `company_name = null` |
+| Responsavel | backend | nao enviado no modo `pre_pix` | `responsible_name = null` |
+| Tipo de documento | backend | nao enviado no modo `pre_pix` | `document_type = cpf` |
+| CPF/CNPJ | backend | nao enviado no modo `pre_pix` | CPF sintetico valido |
+| E-mail | backend | nao enviado no modo `pre_pix` | e-mail tecnico `prepix+...@flamedula.invalid` |
 | Telefone/WhatsApp | `phone` | `phone` | `phone` |
-| Data de nascimento | `birth_date` | `birth_date` | `birth_date` |
-| Preferencia de contato | `contact_preference` | `contact_preference` | `contact_preference` |
-| Forma de pagamento | `payment_method` | `payment_method` | `payment_method` |
-| Tipo de doacao | `donation_type` | `donation_type` | `donation_type` |
-| Dia de vencimento | `due_day` | `due_day` | `due_day` |
-| Recorrencia | `recurrence_period` | `recurrence_period` | `recurrence_period` |
-| Valor escolhido | `amount` | `amount` | `amount` |
-| Valor personalizado | `custom_amount` | `custom_amount` | `custom_amount` |
+| Data de nascimento | backend | nao enviado no modo `pre_pix` | `birth_date = null` |
+| Preferencia de contato | backend | nao enviado no modo `pre_pix` | `contact_preference = whatsapp` |
+| Forma de pagamento | backend | nao enviado no modo `pre_pix` | `payment_method = pix` |
+| Tipo de doacao | backend | nao enviado no modo `pre_pix` | `donation_type = single` |
+| Dia de vencimento | backend | nao enviado no modo `pre_pix` | `due_day = null` |
+| Recorrencia | backend | nao enviado no modo `pre_pix` | `recurrence_period = null` |
+| Valor pretendido | `amount_display` | nao enviado ao backend | fica apenas no estado da pagina |
+| Valor schema | backend | nao enviado no modo `pre_pix` | `amount = 1` como placeholder tecnico |
+| Valor personalizado | backend | nao enviado no modo `pre_pix` | `custom_amount = null` |
 | Privacidade | `privacy_accepted` | `privacy_accepted` | `privacy_accepted` |
 | Termos | `terms_accepted` | `terms_accepted` | `terms_accepted` |
 | Honeypot invisivel | `website` | `website` | nao grava quando preenchido |
 | Origem publica | valor fixo no builder | `source` | `source = apoie_page` |
+| Secao publica | valor fixo no builder | `source_section` | registrada em `internal_notes` |
 | Status | backend | nao enviado pelo frontend | `status = pending_payment_setup` |
 | Data de consentimento | backend | nao enviado pelo frontend | `consent_at` |
 | Marcador de teste | backend | nao enviado pelo frontend | `is_test = false` |
 | Provedor de pagamento | backend | nao enviado pelo frontend | `provider_name = null` |
 | Referencia do provedor | backend | nao enviado pelo frontend | `provider_reference = null` |
+
+O modo publico `pre_pix` envia apenas cadastro minimo ao Supabase. O valor pretendido nao vai para o ADM; aparece somente como resumo local antes do usuario copiar o PIX e enviar o comprovante pelo WhatsApp oficial.
 
 ## Dados sensiveis de pagamento
 
