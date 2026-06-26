@@ -10,6 +10,19 @@ body.apoie-page {
     overflow-x: hidden;
 }
 
+body.apoie-page .apoie-header,
+body.apoie-page .apoie-main,
+body.apoie-page .apoie-footer {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+body.apoie-page-entering .apoie-header,
+body.apoie-page-entering .apoie-main,
+body.apoie-page-entering .apoie-footer {
+    opacity: 0.86;
+    transform: translateY(6px);
+}
+
 @supports (min-height: 100dvh) {
     body.apoie-page {
         min-height: 100dvh;
@@ -258,6 +271,11 @@ body.apoie-page {
     min-width: 0;
 }
 
+.apoie-form[aria-busy="true"] .apoie-field input,
+.apoie-form[aria-busy="true"] .apoie-check {
+    opacity: 0.82;
+}
+
 .apoie-honeypot {
     position: absolute;
     left: -9999px;
@@ -300,11 +318,11 @@ body.apoie-page {
 }
 
 .apoie-step.is-active {
-    animation: apoieStepIn 0.24s ease both;
+    animation: apoieStepIn 0.28s ease both;
 }
 
 .apoie-step.is-exiting {
-    animation: apoieStepOut 0.17s ease both;
+    animation: apoieStepOut 0.22s ease both;
 }
 
 .apoie-step[hidden],
@@ -418,6 +436,7 @@ body.apoie-page {
     border-radius: 14px;
     font-size: 0.98rem;
     font-weight: 800;
+    line-height: 1.18;
     text-align: center;
     transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
 }
@@ -432,7 +451,9 @@ body.apoie-page {
     opacity: 0.82;
 }
 
-.apoie-form[data-submit-state="sending"] [data-step-one-submit]::before {
+.apoie-form[data-submit-state="validating"] [data-step-one-submit]::before,
+.apoie-form[data-submit-state="sending"] [data-step-one-submit]::before,
+.apoie-form[data-submit-state="preparing_pix"] [data-step-one-submit]::before {
     content: '';
     width: 16px;
     height: 16px;
@@ -616,6 +637,7 @@ body.apoie-page {
 }
 
 .apoie-institutional-figure {
+    position: relative;
     display: grid;
     gap: 10px;
 }
@@ -636,18 +658,77 @@ body.apoie-page {
     background: #fff;
     border-radius: 20px;
     box-shadow: 0 18px 42px rgba(17, 24, 39, 0.12);
+    opacity: 0;
+    transform: scale(0.985);
+    transition: opacity 0.34s ease, transform 0.34s ease;
 }
 
 .apoie-institutional-figure figcaption {
     font-size: 0.92rem;
 }
 
+.apoie-institutional-figure-step::before,
+.apoie-qr-frame::before {
+    content: '';
+    position: absolute;
+    z-index: 1;
+    border-radius: 20px;
+    background:
+        linear-gradient(90deg, rgba(255, 247, 237, 0.65), rgba(255, 255, 255, 0.95), rgba(255, 247, 237, 0.65));
+    background-size: 220% 100%;
+    animation: apoieSkeleton 1.1s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.apoie-institutional-figure-step::before {
+    inset: 0 0 auto;
+    aspect-ratio: 1166 / 1654;
+    box-shadow: inset 0 0 0 1px rgba(127, 29, 29, 0.08);
+}
+
+.apoie-institutional-figure-step.is-loaded img,
+.apoie-qr-card.is-loaded .apoie-qr-image {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.apoie-institutional-figure-step.is-loaded::before,
+.apoie-institutional-figure-step.is-error::before,
+.apoie-qr-card.is-loaded .apoie-qr-frame::before,
+.apoie-qr-card.is-error .apoie-qr-frame::before {
+    opacity: 0;
+    animation: none;
+}
+
+.apoie-institutional-figure-step.is-error img,
+.apoie-qr-card.is-error .apoie-qr-image {
+    display: none;
+}
+
+.apoie-qr-frame {
+    position: relative;
+}
+
+.apoie-qr-frame::before {
+    inset: 10px;
+    border-radius: 14px;
+}
+
+.apoie-qr-image {
+    opacity: 0;
+    transform: scale(0.985);
+    transition: opacity 0.28s ease, transform 0.28s ease;
+}
+
 .apoie-whatsapp-area {
     background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%);
     overflow: hidden;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
     opacity: 0;
     transform: translateY(8px);
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition: opacity 0.24s ease, transform 0.24s ease, max-height 0.28s ease, padding 0.28s ease;
 }
 
 .apoie-whatsapp-area[hidden] {
@@ -655,7 +736,10 @@ body.apoie-page {
 }
 
 .apoie-whatsapp-area.is-visible {
-    opacity: 1;
+    max-height: 520px;
+    padding-top: 18px;
+    padding-bottom: 18px;
+    opacity: 1 !important;
     transform: translateY(0);
     animation: apoieRevealBlock 0.24s ease both;
 }
@@ -758,6 +842,15 @@ body.apoie-page {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@keyframes apoieSkeleton {
+    from {
+        background-position: 120% 0;
+    }
+    to {
+        background-position: -120% 0;
     }
 }
 
@@ -898,8 +991,14 @@ body.apoie-page {
     .apoie-step.is-active,
     .apoie-step.is-exiting,
     .apoie-form[data-submit-state="sending"] [data-step-one-submit]::before,
+    .apoie-form[data-submit-state="validating"] [data-step-one-submit]::before,
+    .apoie-form[data-submit-state="preparing_pix"] [data-step-one-submit]::before,
     .apoie-button,
     .apoie-progress-line span,
+    .apoie-institutional-figure img,
+    .apoie-qr-image,
+    .apoie-institutional-figure-step::before,
+    .apoie-qr-frame::before,
     .apoie-whatsapp-area,
     .apoie-toast {
         animation: none;

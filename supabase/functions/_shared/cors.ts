@@ -10,8 +10,10 @@ export const allowedHeaders = "content-type, apikey, authorization, x-client-inf
 
 export function getAllowedOrigins() {
   const configured = Deno.env.get("ALLOWED_ORIGINS");
-  if (!configured) return DEFAULT_ALLOWED_ORIGINS;
-  return configured.split(",").map((origin) => origin.trim()).filter(Boolean);
+  const configuredOrigins = configured
+    ? configured.split(",").map((origin) => origin.trim()).filter(Boolean)
+    : [];
+  return [...new Set([...DEFAULT_ALLOWED_ORIGINS, ...configuredOrigins])];
 }
 
 export function corsHeadersFor(origin: string | null) {

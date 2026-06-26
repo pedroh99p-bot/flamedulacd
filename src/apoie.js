@@ -3,13 +3,23 @@ import './styles/base.css';
 import './styles/apoie.css';
 
 import { submitDonationIntent } from './services/intakeApi.js';
-import { setSubmitting as setButtonSubmitting, applyFieldErrors } from './utils/formState.js';
+import { applyFieldErrors } from './utils/formState.js';
 import { hasMinPhoneDigits, onlyDigits } from './utils/formValidation.js';
 
 const PIX_CODE = '00020126360014br.gov.bcb.pix0114530430740001715204000053039865802BR5921ASSOCIACAO FLA MEDULA6014RIO DE JANEIRO622605222RwegBxM8xgNzjcbhgJHeP6304D846';
 const WHATSAPP_NUMBER = '85999280682';
 const PRE_PIX_STATUS_LABEL = 'Aguardando confirma\u00e7\u00e3o do PIX';
-const STEP_TRANSITION_MS = 170;
+const STEP_TRANSITION_MS = 220;
+const MEDIA_READY_TIMEOUT_MS = 900;
+
+const submitButtonLabels = {
+  idle: 'Continuar para o PIX',
+  validating: 'Validando seus dados...',
+  sending: 'Enviando seu cadastro...',
+  preparing_pix: 'Cadastro recebido. Preparando seu PIX...',
+  success: 'Continuar para o PIX',
+  error: 'Continuar para o PIX',
+};
 
 const currencyFormatter = new Intl.NumberFormat('pt-BR', {
   style: 'currency',
@@ -31,6 +41,10 @@ const summaryStatus = document.getElementById('apoieSummaryStatus');
 const whatsappArea = document.getElementById('apoieWhatsappArea');
 const whatsappButton = document.getElementById('apoieWhatsappButton');
 const pixCodeBox = document.getElementById('apoiePixCode');
+const institutionalFigure = document.querySelector('.apoie-institutional-figure-step');
+const institutionalImage = document.querySelector('.apoie-institutional-image');
+const qrCard = document.querySelector('.apoie-qr-card');
+const qrImage = document.querySelector('.apoie-qr-image');
 
 const state = {
   isSubmitting: false,
@@ -46,6 +60,7 @@ const state = {
 
 let toastTimeoutId = null;
 let stepTransitionTimer = null;
+let mediaReadyPromise = null;
 
 function formatPhone(value) {
   const digits = onlyDigits(value).slice(0, 11);
@@ -102,10 +117,106 @@ function setFeedback(message, tone = 'neutral') {
 function setSubmitState(status = 'idle') {
   if (!form) return;
   form.dataset.submitState = status;
+  const busy = status === 'validating' || status === 'sending' || status === 'preparing_pix';
+  form.setAttribute('aria-busy', String(busy));
+
+  if (stepOneSubmitButton) {
+    stepOneSubmitButton.textContent = submitButtonLabels[status] || submitButtonLabels.idle;
+    stepOneSubmitButton.setAttribute('aria-disabled', String(stepOneSubmitButton.disabled));
+  }
 }
 
 function prefersReducedMotion() {
   return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+}
+
+function setButtonDisabled(button, disabled) {
+  if (!button) return;
+  button.disabled = disabled;
+  button.setAttribute('aria-disabled', String(disabled));
+}
+
+function markMediaLoading(container) {
+  container?.classList.add('is-loading');
+  container?.classList.remove('is-loaded', 'is-error');
+  container?.setAttribute('data-media-state', 'loading');
+}
+
+function markMediaLoaded(container) {
+  container?.classList.remove('is-loading', 'is-error');
+  container?.classList.add('is-loaded');
+  container?.setAttribute('data-media-state', 'loaded');
+}
+
+function markMediaError(container, label) {
+  container?.classList.remove('is-loading');
+  container?.classList.add('is-error');
+  container?.setAttribute('data-media-state', 'error');
+  console.warn(`[FlaMedula] Nao foi possivel carregar ${label}. O PIX continua disponivel.`);
+}
+
+async function decodeImage(image) {
+  if (!image?.decode) return;
+  try {
+    await image.decode();
+  } catch {
+    // Alguns navegadores rejeitam decode mesmo com a imagem carregada.
+  }
+}
+
+function prepareImage(image, container, label) {
+  if (!image) return Promise.resolve({ label, status: 'missing' });
+
+  markMediaLoading(container);
+  image.loading = 'eager';
+
+  if (image.complete && image.naturalWidth > 0) {
+    return decodeImage(image).then(() => {
+      markMediaLoaded(container);
+      return { label, status: 'loaded' };
+    });
+  }
+
+  return new Promise((resolve) => {
+    const finishLoaded = async () => {
+      image.removeEventListener('error', finishError);
+      await decodeImage(image);
+      markMediaLoaded(container);
+      resolve({ label, status: 'loaded' });
+    };
+
+    const finishError = () => {
+      image.removeEventListener('load', finishLoaded);
+      markMediaError(container, label);
+      resolve({ label, status: 'error' });
+    };
+
+    image.addEventListener('load', finishLoaded, { once: true });
+    image.addEventListener('error', finishError, { once: true });
+
+    if (!image.currentSrc && image.src) {
+      image.src = image.src;
+    }
+  });
+}
+
+function startPixMediaPreload() {
+  if (!mediaReadyPromise) {
+    mediaReadyPromise = Promise.allSettled([
+      prepareImage(institutionalImage, institutionalFigure, 'a imagem institucional'),
+      prepareImage(qrImage, qrCard, 'o QR Code PIX'),
+    ]);
+  }
+
+  return mediaReadyPromise;
+}
+
+function waitForPixMedia(timeoutMs = MEDIA_READY_TIMEOUT_MS) {
+  const timeout = new Promise((resolve) => {
+    window.setTimeout(() => resolve({ status: 'timeout' }), timeoutMs);
+  });
+
+  return Promise.race([startPixMediaPreload(), timeout]);
 }
 
 function clearErrors() {
@@ -147,10 +258,13 @@ function focusStepTitle(stepNumber) {
       : 'apoieStepTwoTitle',
   );
 
-  window.requestAnimationFrame(() => {
+  const focusAndScroll = () => {
     target?.focus({ preventScroll: true });
     document.querySelector('.apoie-panel')?.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
-  });
+  };
+
+  window.requestAnimationFrame(focusAndScroll);
+  window.setTimeout(focusAndScroll, 80);
 }
 
 function applyStep(stepNumber, { focusTitle = false } = {}) {
@@ -255,6 +369,9 @@ function setStepOneLocked(locked) {
   stepOne.querySelectorAll('input, button, select, textarea').forEach((control) => {
     if (control.name === 'website') return;
     control.disabled = locked;
+    if (control.matches('button')) {
+      control.setAttribute('aria-disabled', String(locked));
+    }
   });
 }
 
@@ -274,7 +391,12 @@ function buildPrePixPayload() {
 }
 
 function buildWhatsappUrl() {
-  const message = `Ol\u00e1! Meu nome \u00e9 ${state.name}. Informei que gostaria de contribuir com ${formatCurrency(state.amount)} para a FlaMedula e realizei o PIX. Gostaria de enviar o comprovante. Cadastro: ${state.submissionId}.`;
+  const message = [
+    'Ol\u00e1, FlaMedula! Quero enviar o comprovante do PIX de apoio financeiro.',
+    `Nome: ${state.name}.`,
+    `Valor pretendido: ${formatCurrency(state.amount)}.`,
+    `Cadastro: ${state.submissionId}.`,
+  ].join(' ');
   return `https://api.whatsapp.com/send/?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(message)}&type=phone_number&app_absent=0`;
 }
 
@@ -342,10 +464,11 @@ function fallbackCopy(text, element) {
 
   document.body.removeChild(helper);
 
-  if (copied) return true;
+  if (copied) {
+    return { copied: true, selected: false };
+  }
 
-  selectElementText(element);
-  return false;
+  return { copied: false, selected: selectElementText(element) };
 }
 
 function hideWhatsappArea() {
@@ -360,37 +483,58 @@ function revealWhatsappArea() {
   whatsappButton.href = buildWhatsappUrl();
   whatsappArea.hidden = false;
   whatsappArea.setAttribute('aria-hidden', 'false');
-  window.requestAnimationFrame(() => {
+  const showArea = () => {
     whatsappArea.classList.add('is-visible');
-  });
+    window.setTimeout(() => {
+      const rect = whatsappArea.getBoundingClientRect();
+      if (rect.bottom > window.innerHeight || rect.top < 0) {
+        whatsappArea.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'nearest' });
+      }
+    }, prefersReducedMotion() ? 0 : 260);
+  };
+
+  window.requestAnimationFrame(showArea);
+  window.setTimeout(showArea, 80);
 }
 
 async function copyValue(value, element, button, successMessage, stateKey, { revealWhatsapp = false, feedbackMessage = successMessage } = {}) {
   let copied = false;
+  let selected = false;
 
   try {
-    await navigator.clipboard.writeText(value);
+    if (!window.navigator?.clipboard?.writeText) {
+      throw new Error('Clipboard API indisponivel.');
+    }
+    await window.navigator.clipboard.writeText(value);
     copied = true;
   } catch {
-    copied = fallbackCopy(value, element);
+    const result = fallbackCopy(value, element);
+    copied = result.copied;
+    selected = result.selected;
   }
 
-  if (!copied) {
-    setFeedback('N\u00e3o foi poss\u00edvel copiar. Selecione manualmente.', 'warning');
-    showToast('N\u00e3o foi poss\u00edvel copiar. Selecione manualmente.', 'warning');
-    return false;
-  }
+  state[stateKey] = copied || selected;
 
-  state[stateKey] = true;
-  setFeedback(feedbackMessage, 'success');
-  setCopiedButtonState(button, successMessage);
-  showToast(feedbackMessage, 'success');
+  if (copied) {
+    setFeedback(feedbackMessage, 'success');
+    setCopiedButtonState(button, successMessage);
+    showToast(feedbackMessage, 'success');
+  } else if (selected) {
+    const manualMessage = 'O c\u00f3digo foi selecionado. Copie manualmente e envie o comprovante pelo WhatsApp.';
+    setFeedback(manualMessage, 'warning');
+    setCopiedButtonState(button, 'C\u00f3digo selecionado');
+    showToast(manualMessage, 'warning');
+  } else {
+    const errorMessage = 'N\u00e3o foi poss\u00edvel copiar automaticamente. O c\u00f3digo continua vis\u00edvel para c\u00f3pia manual.';
+    setFeedback(errorMessage, 'warning');
+    showToast(errorMessage, 'warning');
+  }
 
   if (revealWhatsapp) {
     revealWhatsappArea();
   }
 
-  return true;
+  return copied;
 }
 
 function resetCopyState() {
@@ -406,9 +550,11 @@ async function handleStepOneSubmit() {
   if (state.submissionId && sameSnapshot(snapshot, state.submissionSnapshot)) {
     state.amount = snapshot.amount;
     updateSummary();
-    setSubmitState('success');
-    setFeedback(`Cadastro recebido. Sua contribui\u00e7\u00e3o de ${formatCurrency(state.amount)} est\u00e1 aguardando confirma\u00e7\u00e3o do PIX.`, 'success');
+    setSubmitState('preparing_pix');
+    setFeedback('Cadastro recebido. Preparando seu PIX...', 'success');
+    await waitForPixMedia();
     showStep(2, { focusTitle: true });
+    setSubmitState('success');
     return;
   }
 
@@ -423,7 +569,7 @@ async function handleStepOneSubmit() {
   setStepOneLocked(true);
   setSubmitState('sending');
   setFeedback('Enviando seu cadastro...', 'info');
-  setButtonSubmitting(stepOneSubmitButton, true, 'Enviando cadastro...');
+  setButtonDisabled(stepOneSubmitButton, true);
 
   try {
     const response = await submitDonationIntent(buildPrePixPayload());
@@ -445,9 +591,12 @@ async function handleStepOneSubmit() {
 
     whatsappButton.href = buildWhatsappUrl();
     updateSummary();
-    setSubmitState('success');
+    setSubmitState('preparing_pix');
+    setFeedback('Cadastro recebido. Preparando seu PIX...', 'success');
+    await waitForPixMedia();
     setFeedback(`Cadastro recebido. Sua contribui\u00e7\u00e3o de ${formatCurrency(state.amount)} est\u00e1 aguardando confirma\u00e7\u00e3o do PIX.`, 'success');
     showStep(2, { focusTitle: true });
+    setSubmitState('success');
   } catch (error) {
     applyFieldErrors(form, error.fieldErrors);
     setSubmitState('error');
@@ -455,22 +604,23 @@ async function handleStepOneSubmit() {
   } finally {
     state.isSubmitting = false;
     setStepOneLocked(false);
-    setButtonSubmitting(stepOneSubmitButton, false);
+    setButtonDisabled(stepOneSubmitButton, false);
   }
 }
 
 function bindCopyButtons() {
-  form.querySelectorAll('[data-copy-target]').forEach((button) => {
-    button.addEventListener('click', async () => {
-      const target = button.dataset.copyTarget;
+  form.addEventListener('click', async (event) => {
+    const button = event.target.closest('[data-copy-target]');
+    if (!button || !form.contains(button)) return;
 
-      if (target === 'pix-code') {
-        await copyValue(PIX_CODE, pixCodeBox, button, 'C\u00f3digo PIX copiado', 'copiedPixCode', {
-          revealWhatsapp: true,
-          feedbackMessage: 'C\u00f3digo PIX copiado. Envie o comprovante pelo WhatsApp para confirmar o apoio.',
-        });
-      }
-    });
+    const target = button.dataset.copyTarget;
+
+    if (target === 'pix-code') {
+      await copyValue(PIX_CODE, pixCodeBox, button, 'C\u00f3digo PIX copiado', 'copiedPixCode', {
+        revealWhatsapp: true,
+        feedbackMessage: 'C\u00f3digo PIX copiado. Envie o comprovante pelo WhatsApp para confirmar o apoio.',
+      });
+    }
   });
 }
 
@@ -485,12 +635,19 @@ function bindNavigation() {
 function initApoiePage() {
   if (!form) return;
 
+  const releasePageEntrance = () => {
+    document.body.classList.remove('apoie-page-entering');
+  };
+  window.requestAnimationFrame(releasePageEntrance);
+  window.setTimeout(releasePageEntrance, 80);
+
   setFeedback('', 'neutral');
   setSubmitState('idle');
   updateSummary();
   updateProgress(1);
   showStep(1);
   hideWhatsappArea();
+  startPixMediaPreload();
   bindCopyButtons();
   bindNavigation();
 

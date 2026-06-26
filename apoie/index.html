@@ -19,13 +19,15 @@
     <meta name="twitter:description" content="FlaMedula, rede de doa&ccedil;&atilde;o, medula e mobiliza&ccedil;&atilde;o.">
     <meta name="twitter:image" content="https://res.cloudinary.com/dm9mnc97u/image/upload/c_pad,w_512,h_512,b_white/v1781279524/Untitled_design_17_1_x7qbdx.webp">
     <link rel="preconnect" href="https://res.cloudinary.com">
+    <link rel="preload" as="image" href="https://res.cloudinary.com/dm9mnc97u/image/upload/v1782411944/flamedula_1_eppcqk.webp" imagesrcset="https://res.cloudinary.com/dm9mnc97u/image/upload/v1782411944/flamedula_1_eppcqk.webp">
+    <link rel="preload" as="image" href="https://res.cloudinary.com/dm9mnc97u/image/upload/v1782412026/Captura_de_tela_2026-06-25_142326_fnobuk.webp">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Oswald:wght@500;600&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="icon" type="image/webp" href="https://res.cloudinary.com/dm9mnc97u/image/upload/c_pad,w_64,h_64,b_white/v1781279524/Untitled_design_17_1_x7qbdx.webp">
     <script type="module" src="/src/apoie.js"></script>
 </head>
-<body class="apoie-page">
+<body class="apoie-page apoie-page-entering">
     <header class="apoie-header">
         <div class="apoie-header-inner">
             <a href="/" class="apoie-brand" aria-label="Voltar para a p&aacute;gina inicial da FlaMedula">
@@ -119,13 +121,14 @@
                 </section>
 
                 <section class="apoie-step is-hidden" data-step="2" id="supportStep2" aria-labelledby="apoieStepTwoTitle" aria-hidden="true" hidden>
-                    <figure class="apoie-institutional-figure apoie-institutional-figure-step">
+                    <figure class="apoie-institutional-figure apoie-institutional-figure-step is-loading" data-media-state="loading">
                         <img
+                            class="apoie-institutional-image"
                             src="https://res.cloudinary.com/dm9mnc97u/image/upload/v1782411944/flamedula_1_eppcqk.webp"
                             alt="Foto institucional da FlaMedula em a&ccedil;&atilde;o social"
                             width="1166"
                             height="1654"
-                            loading="lazy"
+                            loading="eager"
                             decoding="async"
                         >
                         <figcaption>A rede segue ativa com mobiliza&ccedil;&atilde;o, comunica&ccedil;&atilde;o e apoio presencial.</figcaption>
@@ -157,7 +160,7 @@
                         </dl>
                     </section>
 
-                    <section class="apoie-card apoie-qr-card" aria-labelledby="apoieQrTitle">
+                    <section class="apoie-card apoie-qr-card is-loading" aria-labelledby="apoieQrTitle" data-media-state="loading">
                         <div class="apoie-card-headline">
                             <h4 id="apoieQrTitle">QR Code PIX</h4>
                             <p>Use a c&acirc;mera do app do seu banco para concluir a transfer&ecirc;ncia.</p>
@@ -169,6 +172,7 @@
                                 class="apoie-qr-image"
                                 width="512"
                                 height="512"
+                                loading="eager"
                                 decoding="async"
                             >
                         </div>

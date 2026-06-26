@@ -25,7 +25,7 @@ const FLOW_CONFIG = {
     stepFields: [
       ['requester_name', 'requester_phone'],
       [],
-      ['need_type', 'urgency_level'],
+      ['need_type'],
       ['consent_authorized'],
     ],
   },
@@ -44,6 +44,7 @@ const state = {
 };
 
 const FLOW_SELECTION_DELAY_MS = 320;
+const SUPPORT_NAVIGATION_DELAY_MS = 280;
 const SUPPORT_PAGE_URL = '/apoie/';
 
 function getMiniApp() {
@@ -52,6 +53,10 @@ function getMiniApp() {
 
 function getFeedback() {
   return document.getElementById('hubFormFeedback');
+}
+
+function getNavigationOverlay() {
+  return document.getElementById('hubNavigationOverlay');
 }
 
 function getFlowForm(flow) {
@@ -116,6 +121,13 @@ function resetChoiceSelection() {
 
   state.selectionLocked = false;
   getMiniApp()?.classList.remove('is-choosing-flow');
+  document.body.classList.remove('is-navigating-to-apoie');
+  const overlay = getNavigationOverlay();
+  if (overlay) {
+    overlay.hidden = true;
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.classList.remove('is-visible');
+  }
   getChoiceCards().forEach((card) => {
     card.disabled = false;
     card.classList.remove('is-selected', 'is-dimmed', 'is-pending');
@@ -124,14 +136,26 @@ function resetChoiceSelection() {
 }
 
 function runSelectedFlow(flow) {
-  resetChoiceSelection();
-
   if (flow === 'support') {
     window.location.href = SUPPORT_PAGE_URL;
     return;
   }
 
+  resetChoiceSelection();
   startFlow(flow);
+}
+
+function showSupportNavigationOverlay() {
+  const overlay = getNavigationOverlay();
+  document.body.classList.add('is-navigating-to-apoie');
+
+  if (!overlay) return;
+
+  overlay.hidden = false;
+  overlay.setAttribute('aria-hidden', 'false');
+  window.requestAnimationFrame(() => {
+    overlay.classList.add('is-visible');
+  });
 }
 
 function chooseFlowWithTransition(button) {
@@ -140,6 +164,9 @@ function chooseFlowWithTransition(button) {
 
   state.selectionLocked = true;
   getMiniApp()?.classList.add('is-choosing-flow');
+  if (flow === 'support') {
+    showSupportNavigationOverlay();
+  }
 
   getChoiceCards().forEach((card) => {
     const isSelected = card === button;
@@ -156,7 +183,9 @@ function chooseFlowWithTransition(button) {
     'info',
   );
 
-  const delay = prefersReducedMotion() ? 0 : FLOW_SELECTION_DELAY_MS;
+  const delay = flow === 'support'
+    ? SUPPORT_NAVIGATION_DELAY_MS
+    : prefersReducedMotion() ? 0 : FLOW_SELECTION_DELAY_MS;
   state.selectionTimer = window.setTimeout(() => runSelectedFlow(flow), delay);
 }
 
@@ -221,6 +250,45 @@ function updateContactPreferenceState() {
   if (!prefersEmail) {
     setFieldInvalid(form, 'email', false);
   }
+}
+
+function applyPublicFlowCopyAdjustments() {
+  const donorForm = getFlowForm('donor');
+  const patientForm = getFlowForm('patient');
+  if (!donorForm || !patientForm) return;
+
+  const donorStepZeroText = donorForm.querySelector('[data-step="0"] .step-copy p');
+  if (donorStepZeroText) {
+    donorStepZeroText.textContent = 'Doacao de sangue e cadastro de medula sao caminhos diferentes. A FlaMedula usa essa resposta para orientar sem misturar os dois processos.';
+  }
+
+  const donorStepTwoText = donorForm.querySelector('[data-step="2"] .step-copy p');
+  if (donorStepTwoText) {
+    donorStepTwoText.textContent = 'Estar no REDOME significa estar cadastrado para uma possivel compatibilidade. Isso nao significa que a doacao ja aconteceu.';
+  }
+
+  const redomeNote = document.getElementById('redome-positive-note');
+  if (redomeNote) {
+    redomeNote.textContent = 'Otimo. Manter seus dados atualizados ajuda os canais oficiais a localizar voce se houver compatibilidade futura.';
+  }
+
+  const medulaLegend = document.querySelector('#medula-interest-group legend');
+  if (medulaLegend) {
+    medulaLegend.textContent = 'Voce quer receber orientacao para entender como funciona o cadastro de medula?';
+  }
+
+  const donorStepThreeText = donorForm.querySelector('[data-step="3"] .step-copy p');
+  if (donorStepThreeText) {
+    donorStepThreeText.textContent = 'Escolha o melhor canal para receber orientacao sobre sangue, REDOME e medula sem misturar os temas.';
+  }
+
+  const patientStepTwoText = patientForm.querySelector('[data-step="2"] .step-copy p');
+  if (patientStepTwoText) {
+    patientStepTwoText.textContent = 'Selecione a necessidade principal e adicione um contexto breve para orientar a equipe.';
+  }
+
+  const urgencyGroup = patientForm.querySelector('[data-field-group="urgency_level"]');
+  if (urgencyGroup) urgencyGroup.hidden = true;
 }
 
 export function updateDonorConditionalFields() {
@@ -351,7 +419,7 @@ export function buildDonorPayload(form = getFlowForm('donor')) {
     contact_preference: getCheckedValue(form, 'contact_preference'),
     consent_lgpd: getCheckboxValue(form, 'consent_lgpd'),
     consent_updates: getCheckboxValue(form, 'consent_updates'),
-    origem: 'pagina_principal',
+    source: 'pagina_principal',
     source_section: 'hub_cadastro_doador',
     website: getFormValue(form, 'website'),
   };
@@ -368,10 +436,9 @@ export function buildPatientPayload(form = getFlowForm('patient')) {
     estado: getFormValue(form, 'estado'),
     hospital: getFormValue(form, 'hospital'),
     need_type: getCheckedValue(form, 'need_type'),
-    urgency_level: getCheckedValue(form, 'urgency_level'),
     campaign_context: getFormValue(form, 'campaign_context') || null,
     consent_authorized: getCheckboxValue(form, 'consent_authorized'),
-    origem: 'pagina_principal',
+    source: 'pagina_principal',
     source_section: 'hub_cadastro_paciente',
     website: getFormValue(form, 'website'),
   };
@@ -557,7 +624,10 @@ export function openPanel(type) {
       return;
     }
 
-    window.location.href = SUPPORT_PAGE_URL;
+    showSupportNavigationOverlay();
+    window.setTimeout(() => {
+      window.location.href = SUPPORT_PAGE_URL;
+    }, SUPPORT_NAVIGATION_DELAY_MS);
     return;
   }
 
@@ -630,5 +700,6 @@ export function initHubCadastro() {
 
   updateDonorConditionalFields();
   updateContactPreferenceState();
+  applyPublicFlowCopyAdjustments();
   showChoice();
 }
