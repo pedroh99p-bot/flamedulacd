@@ -55,7 +55,15 @@ function createHeroSlide(item, index) {
 
   if (isValidUrl(item.image_url)) {
     slide.classList.add('has-image');
-    slide.style.setProperty('--hero-image', `url("${item.image_url}")`);
+
+    const image = document.createElement('img');
+    image.className = 'hero-slide-image';
+    image.src = item.image_url;
+    image.alt = item.image_alt || item.title || 'Novidade FlaMedula';
+    image.decoding = 'async';
+    image.loading = index === 0 ? 'eager' : 'lazy';
+    if (index === 0) image.setAttribute('fetchpriority', 'high');
+    slide.appendChild(image);
   }
 
   const content = document.createElement('div');
@@ -68,7 +76,7 @@ function createHeroSlide(item, index) {
   category.className = 'slide-tag';
   category.textContent = item.category || 'FlaMedula';
 
-  const title = document.createElement('h1');
+  const title = document.createElement(index === 0 ? 'h1' : 'h2');
   title.className = 'slide-title';
   title.textContent = item.title || 'FlaMedula';
 

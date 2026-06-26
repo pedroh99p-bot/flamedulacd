@@ -1,40 +1,40 @@
-// Futuro: estes dados virão da tabela hero_news no Supabase.
-// image_url receberá a URL do Cloudinary enviada pelo ADM.
+// Fallback local do Hero. A landing usa o Supabase quando os posts publicados
+// possuem imagens renderizaveis; caso contrario, estes 3 posts garantem o Hero.
 export const heroNewsItems = [
   {
     id: 'hero-01',
-    category: 'Mobilização',
-    title: 'Informação que vira mobilização',
-    subtitle: 'A FlaMedula organiza cadastro, orientação e campanhas para aproximar quem pode ajudar de quem precisa.',
-    image_url: '',
-    image_alt: 'Mobilização FlaMedula',
-    cta_label: 'Quero participar',
+    category: 'Notícia',
+    title: '15 de junho agora é o Dia do FlaMedula',
+    subtitle: 'A data entrou no calendário oficial do Rio de Janeiro após aprovação na Câmara, fortalecendo a visibilidade da causa e da doação de sangue e medula.',
+    image_url: 'https://res.cloudinary.com/dm9mnc97u/image/upload/v1782501138/c46f2575-bd3e-429d-8831-b9d9da5ad3a8_ku4r0p.webp',
+    image_alt: 'Registro institucional do Dia do FlaMedula',
+    cta_label: 'Quero me cadastrar',
     cta_url: '#hub-cadastro',
     published: true,
-    order: 1
+    order: 1,
   },
   {
     id: 'hero-02',
-    category: 'Medula óssea',
-    title: 'Uma chance rara pode estar em você',
-    subtitle: 'Cada novo cadastro pode aumentar a possibilidade de um paciente encontrar compatibilidade pelos canais oficiais.',
-    image_url: '',
-    image_alt: 'Orientação sobre cadastro de medula óssea',
-    cta_label: 'Entender a medula',
+    category: 'História real',
+    title: 'Filha doa medula para o pai',
+    subtitle: 'A compatibilidade entre familiares costuma ser maior. Entre pessoas sem parentesco, a chance pode chegar a 1 em 100 mil - por isso cada novo cadastro importa.',
+    image_url: 'https://res.cloudinary.com/dm9mnc97u/image/upload/v1782501138/af5b390a-4e86-4737-aaeb-af6daf55b04e_mwhlvt.webp',
+    image_alt: 'Filha realizando doação de medula para o pai',
+    cta_label: 'Entenda como ajudar',
     cta_url: '#educacional',
     published: true,
-    order: 2
+    order: 2,
   },
   {
     id: 'hero-03',
-    category: 'Famílias e pacientes',
-    title: 'Casos precisam de rede, dados e direção',
-    subtitle: 'Quando uma família cadastra um caso, a FlaMedula ajuda a organizar orientação e mobilização responsável.',
-    image_url: '',
-    image_alt: 'Rede de apoio para famílias e pacientes',
-    cta_label: 'Cadastrar um caso',
+    category: 'Vitória',
+    title: 'Rafael VENCEU!!!',
+    subtitle: 'Depois de dois transplantes de medula, Rafael venceu. Uma história de superação que mostra como a doação pode mudar destinos e salvar vidas.',
+    image_url: 'https://res.cloudinary.com/dm9mnc97u/image/upload/v1782501137/341c873e-d4f5-403c-a589-b6a72287dfde_pj3nh6.webp',
+    image_alt: 'Vitória de Rafael após dois transplantes de medula',
+    cta_label: 'Seja parte dessa corrente',
     cta_url: '#hub-cadastro',
     published: true,
-    order: 3
-  }
+    order: 3,
+  },
 ];

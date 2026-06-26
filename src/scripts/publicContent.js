@@ -123,11 +123,18 @@ function sortByOrder(items) {
   return [...items].sort((first, second) => (first.order ?? 0) - (second.order ?? 0));
 }
 
+function hasRenderableHeroImages(items) {
+  return items.length > 0 && items.every((item) => isValidUrl(item.image_url));
+}
+
 async function loadHeroContent() {
   try {
     const rows = await getPublishedHero();
     if (!rows.length) return sortByOrder(heroNewsItems);
-    return await enrichWithAssets(rows, normalizeHeroRows);
+    const normalizedRows = await enrichWithAssets(rows, normalizeHeroRows);
+    return hasRenderableHeroImages(normalizedRows)
+      ? normalizedRows
+      : sortByOrder(heroNewsItems);
   } catch (error) {
     logDevError('hero fallback', error);
     return sortByOrder(heroNewsItems);
