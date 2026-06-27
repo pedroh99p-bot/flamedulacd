@@ -285,8 +285,9 @@ export function renderTeam() {
 
   grid.innerHTML = teamMembers.map((member) => {
     const avatar = createAvatarMarkup(member, 'team-avatar-v');
+    const roleHtml = member.role ? `<div class="team-role-v">${escapeHtml(member.role)}</div>` : '';
 
-    return `<div class="team-card-v">${avatar}<div class="team-name-v">${escapeHtml(member.name)}</div><div class="team-role-v">${escapeHtml(member.role)}</div></div>`;
+    return `<div class="team-card-v">${avatar}<div class="team-name-v">${escapeHtml(member.name)}</div>${roleHtml}</div>`;
   }).join('');
 }
 
