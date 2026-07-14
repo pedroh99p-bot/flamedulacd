@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "test:migrations": "node scripts/validateMigrations.mjs",
+    "test:access:staging": "node scripts/validateStagingAccess.mjs",
+    "configure:admin:staging": "node scripts/configureStagingAdmin.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.107.0"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.4"
+  }
+}

@@ -1,0 +1,10 @@
+project_id = "gimugfooncsmyztjuull"
+
+[functions.submit-donor-lead]
+verify_jwt = false
+
+[functions.submit-patient-case]
+verify_jwt = false
+
+[functions.submit-donation-intent]
+verify_jwt = false

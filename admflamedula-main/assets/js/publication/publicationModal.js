@@ -1,0 +1,284 @@
+import { publicationState } from "./publicationState.js";
+import { openMediaPicker } from "./mediaPicker.js";
+import { showToast } from "../toast.js";
+import {
+  applySelectedPublicationAsset,
+  clearSelectedPublicationAsset,
+  getPublicationTarget,
+  isPublicationUploadBusy,
+  setPublicationUploadStatus,
+  showPendingMediaRegistration,
+  syncPublicationUploadControls
+} from "./publicationMedia.js";
+import {
+  isMediaAssetRegistrationError,
+  registerUploadedMediaAsset,
+  uploadSignedMediaAsset
+} from "../services/cloudinaryService.js";
+import {
+  destroyCloudinaryUploadWidget,
+  openCloudinaryUploadWidget
+} from "../services/cloudinaryWidgetService.js";
+import { reportOperationalFailure } from "../services/operationalEventService.js";
+
+export function ensurePublicationModal() {
+  let modal = document.getElementById("editorialModal");
+  if (modal) return modal;
+
+  modal = document.createElement("div");
+  modal.id = "editorialModal";
+  modal.className = "editorial-modal";
+  modal.setAttribute("aria-hidden", "true");
+  modal.innerHTML = `
+    <div class="editorial-modal-backdrop" id="btnEditorialModalCloseBackdrop"></div>
+    <section class="editorial-modal-panel" role="dialog" aria-modal="true" aria-labelledby="editorialModalTitle">
+      <header class="editorial-modal-header">
+        <div>
+          <p class="eyebrow" id="editorialModalKicker">Publicacao</p>
+          <h2 id="editorialModalTitle">Novo registro</h2>
+        </div>
+        <button class="icon-button" type="button" id="btnEditorialModalClose" aria-label="Fechar editor">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </header>
+      <nav class="publication-wizard-progress" aria-label="Etapas da publicação">
+        <button type="button" class="wizard-progress-step is-active" data-wizard-go="1" aria-current="step">
+          <span>1</span><strong>Escrever</strong>
+        </button>
+        <div class="wizard-progress-line" aria-hidden="true"></div>
+        <button type="button" class="wizard-progress-step" data-wizard-go="2">
+          <span>2</span><strong>Imagem</strong>
+        </button>
+        <div class="wizard-progress-line" aria-hidden="true"></div>
+        <button type="button" class="wizard-progress-step" data-wizard-go="3">
+          <span>3</span><strong>Conferir</strong>
+        </button>
+      </nav>
+      <form id="editorialModalForm" novalidate>
+        <div class="editorial-modal-body" id="editorialModalBody"></div>
+        <footer class="editorial-modal-footer">
+          <button class="action-button ghost" type="button" id="btnEditorialModalCancel">Cancelar</button>
+          <div class="modal-feedback-stack">
+            <div class="publication-inline-status" id="publicationUploadFeedback" hidden></div>
+            <div class="publication-inline-status" id="publicationSaveFeedback" hidden></div>
+          </div>
+          <div class="footer-actions">
+            <button class="action-button secondary" type="button" id="btnWizardBack" hidden>Voltar</button>
+            <button class="action-button primary" type="button" id="btnWizardNext">Ir para a imagem</button>
+            <button class="action-button secondary wizard-save-action" type="submit" id="btnSaveDraft" hidden>Salvar sem publicar</button>
+            <button class="action-button secondary wizard-save-action" type="submit" id="btnSaveSchedule" hidden>Publicar depois</button>
+            <button class="action-button primary wizard-save-action" type="submit" id="btnSavePublish" hidden>Publicar agora</button>
+          </div>
+        </footer>
+      </form>
+    </section>
+  `;
+  document.body.appendChild(modal);
+
+  document.getElementById("btnEditorialModalClose").addEventListener("click", closePublicationModal);
+  document.getElementById("btnEditorialModalCloseBackdrop").addEventListener("click", closePublicationModal);
+  document.getElementById("btnEditorialModalCancel").addEventListener("click", closePublicationModal);
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && publicationState.editorOpen) {
+      closePublicationModal();
+    }
+  });
+
+  return modal;
+}
+
+export function openPublicationModal({ title, kicker, bodyMarkup }) {
+  ensurePublicationModal();
+  const modal = document.getElementById("editorialModal");
+
+  document.getElementById("editorialModalTitle").textContent = title;
+  document.getElementById("editorialModalKicker").textContent = kicker;
+  document.getElementById("editorialModalBody").innerHTML = bodyMarkup;
+
+  import("./publicationRouter.js")
+    .then((mod) => mod.bindFormSubmitEvent())
+    .catch((error) => console.error("[PublicationModal:submit_bind]", { message: error?.message || "bind_failed" }));
+
+  bindMediaControls();
+
+  modal.classList.add("is-open");
+  modal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+  publicationState.editorOpen = true;
+  syncPublicationUploadControls();
+}
+
+export function closePublicationModal() {
+  if (isPublicationUploadBusy() || publicationState.saving) {
+    showToast("Aguarde a operacao terminar.", "error");
+    return;
+  }
+
+  const modal = document.getElementById("editorialModal");
+  if (modal) {
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("modal-open");
+    publicationState.editorOpen = false;
+    destroyCloudinaryUploadWidget();
+  }
+}
+
+function bindMediaControls() {
+  const isViewer = publicationState.role === "viewer";
+  const removeBtn = document.getElementById("btnRemoveMediaAsset");
+  const widgetBtn = document.getElementById("btnOpenCloudinaryWidget");
+  const pickerBtn = document.getElementById("btnOpenMediaPicker");
+  const directInput = document.getElementById("formDirectFileInput");
+  const retryButton = document.getElementById("btnRetryMediaRegistration");
+
+  if (isViewer) {
+    if (removeBtn) removeBtn.style.display = "none";
+    if (widgetBtn) widgetBtn.style.display = "none";
+    if (pickerBtn) pickerBtn.style.display = "none";
+    if (directInput?.parentNode) directInput.parentNode.style.display = "none";
+    if (retryButton) retryButton.style.display = "none";
+    syncPublicationUploadControls();
+    return;
+  }
+
+  widgetBtn?.addEventListener("click", handleWidgetUpload);
+
+  pickerBtn?.addEventListener("click", () => {
+    if (isPublicationUploadBusy()) return;
+    openMediaPicker(getPublicationTarget());
+  });
+
+  removeBtn?.addEventListener("click", () => {
+    if (isPublicationUploadBusy()) return;
+    clearSelectedPublicationAsset();
+  });
+
+  directInput?.addEventListener("change", handleDirectUpload);
+  retryButton?.addEventListener("click", retryMediaRegistration);
+  syncPublicationUploadControls();
+}
+
+async function handleWidgetUpload() {
+  if (isPublicationUploadBusy()) return;
+
+  const formType = publicationState.activeType;
+  const target = getPublicationTarget(formType);
+
+  try {
+    const result = await openCloudinaryUploadWidget({
+      target,
+      altText: () => document.getElementById("pub_image_alt")?.value || "",
+      onStatus: (status, message) => setPublicationUploadStatus(status, message)
+    });
+
+    if (!result?.mediaAsset) {
+      setPublicationUploadStatus(publicationState.selectedAsset ? "ready" : "idle");
+      return;
+    }
+
+    applySelectedPublicationAsset(result.mediaAsset);
+    showToast("Imagem escolhida. Agora clique em “Revisar publicação”.");
+  } catch (error) {
+    reportOperationalFailure({
+      source: "cloudinary",
+      eventType: "upload_failed",
+      error,
+      metadata: { content_type: formType, step: "upload_widget" }
+    });
+    console.error("[PublicationWidgetUpload]", {
+      status: error?.name || "error",
+      message: error?.message || "widget_upload_failed"
+    });
+
+    if (isMediaAssetRegistrationError(error)) {
+      showPendingMediaRegistration(error.retryContext, error.message);
+      showToast(error.message, "error");
+    } else {
+      setPublicationUploadStatus("error", error.message || "Nao foi possivel enviar a imagem.");
+      showToast(error.message || "Nao foi possivel enviar a imagem.", "error");
+    }
+  } finally {
+    syncPublicationUploadControls();
+  }
+}
+
+async function handleDirectUpload(event) {
+  const file = event.target.files?.[0];
+  if (!file || isPublicationUploadBusy()) return;
+
+  const formType = publicationState.activeType;
+  const span = document.getElementById("formDirectUploadSpan");
+  const target = getPublicationTarget(formType);
+
+  if (span) span.textContent = "Enviando...";
+
+  try {
+    const result = await uploadSignedMediaAsset({
+      file,
+      target,
+      resourceType: "image",
+      displayName: file.name,
+      altText: document.getElementById("pub_image_alt")?.value || "",
+      assetType: formType,
+      onProgress: (status) => setPublicationUploadStatus(status)
+    });
+
+    applySelectedPublicationAsset(result.mediaAsset);
+    showToast("Imagem enviada e escolhida com sucesso.");
+  } catch (error) {
+    reportOperationalFailure({
+      source: "cloudinary",
+      eventType: "upload_failed",
+      error,
+      metadata: { content_type: formType, step: "direct_upload" }
+    });
+    console.error("[PublicationUpload]", {
+      status: error?.name || "error",
+      message: error?.message || "upload_failed"
+    });
+
+    if (isMediaAssetRegistrationError(error)) {
+      showPendingMediaRegistration(error.retryContext, error.message);
+      showToast(error.message, "error");
+    } else {
+      setPublicationUploadStatus("error", error.message || "Erro durante o upload.");
+      showToast(error.message || "Erro durante o upload.", "error");
+    }
+  } finally {
+    if (span) span.textContent = "Se a janela não abrir, escolha o arquivo aqui";
+    syncPublicationUploadControls();
+    event.target.value = "";
+  }
+}
+
+async function retryMediaRegistration() {
+  if (!publicationState.pendingMediaRegistration || isPublicationUploadBusy()) return;
+
+  try {
+    const mediaAsset = await registerUploadedMediaAsset({
+      ...publicationState.pendingMediaRegistration,
+      altText: document.getElementById("pub_image_alt")?.value || publicationState.pendingMediaRegistration.altText || "",
+      onProgress: (status) => setPublicationUploadStatus(status)
+    });
+
+    applySelectedPublicationAsset(mediaAsset);
+    showToast("Imagem registrada no painel.");
+  } catch (error) {
+    reportOperationalFailure({
+      source: "cloudinary",
+      eventType: "upload_failed",
+      error,
+      metadata: { content_type: publicationState.activeType, step: "asset_registration_retry" }
+    });
+    console.error("[PublicationUploadRetry]", {
+      status: error?.name || error?.code || "error",
+      message: error?.message || "media_asset_retry_failed"
+    });
+    setPublicationUploadStatus("error", error.message || "Falha ao registrar media_assets.");
+    showToast(error.message || "Falha ao registrar media_assets.", "error");
+  } finally {
+    syncPublicationUploadControls();
+  }
+}

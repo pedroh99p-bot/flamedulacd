@@ -1,0 +1,162 @@
+import { listDonors } from "./donorService.js";
+import { listPatientCases } from "./patientService.js";
+import { listDonationIntents, listSupportLeads } from "./supportService.js";
+import { fetchTable, fetchTablePage } from "./supabaseService.js";
+
+function normalizeDonor(row) {
+  if (!row) return row;
+  const bloodStatus = row.blood_donor_status || "";
+  const marrowInterest = row.medula_interest || "";
+  return {
+    ...row,
+    blood_donor_status_raw: row.blood_donor_status,
+    redome_status_raw: row.redome_status,
+    medula_interest_raw: row.medula_interest,
+    nome: row.nome,
+    telefone: row.telefone,
+    email: row.email,
+    cidade: row.cidade,
+    estado: row.estado,
+    tipo_sanguineo: row.tipo_sanguineo || "",
+    ja_doador_sangue: ["ja_doador", "doador_recorrente", "sim"].includes(bloodStatus),
+    quer_doar_sangue: ["quero_comecar", "interessado", "sim"].includes(bloodStatus),
+    quer_doar_medula: ["sim", "interessado", "quero_saber"].includes(marrowInterest),
+    consentimento_contato: row.consent_lgpd,
+    contato_whatsapp_realizado: Boolean(row.contacted_at),
+    canal_preferido: row.contact_preference,
+    origem: row.origem,
+    observacoes: row.internal_notes,
+    status: row.status,
+    created_at: row.created_at
+  };
+}
+
+function normalizePatientCase(row) {
+  if (!row) return row;
+  return {
+    ...row,
+    nome_paciente: row.patient_identifier || row.requester_name || "Caso sinalizado",
+    telefone_responsavel: row.requester_phone,
+    email: row.requester_email,
+    diagnostico: row.campaign_context,
+    tipo_necessidade: row.need_type,
+    necessita_medula: ["medula", "campanha_cadastro_medula"].includes(row.need_type),
+    hospital: row.hospital,
+    cidade: row.cidade,
+    estado: row.estado,
+    autorizacao_divulgacao: row.consent_authorized,
+    usar_nome_paciente: false,
+    mensagem_publica: row.campaign_context,
+    contato_whatsapp_realizado: false,
+    status: row.status,
+    origem: row.origem,
+    observacoes: row.private_notes,
+    created_at: row.created_at
+  };
+}
+
+function normalizeDonationIntent(row) {
+  if (!row) return row;
+  const valor_raw = row.custom_amount ?? row.amount ?? null;
+  const metodo_raw = row.payment_method ?? null;
+  const tipo_raw = row.donation_type ?? null;
+
+  let name = "";
+  if (row.donor_type === "company") {
+    name = row.company_name || row.responsible_name || "Empresa";
+  } else {
+    name = row.name || "";
+  }
+  if (!name.trim()) {
+    name = "Apoiador cadastrado";
+  }
+
+  return {
+    ...row,
+    nome: name,
+    email: row.email,
+    telefone: row.phone,
+    valor_raw,
+    metodo_raw,
+    tipo_raw,
+    valor: valor_raw !== null ? Number(valor_raw) : null,
+    metodo_pagamento: metodo_raw,
+    status_pagamento: row.status,
+    payment_id: row.provider_reference,
+    origem: row.source,
+    created_at: row.created_at
+  };
+}
+
+export async function getDashboardData() {
+  try {
+    const [
+      donorResult,
+      patientResult,
+      donationResult,
+      supportResult,
+      auditResult,
+      operationalResult,
+      metricsResult,
+      regionResult
+    ] = await Promise.all([
+      listDonors(),
+      listPatientCases(),
+      listDonationIntents(),
+      listSupportLeads(),
+      fetchTable("audit_logs", { orderBy: "created_at", ascending: false }),
+      fetchTablePage("operational_events", { page: 1, pageSize: 50, orderBy: "occurred_at", ascending: false }),
+      getDashboardMetrics(),
+      getRegionSummary()
+    ]);
+
+    return {
+      donorLeads: donorResult.data.map(normalizeDonor),
+      patients: patientResult.data.map(normalizePatientCase),
+      monetaryDonations: donationResult.data.map(normalizeDonationIntent),
+      supportLeads: supportResult.data || [],
+      auditLogs: auditResult.data || [],
+      operationalEvents: operationalResult.data || [],
+      dashboardMetrics: metricsResult.data,
+      regionSummary: regionResult.data,
+      contentSummary: [],
+      errors: [
+        donorResult.error,
+        patientResult.error,
+        donationResult.error,
+        supportResult.error,
+        auditResult.error,
+        operationalResult.error,
+        metricsResult.error,
+        regionResult.error
+      ].filter(Boolean)
+    };
+  } catch (error) {
+    console.error("[Supabase] getDashboardData", error);
+    return {
+      donorLeads: [],
+      patients: [],
+      monetaryDonations: [],
+      supportLeads: [],
+      auditLogs: [],
+      operationalEvents: [],
+      dashboardMetrics: [],
+      regionSummary: [],
+      contentSummary: [],
+      errors: [{
+        source: "dashboard",
+        raw: error,
+        isRls: false,
+        message: "Nao foi possivel carregar os dados do novo Supabase."
+      }]
+    };
+  }
+}
+
+export function getDashboardMetrics() {
+  return fetchTable("v_dashboard_metrics", { orderBy: null });
+}
+
+export function getRegionSummary() {
+  return fetchTable("v_donor_region_summary", { orderBy: null });
+}
