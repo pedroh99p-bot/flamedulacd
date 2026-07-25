@@ -3,6 +3,8 @@ import { errorResponse } from "./responses.ts";
 const DEFAULT_ALLOWED_ORIGINS = [
   "http://localhost:5173",
   "http://127.0.0.1:5173",
+  "https://flamedula.org.br",
+  "https://www.flamedula.org.br",
   "https://flamedula-platform.vercel.app",
   "https://flamedula-platforms.vercel.app",
   "https://flamedulacd.vercel.app",

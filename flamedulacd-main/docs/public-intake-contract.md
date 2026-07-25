@@ -9,9 +9,9 @@ Este documento descreve os endpoints publicos usados pelos formularios da landin
 - `VITE_SUPABASE_PUBLISHABLE_KEY`: chave publica `sb_publishable_*` do ambiente.
 - `FUNCTIONS_BASE_URL`: derivada de `VITE_SUPABASE_URL` como `/functions/v1`.
 
-O fallback local deste repositorio aponta para o staging
+O fallback deste repositorio aponta para o projeto oficial
 `gimugfooncsmyztjuull`. Producao deve sempre receber variaveis explicitas na
-plataforma de deploy; nao troque o fallback para producao.
+plataforma de deploy para evitar divergencia entre ambientes.
 
 As chaves administrativas ficam exclusivamente no ambiente hospedado das Edge Functions. O helper usa `SUPABASE_SECRET_KEYS.default` e aceita `SUPABASE_SERVICE_ROLE_KEY` apenas como fallback legado. Nenhuma chave segura deve ser exposta no frontend, em `.env` publico, no repositorio ou em logs.
 
@@ -44,6 +44,8 @@ Origens padrao para desenvolvimento e publicacao atual:
 
 - `http://localhost:5173`
 - `http://127.0.0.1:5173`
+- `https://flamedula.org.br`
+- `https://www.flamedula.org.br`
 - `https://flamedula-platform.vercel.app`
 - `https://flamedula-platforms.vercel.app`
 - `https://flamedulacd.vercel.app`

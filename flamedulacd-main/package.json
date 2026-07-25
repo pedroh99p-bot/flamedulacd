@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build && node scripts/copyAdminToDist.mjs",
     "preview": "vite preview",
-    "seed:public-content": "node scripts/seedPublicContent.mjs"
+    "seed:public-content": "node scripts/seedPublicContent.mjs",
+    "test:cors": "node scripts/validateCorsContracts.mjs",
+    "test:assistant": "node scripts/validateDedecoAssistant.mjs"
   },
   "dependencies": {
     "vite": "8.0.16"

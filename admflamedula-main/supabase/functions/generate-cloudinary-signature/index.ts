@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { getCorsHeaders, handleCorsPreflight } from "../_shared/cors.ts";
 
 const allowedTargets: Record<string, string> = {
   hero: "flamedula/site/hero",
@@ -24,26 +25,6 @@ const allowedWidgetSignatureKeys = new Set([
   "folder",
   "upload_preset"
 ]);
-
-function getCorsHeaders(request: Request) {
-  const origin = request.headers.get("Origin") || "";
-  const configuredOrigins = (Deno.env.get("ALLOWED_ORIGINS") || "")
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
-  const allowOrigin = configuredOrigins.length === 0 || configuredOrigins.includes("*")
-    ? "*"
-    : configuredOrigins.includes(origin)
-      ? origin
-      : configuredOrigins[0];
-
-  return {
-    "Access-Control-Allow-Origin": allowOrigin,
-    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Vary": "Origin"
-  };
-}
 
 function jsonResponse(request: Request, body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -115,9 +96,8 @@ function sanitizeWidgetParams(
 }
 
 Deno.serve(async (request) => {
-  if (request.method === "OPTIONS") {
-    return new Response("ok", { headers: getCorsHeaders(request) });
-  }
+  const preflight = handleCorsPreflight(request);
+  if (preflight) return preflight;
 
   if (request.method !== "POST") {
     return jsonResponse(request, { error: "Method not allowed" }, 405);

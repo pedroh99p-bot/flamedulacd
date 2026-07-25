@@ -943,5 +943,93 @@
             </div>
         </div>
     </footer>
+
+    <aside class="dedeco-assistant" id="dedecoAssistant" aria-label="Dedeco Responde">
+        <button
+            class="dedeco-chat-launcher"
+            id="dedecoChatLauncher"
+            type="button"
+            aria-controls="dedecoChatPanel"
+            aria-expanded="false"
+        >
+            <img
+                class="dedeco-launcher-avatar"
+                src="/assets/dedeco-chibi.png"
+                alt=""
+                width="60"
+                height="60"
+            >
+            <span class="dedeco-launcher-copy">
+                <strong>Dedeco responde</strong>
+                <small>Orientação simples e segura</small>
+            </span>
+        </button>
+
+        <section
+            class="dedeco-chat-panel"
+            id="dedecoChatPanel"
+            role="dialog"
+            aria-modal="false"
+            aria-labelledby="dedecoChatTitle"
+            hidden
+        >
+            <header class="dedeco-chat-header">
+                <img src="/assets/dedeco-chibi.png" alt="" width="54" height="54">
+                <span class="dedeco-chat-identity">
+                    <strong id="dedecoChatTitle">Dedeco virtual</strong>
+                    <span class="dedeco-chat-status">Assistente guiado da FlaMedula</span>
+                </span>
+                <button class="dedeco-chat-close" id="dedecoChatClose" type="button" aria-label="Fechar conversa">×</button>
+            </header>
+
+            <p class="dedeco-chat-notice">
+                Informações educativas com fontes oficiais. Não substitui triagem, diagnóstico ou atendimento médico.
+            </p>
+
+            <div
+                class="dedeco-chat-messages"
+                id="dedecoChatMessages"
+                aria-live="polite"
+                aria-relevant="additions"
+            ></div>
+
+            <div class="dedeco-quick-actions" aria-label="Assuntos principais">
+                <button class="dedeco-quick-action" type="button" data-dedeco-action="where-blood">📍 Onde doar sangue</button>
+                <button class="dedeco-quick-action" type="button" data-dedeco-action="eligibility">🩸 Posso doar?</button>
+                <button class="dedeco-quick-action" type="button" data-dedeco-action="marrow">🧬 Medula e REDOME</button>
+                <button class="dedeco-quick-action" type="button" data-dedeco-action="story">❤️ História do Dedeco</button>
+                <button class="dedeco-quick-action" type="button" data-dedeco-action="human">💬 Falar com a equipe</button>
+            </div>
+
+            <form class="dedeco-location-form" id="dedecoLocationForm" hidden>
+                <label>
+                    Sua cidade
+                    <input name="city" type="text" autocomplete="address-level2" maxlength="80" placeholder="Ex.: Rio de Janeiro" required>
+                </label>
+                <label>
+                    Estado
+                    <select name="state" id="dedecoState" autocomplete="address-level1" required>
+                        <option value="">UF</option>
+                    </select>
+                </label>
+                <button type="submit">Mostrar caminhos seguros</button>
+            </form>
+
+            <form class="dedeco-chat-composer" id="dedecoChatComposer">
+                <label class="sr-only" for="dedecoChatInput">Digite sua dúvida</label>
+                <input
+                    id="dedecoChatInput"
+                    name="message"
+                    type="text"
+                    maxlength="240"
+                    autocomplete="off"
+                    placeholder="Digite uma dúvida simples"
+                >
+                <button type="submit">Enviar</button>
+            </form>
+
+            <p class="dedeco-chat-footnote">Esta conversa não é armazenada. Não envie exames, CPF ou dados médicos.</p>
+        </section>
+    </aside>
 </body>
 </html>
