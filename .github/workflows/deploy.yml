@@ -35,6 +35,8 @@ jobs:
 
       - name: Build site and dashboard
         run: npm --prefix flamedulacd-main run build
+        env:
+          VITE_ENABLE_DONOR_BLOOD_TYPE: "true"
 
       - name: Add custom domain
         shell: bash
