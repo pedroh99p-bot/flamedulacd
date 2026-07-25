@@ -25,6 +25,7 @@ Payload previsto:
   "email": "string opcional",
   "cidade": "string opcional",
   "estado": "string opcional",
+  "tipo_sanguineo": "A+ | A- | B+ | B- | AB+ | AB- | O+ | O- | null",
   "blood_donor_status": "ja_doador | quero_comecar | interessado | nao_informado",
   "redome_status": "cadastrado | nao_cadastrado | nao_informado",
   "medula_interest": "sim | nao | quero_saber",
@@ -38,6 +39,8 @@ Payload previsto:
 ```
 
 Campos que nunca devem ser enviados: documentos sensiveis desnecessarios, dados medicos, dados de cartao.
+
+`tipo_sanguineo` e declaratorio e serve apenas para acoes de sangue. Nao representa compatibilidade de medula, que depende da tipagem HLA.
 
 ## `patient_cases`
 

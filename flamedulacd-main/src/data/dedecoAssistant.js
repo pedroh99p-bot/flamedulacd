@@ -1,18 +1,22 @@
 export const DEDECO_ASSISTANT_SOURCES = Object.freeze({
   blood: {
-    label: 'Ministério da Saúde — Doação de sangue',
+    label: 'Ministério da Saúde — doação de sangue',
     url: 'https://www.gov.br/saude/pt-br/composicao/saes/doacao-de-sangue',
   },
   hemovida: {
-    label: 'Hemovida — localizador oficial',
+    label: 'Hemovida — doação de sangue',
     url: 'https://www.gov.br/pt-br/servicos/consultar-o-guia-hemovida-para-obter-as-regras-para-doacao-de-sangue',
   },
   redome: {
     label: 'REDOME — cadastro e hemocentros',
     url: 'https://redome.inca.gov.br/doadores/',
   },
+  redomeUpdate: {
+    label: 'REDOME — atualizar cadastro',
+    url: 'https://redome.inca.gov.br/atualize-seu-cadastro/',
+  },
   inca: {
-    label: 'INCA — doação de medula óssea',
+    label: 'INCA — perguntas sobre doação de medula',
     url: 'https://www.gov.br/inca/pt-br/acesso-a-informacao/perguntas-frequentes/doacao-de-medula-ossea/',
   },
   story: {
@@ -30,9 +34,23 @@ export const BLOOD_DONATION_GUIDANCE = [
 ];
 
 export const MARROW_DONATION_GUIDANCE = [
-  'Para entrar no REDOME, a pessoa precisa ter entre 18 e 35 anos, estar em bom estado geral de saúde e apresentar documento oficial com foto.',
-  'O cadastro inclui formulário e coleta de uma pequena amostra de sangue para tipagem HLA.',
-  'Cadastro não é doação imediata. Se houver possível compatibilidade, o REDOME entra em contato para novas etapas e avaliação médica.',
+  'Para fazer um novo cadastro no REDOME, é preciso ter entre 18 e 35 anos, estar em bom estado geral de saúde e apresentar documento oficial com foto.',
+  'No hemocentro, a pessoa preenche o cadastro e autoriza a coleta de uma amostra de 5 ml de sangue para tipagem HLA.',
+  'O cadastro permanece ativo no REDOME até os 60 anos. Manter telefone, endereço e e-mail atualizados é essencial.',
+  'Cadastro não é doação imediata. Se houver possível compatibilidade, o REDOME entra em contato para novos exames e avaliação médica.',
+];
+
+export const HLA_GUIDANCE = [
+  'HLA é a tipagem genética usada para procurar compatibilidade entre doador e paciente.',
+  'Tipo sanguíneo e HLA são informações diferentes. Ser A, B, AB ou O não determina a compatibilidade de medula.',
+  'Uma primeira compatibilidade ainda precisa ser confirmada por novos exames. A equipe médica orienta todas as etapas.',
+];
+
+export const AFTER_MATCH_GUIDANCE = [
+  'Se aparecer uma possível compatibilidade, o REDOME entra em contato pelos dados cadastrados.',
+  'São feitos novos exames para confirmar a compatibilidade e avaliar com segurança a saúde do doador.',
+  'A forma de coleta é definida pela equipe médica conforme o caso e explicada antes de qualquer decisão.',
+  'A doação é voluntária. Tire todas as dúvidas com a equipe responsável antes de confirmar.',
 ];
 
 export const BRAZILIAN_STATES = [

@@ -19,6 +19,7 @@ import {
   getPublishedTestimonials,
   getPublishedTransparencyMetrics,
 } from '../services/publicContentService.js';
+import { resolveOfficialMediaUrl } from '../config/officialMedia.js';
 
 function isValidUrl(value) {
   if (!value) return false;
@@ -52,8 +53,10 @@ function collectAssetIds(rows) {
 }
 
 function resolveAssetImage(asset, priority, fallbackUrl = '') {
-  if (!asset || asset.active === false) return isValidUrl(fallbackUrl) ? fallbackUrl : '';
-  return pickFirstUrl(priority.map((field) => asset[field]).concat(fallbackUrl));
+  if (!asset || asset.active === false) {
+    return isValidUrl(fallbackUrl) ? resolveOfficialMediaUrl(fallbackUrl) : '';
+  }
+  return resolveOfficialMediaUrl(pickFirstUrl(priority.map((field) => asset[field]).concat(fallbackUrl)));
 }
 
 function resolveAssetAlt(row, asset, fallbackParts) {
@@ -137,7 +140,10 @@ function normalizeTestimonialRows(rows, assetMap) {
       role: row.author_label || '',
       case: '',
       avatar: name.trim().charAt(0).toUpperCase() || 'F',
-      image_url: resolveAssetImage(asset, ['thumbnail_url', 'card_url', 'preferred_delivery_url', 'delivery_url', 'webp_url', 'original_url'], row.image_url),
+      image_url: resolveOfficialMediaUrl(
+        resolveAssetImage(asset, ['thumbnail_url', 'card_url', 'preferred_delivery_url', 'delivery_url', 'webp_url', 'original_url'], row.image_url),
+        row.name,
+      ),
       image_alt: resolveAssetAlt(row, asset, [name, 'Depoimento FlaMedula']),
       published: row.published === true,
       order: row.sort_order ?? index + 1,
