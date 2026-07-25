@@ -7,6 +7,7 @@ Este documento descreve os endpoints publicos usados pelos formularios da landin
 - `VITE_SUPABASE_PROJECT_REF`: referencia do projeto do ambiente.
 - `VITE_SUPABASE_URL`: URL do projeto do ambiente.
 - `VITE_SUPABASE_PUBLISHABLE_KEY`: chave publica `sb_publishable_*` do ambiente.
+- `VITE_ENABLE_DONOR_BLOOD_TYPE`: habilite como `true` somente depois de aplicar a migration de `tipo_sanguineo` e publicar a Edge Function atualizada.
 - `FUNCTIONS_BASE_URL`: derivada de `VITE_SUPABASE_URL` como `/functions/v1`.
 
 O fallback deste repositorio aponta para o projeto oficial
@@ -63,6 +64,7 @@ Campos aceitos:
 - `email` opcional, email valido quando preenchido.
 - `cidade` opcional.
 - `estado` opcional, UF com 2 letras.
+- `tipo_sanguineo` opcional: `A+`, `A-`, `B+`, `B-`, `AB+`, `AB-`, `O+`, `O-`.
 - `blood_donor_status`: `ja_doador`, `quero_comecar`, `quero_entender`.
 - `redome_status`: `sim`, `nao`, `nao_tenho_certeza`.
 - `medula_interest`: `ja_cadastrado_redome`, `sim_tenho_interesse`, `quero_entender_melhor`, `nao_neste_momento` ou `null`.

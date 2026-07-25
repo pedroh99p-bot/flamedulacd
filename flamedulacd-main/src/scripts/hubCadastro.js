@@ -48,6 +48,7 @@ const SUPPORT_NAVIGATION_DELAY_MS = 280;
 const SUPPORT_PAGE_URL = `${import.meta.env.BASE_URL}apoie/`;
 const TECHNICAL_SUBMISSION_ERROR_MESSAGE = 'N\u00e3o foi poss\u00edvel concluir o cadastro. Tente novamente.';
 const DEVELOPMENT_HOSTS = new Set(['localhost', '127.0.0.1']);
+const DONOR_BLOOD_TYPE_ENABLED = import.meta.env.VITE_ENABLE_DONOR_BLOOD_TYPE === 'true';
 
 function getMiniApp() {
   return document.getElementById('hubMiniApp');
@@ -409,7 +410,7 @@ export function buildDonorPayload(form = getFlowForm('donor')) {
     ? 'ja_cadastrado_redome'
     : getCheckedValue(form, 'medula_interest');
 
-  return {
+  const payload = {
     nome: getFormValue(form, 'nome'),
     telefone: getFormValue(form, 'telefone'),
     email: getFormValue(form, 'email') || null,
@@ -425,6 +426,12 @@ export function buildDonorPayload(form = getFlowForm('donor')) {
     source_section: 'hub_cadastro_doador',
     website: getFormValue(form, 'website'),
   };
+
+  if (DONOR_BLOOD_TYPE_ENABLED) {
+    payload.tipo_sanguineo = getFormValue(form, 'tipo_sanguineo') || null;
+  }
+
+  return payload;
 }
 
 export function buildPatientPayload(form = getFlowForm('patient')) {
@@ -719,6 +726,13 @@ export function initHubCadastro() {
   window.handleFormSubmit = handleFormSubmit;
 
   const miniApp = getMiniApp();
+  const bloodTypeField = document.getElementById('donorBloodTypeField');
+  const bloodTypeSelect = document.getElementById('donor-tipo-sanguineo');
+  if (DONOR_BLOOD_TYPE_ENABLED && bloodTypeField && bloodTypeSelect) {
+    bloodTypeField.hidden = false;
+    bloodTypeSelect.disabled = false;
+  }
+
   miniApp?.addEventListener('click', handleHubClick);
   miniApp?.addEventListener('input', handleHubInput);
   miniApp?.addEventListener('change', handleHubInput);

@@ -15,6 +15,7 @@ Tabela: `donor_leads`
 | E-mail | `email` | `email` | `email` |
 | Cidade | `cidade` | `cidade` | `cidade` |
 | Estado | `estado` | `estado` | `estado` |
+| Tipo sanguineo (opcional) | `tipo_sanguineo` | `tipo_sanguineo` | `tipo_sanguineo` |
 | Doacao de sangue | `blood_donor_status` | `blood_donor_status` | `blood_donor_status` |
 | Cadastro REDOME | `redome_status` | `redome_status` | `redome_status` |
 | Interesse em medula | `medula_interest` | `medula_interest` | `medula_interest` |
@@ -28,7 +29,8 @@ Tabela: `donor_leads`
 | Data de consentimento | backend | nao enviado pelo frontend | `consent_at` |
 | Marcador de teste | backend | nao enviado pelo frontend | `is_test = false` |
 
-Campos como `idade`, `peso` e `tipo_sanguineo` nao entram no fluxo publico de doadores porque nao existem no schema real de `donor_leads`.
+O tipo sanguineo ABO/Rh e opcional e serve somente para segmentar acoes de doacao de sangue. Compatibilidade de medula depende da tipagem HLA e nunca deve ser inferida desse campo.
+O campo publico fica protegido por `VITE_ENABLE_DONOR_BLOOD_TYPE=true`; ative apenas depois da migration e da Edge Function estarem publicadas no mesmo ambiente.
 
 ## Pagina principal - pedido/apoio a paciente
 

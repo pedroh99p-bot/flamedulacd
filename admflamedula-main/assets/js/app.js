@@ -1354,6 +1354,7 @@ function openDetails(type, id) {
         ["Telefone", record.telefone || "Não informado"],
         ["Cidade/Estado", `${record.cidade || "-"} / ${record.estado || "-"}`],
         ["Bairro", record.bairro || "Não informado"],
+        ["Tipo sanguíneo", record.tipo_sanguineo || "Não informado"],
         ["Doador de sangue", formatBloodDonorStatus(record.blood_donor_status_raw)],
         ["Cadastro no REDOME", formatRedomeStatus(record.redome_status_raw)],
         ["Interesse em doar medula", formatMarrowInterest(record.medula_interest_raw)],
@@ -1568,6 +1569,7 @@ function buildEntityFormMarkup(entityType, record, submitting) {
       ${renderTextField("Telefone", "telefone", record.telefone, "tel")}
       ${renderTextField("Cidade", "cidade", record.cidade)}
       ${renderTextField("Estado", "estado", record.estado)}
+      ${renderSelectField("Tipo sanguineo", "tipo_sanguineo", record.tipo_sanguineo, ["", "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"])}
       ${renderSelectField("Doador de sangue", "blood_donor_status", record.blood_donor_status, ["nao_informado", "ja_doador", "doador_recorrente", "quero_comecar", "interessado"])}
       ${renderSelectField("Status REDOME", "redome_status", record.redome_status, ["nao_informado", "cadastrado", "nao_cadastrado"])}
       ${renderSelectField("Interesse em medula", "medula_interest", record.medula_interest, ["nao", "sim", "quero_saber", "interessado"])}

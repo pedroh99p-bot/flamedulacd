@@ -73,6 +73,7 @@ for (const file of migrationFiles.filter((name) => /^(006|007|008)_/.test(name))
 
 const expectedColumns = [
   ["donor_leads", "consent_at"],
+  ["donor_leads", "tipo_sanguineo"],
   ["patient_cases", "requester_email"],
   ["donation_intents", "intended_amount"],
   ["media_assets", "publicly_available"],
