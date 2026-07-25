@@ -54,8 +54,8 @@ async function postIntake(endpoint, payload) {
     if (error.name === 'AbortError') {
       const timeoutError = new IntakeApiError({
         success: false,
-        code: 'INTERNAL_ERROR',
-        message: 'O envio demorou mais do que o esperado. Tente novamente.',
+        code: 'REQUEST_TIMEOUT',
+        message: 'O envio demorou mais do que o esperado e não foi concluído. Tente novamente em instantes.',
       });
       reportFormFailure(endpoint, timeoutError);
       throw timeoutError;
@@ -68,8 +68,8 @@ async function postIntake(endpoint, payload) {
 
     const connectionError = new IntakeApiError({
       success: false,
-      code: 'INTERNAL_ERROR',
-      message: 'Falha de conexão. Verifique sua internet e tente novamente.',
+      code: 'CONNECTION_ERROR',
+      message: 'Não foi possível enviar agora. Seus dados não foram enviados. Tente novamente em instantes ou fale com a FlaMedula pelo WhatsApp.',
     });
     reportFormFailure(endpoint, connectionError);
     throw connectionError;
