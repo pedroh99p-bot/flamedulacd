@@ -6,12 +6,14 @@ import {
   DEDECO_WHATSAPP_URL,
   HLA_GUIDANCE,
   MARROW_DONATION_GUIDANCE,
+  PLATELET_DONATION_GUIDANCE,
 } from '../data/dedecoAssistant.js';
 import { HEMOCENTERS, HEMOCENTER_DIRECTORY_REVIEWED_AT } from '../data/hemocenters.js';
 
 const state = {
   initialized: false,
   greeted: false,
+  locationPurpose: 'blood',
 };
 
 function normalizeText(value) {
@@ -112,9 +114,18 @@ function hideLocationForm() {
   form.hidden = true;
 }
 
-function respondWithRedomeLocation() {
+function respondWithLocation(purpose = 'blood') {
+  state.locationPurpose = purpose;
+  const button = document.querySelector('#dedecoLocationForm button[type="submit"]');
+  if (button) {
+    button.textContent = purpose === 'redome'
+      ? 'Procurar local de cadastro no REDOME'
+      : 'Procurar hemocentro para doação';
+  }
   appendMessage({
-    text: 'Me diga sua cidade e o estado. Vou procurar na relação de hemocentros para cadastro no REDOME.',
+    text: purpose === 'redome'
+      ? 'Me diga sua cidade e o estado. Vou procurar locais que fazem cadastro no REDOME.'
+      : 'Me diga sua cidade e o estado. Vou mostrar hemocentros da sua região. Confirme o tipo de doação e o horário com a unidade antes de sair.',
   });
   showLocationForm();
 }
@@ -126,6 +137,30 @@ function respondWithEligibility() {
     actions: [
       { label: 'Abrir orientação oficial', url: DEDECO_ASSISTANT_SOURCES.blood.url },
       { label: 'Encontrar local para doar sangue', url: DEDECO_ASSISTANT_SOURCES.hemovida.url },
+    ],
+    sourceKeys: ['blood'],
+  });
+}
+
+function respondWithPlatelets() {
+  appendMessage({
+    text: 'Plaquetas podem ser doadas por aférese. O processo e os critérios precisam ser confirmados diretamente com o hemocentro.',
+    lines: PLATELET_DONATION_GUIDANCE,
+    actions: [
+      { label: 'Encontrar um hemocentro', action: 'where-blood' },
+      { label: 'Ler orientação oficial do INCA', url: DEDECO_ASSISTANT_SOURCES.platelets.url },
+    ],
+    sourceKeys: ['platelets'],
+  });
+}
+
+function respondWithPreparation() {
+  appendMessage({
+    text: 'Para doação de sangue, vá alimentado e descansado e leve um documento oficial com foto. A triagem do hemocentro confirma todos os critérios no dia.',
+    lines: BLOOD_DONATION_GUIDANCE,
+    actions: [
+      { label: 'Encontrar um hemocentro', action: 'where-blood' },
+      { label: 'Ver orientação oficial', url: DEDECO_ASSISTANT_SOURCES.blood.url },
     ],
     sourceKeys: ['blood'],
   });
@@ -212,9 +247,10 @@ function respondWithFallback() {
   appendMessage({
     text: 'Não tenho uma resposta segura para isso. Escolha um assunto abaixo ou fale com a equipe da FlaMedula.',
     actions: [
-      { label: 'Onde me cadastrar no REDOME', action: 'where-redome' },
-      { label: 'Como funciona o cadastro', action: 'marrow' },
-      { label: 'Compatibilidade e HLA', action: 'hla' },
+      { label: 'Onde doar sangue', action: 'where-blood' },
+      { label: 'Como doar plaquetas', action: 'platelets' },
+      { label: 'Quem pode doar', action: 'eligibility' },
+      { label: 'Medula e REDOME', action: 'marrow' },
       { label: 'Falar com a equipe', action: 'human' },
     ],
   });
@@ -223,8 +259,11 @@ function respondWithFallback() {
 function handleAction(action) {
   hideLocationForm();
 
-  if (action === 'where-redome') respondWithRedomeLocation();
+  if (action === 'where-blood') respondWithLocation('blood');
+  if (action === 'where-redome') respondWithLocation('redome');
   if (action === 'eligibility') respondWithEligibility();
+  if (action === 'platelets') respondWithPlatelets();
+  if (action === 'prepare') respondWithPreparation();
   if (action === 'marrow') respondWithMarrow();
   if (action === 'hla') respondWithHla();
   if (action === 'update-data') respondWithUpdateData();
@@ -244,10 +283,13 @@ function classifyMessage(message) {
   if (/atualizar|trocar telefone|mudei|dados cadastrais/.test(normalized) && /redome|cadastro|telefone|endereco|email/.test(normalized)) return 'update-data';
   if (/compativel|compatibilidade|hla|tipo sanguineo|tipo de sangue/.test(normalized)) return 'hla';
   if (/chamado|encontrou|encontraram|match|depois da compatibilidade/.test(normalized)) return 'after-match';
-  if (/onde|hemocentro|local|cidade|perto/.test(normalized) && /medula|redome|cadastro|hemocentro/.test(normalized)) return 'where-redome';
-  if (/onde|local|cidade|perto/.test(normalized) && /doar sangue|doacao de sangue/.test(normalized)) return 'eligibility';
+  if (/onde|hemocentro|local|cidade|perto/.test(normalized) && /medula|redome|cadastro/.test(normalized)) return 'where-redome';
+  if (/onde|hemocentro|local|cidade|perto/.test(normalized) && /sangue|plaqueta|doar|doacao/.test(normalized)) return 'where-blood';
+  if (/plaqueta|aferese/.test(normalized)) return 'platelets';
+  if (/levar|preparar|jejum|alimentado|documento/.test(normalized)) return 'prepare';
   if (/posso doar|quem pode|requisito|criterio|idade|peso/.test(normalized)) return 'eligibility';
   if (/medula|redome|cadastro/.test(normalized)) return 'marrow';
+  if (/sangue|doacao|doador/.test(normalized)) return 'eligibility';
   if (/dedeco|historia|fundador|flamedula/.test(normalized)) return 'story';
   if (/whatsapp|atendente|pessoa|equipe|ajuda humana|falar com/.test(normalized)) return 'human';
   return 'fallback';
@@ -297,20 +339,25 @@ function handleLocationSubmit(event) {
 
   if (!shownEntries.length) {
     appendMessage({
-      text: `Não encontrei uma unidade de ${stateName} na lista local. Use o localizador atual do REDOME e confirme antes de sair.`,
+      text: state.locationPurpose === 'redome'
+        ? `Não encontrei uma unidade de ${stateName} na lista local. Use o localizador atual do REDOME e confirme antes de sair.`
+        : `Não encontrei uma unidade de ${stateName} na lista local. Fale com a equipe FlaMedula ou consulte o guia oficial antes de sair.`,
       actions: [
-        { label: 'Abrir localizador oficial do REDOME', url: DEDECO_ASSISTANT_SOURCES.redome.url },
+        state.locationPurpose === 'redome'
+          ? { label: 'Abrir localizador oficial do REDOME', url: DEDECO_ASSISTANT_SOURCES.redome.url }
+          : { label: 'Consultar guia oficial de doação', url: DEDECO_ASSISTANT_SOURCES.hemovida.url },
         { label: 'Falar com a equipe FlaMedula', url: DEDECO_WHATSAPP_URL },
       ],
-      sourceKeys: ['redome'],
+      sourceKeys: [state.locationPurpose === 'redome' ? 'redome' : 'hemovida'],
     });
     event.currentTarget.reset();
     hideLocationForm();
     return;
   }
 
+  const directoryLabel = state.locationPurpose === 'redome' ? 'relação de cadastro do REDOME' : 'relação de hemocentros';
   const exactMessage = matches.length
-    ? `Encontrei ${matches.length === 1 ? 'uma unidade' : `${matches.length} unidades`} na relação de cadastro do REDOME para ${city}/${stateCode}.`
+    ? `Encontrei ${matches.length === 1 ? 'uma unidade' : `${matches.length} unidades`} na ${directoryLabel} para ${city}/${stateCode}.`
     : `Não encontrei o nome de ${city} na lista local. Estas são algumas unidades do estado de ${stateName}.`;
 
   const lines = shownEntries.map((entry) => {
@@ -324,13 +371,15 @@ function handleLocationSubmit(event) {
   }));
 
   appendMessage({
-    text: `${exactMessage} A base foi recebida em ${formatReviewDate(HEMOCENTER_DIRECTORY_REVIEWED_AT)}. Telefone, endereço e horário podem mudar: confirme no REDOME ou com a unidade antes de ir.`,
+    text: `${exactMessage} A base foi revisada em ${formatReviewDate(HEMOCENTER_DIRECTORY_REVIEWED_AT)}. Telefone, endereço, horário e tipos de doação podem mudar: confirme diretamente com a unidade antes de ir.`,
     lines,
     actions: [
       ...mapActions,
-      { label: 'Confirmar no REDOME oficial', url: DEDECO_ASSISTANT_SOURCES.redome.url },
+      state.locationPurpose === 'redome'
+        ? { label: 'Confirmar no REDOME oficial', url: DEDECO_ASSISTANT_SOURCES.redome.url }
+        : { label: 'Ver orientação oficial', url: DEDECO_ASSISTANT_SOURCES.hemovida.url },
     ],
-    sourceKeys: ['redome'],
+    sourceKeys: [state.locationPurpose === 'redome' ? 'redome' : 'hemovida'],
   });
 
   event.currentTarget.reset();
@@ -348,17 +397,17 @@ function openChat() {
 
   if (!state.greeted) {
     appendMessage({
-      text: 'Fala, meu amigo! Eu sou o Dedeco virtual da FlaMedula. Posso explicar o cadastro no REDOME, procurar hemocentros e orientar com fontes oficiais. Não substituo a triagem nem um profissional de saúde.',
+      text: 'Fala, meu amigo! Eu sou o Dedeco virtual da FlaMedula. Posso ajudar você a entender como doar sangue ou plaquetas, encontrar um hemocentro e saber o que levar. Se quiser, também explico o REDOME separadamente.',
     });
     state.greeted = true;
   }
 
   window.setTimeout(() => {
-    panel.querySelector('[data-dedeco-action="where-redome"]')?.focus();
+    panel.querySelector('[data-dedeco-action="where-blood"]')?.focus();
   }, 50);
 }
 
-function closeChat() {
+function closeChat({ restoreFocus = true } = {}) {
   const panel = document.getElementById('dedecoChatPanel');
   const launcher = document.getElementById('dedecoChatLauncher');
   if (!panel || !launcher) return;
@@ -366,7 +415,7 @@ function closeChat() {
   panel.hidden = true;
   launcher.setAttribute('aria-expanded', 'false');
   document.body.classList.remove('dedeco-chat-open');
-  launcher.focus();
+  if (restoreFocus) launcher.focus();
 }
 
 function populateStates() {
@@ -407,6 +456,12 @@ export function initDedecoChat() {
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && !document.getElementById('dedecoChatPanel')?.hidden) {
       closeChat();
+    }
+  });
+
+  document.addEventListener('flamedula:registration-flow', (event) => {
+    if (event.detail?.active && !document.getElementById('dedecoChatPanel')?.hidden) {
+      closeChat({ restoreFocus: false });
     }
   });
 

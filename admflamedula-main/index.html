@@ -265,10 +265,11 @@
 
           <div class="segment-tabs" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;">
             <button class="action-button active" type="button" data-segment="all" style="min-height: 38px; border-radius: 99px; padding: 0 16px; font-weight: 700; font-size: 0.85rem;">Todos</button>
-            <button class="action-button secondary" type="button" data-segment="ja_doadores" style="min-height: 38px; border-radius: 99px; padding: 0 16px; font-weight: 700; font-size: 0.85rem;">Já são doadores</button>
-            <button class="action-button secondary" type="button" data-segment="interessados" style="min-height: 38px; border-radius: 99px; padding: 0 16px; font-weight: 700; font-size: 0.85rem;">Interessados em doar</button>
-            <button class="action-button secondary" type="button" data-segment="ainda_nao" style="min-height: 38px; border-radius: 99px; padding: 0 16px; font-weight: 700; font-size: 0.85rem;">Ainda não são doadores</button>
-            <button class="action-button secondary" type="button" data-segment="sem_interesse" style="min-height: 38px; border-radius: 99px; padding: 0 16px; font-weight: 700; font-size: 0.85rem;">Sem interesse</button>
+            <button class="action-button secondary" type="button" data-segment="sangue" style="min-height: 38px; border-radius: 99px; padding: 0 16px; font-weight: 700; font-size: 0.85rem;">Sangue</button>
+            <button class="action-button secondary" type="button" data-segment="plaquetas" style="min-height: 38px; border-radius: 99px; padding: 0 16px; font-weight: 700; font-size: 0.85rem;">Plaquetas</button>
+            <button class="action-button secondary" type="button" data-segment="sangue_e_plaquetas" style="min-height: 38px; border-radius: 99px; padding: 0 16px; font-weight: 700; font-size: 0.85rem;">Sangue + plaquetas</button>
+            <button class="action-button secondary" type="button" data-segment="ja_doadores" style="min-height: 38px; border-radius: 99px; padding: 0 16px; font-weight: 700; font-size: 0.85rem;">Já doam</button>
+            <button class="action-button secondary" type="button" data-segment="quero_comecar" style="min-height: 38px; border-radius: 99px; padding: 0 16px; font-weight: 700; font-size: 0.85rem;">Querem começar</button>
             <button class="action-button secondary" type="button" data-segment="nao_informado" style="min-height: 38px; border-radius: 99px; padding: 0 16px; font-weight: 700; font-size: 0.85rem;">Não informado</button>
           </div>
 
@@ -276,6 +277,17 @@
             <label>
               <span>Estado</span>
               <select id="donorStateFilter"></select>
+            </label>
+            <label>
+              <span>Interesse principal</span>
+              <select id="donorDonationInterestFilter">
+                <option value="">Todos</option>
+                <option value="sangue">Sangue</option>
+                <option value="plaquetas">Plaquetas</option>
+                <option value="sangue_e_plaquetas">Sangue e plaquetas</option>
+                <option value="quero_entender">Quer entender</option>
+                <option value="nao_informado">Não informado (cadastros antigos)</option>
+              </select>
             </label>
             <label>
               <span>Status REDOME</span>

@@ -65,9 +65,10 @@ Campos aceitos:
 - `cidade` opcional.
 - `estado` opcional, UF com 2 letras.
 - `tipo_sanguineo` opcional: `A+`, `A-`, `B+`, `B-`, `AB+`, `AB-`, `O+`, `O-`.
+- `donation_interest`: `sangue`, `plaquetas`, `sangue_e_plaquetas`, `quero_entender`. O frontend oficial exige uma opcao; o backend aceita ausencia temporariamente para compatibilidade com clientes antigos.
 - `blood_donor_status`: `ja_doador`, `quero_comecar`, `quero_entender`.
-- `redome_status`: `sim`, `nao`, `nao_tenho_certeza`.
-- `medula_interest`: `ja_cadastrado_redome`, `sim_tenho_interesse`, `quero_entender_melhor`, `nao_neste_momento` ou `null`.
+- `redome_status`: campo legado opcional (`sim`, `nao`, `nao_tenho_certeza`). O novo fluxo envia `null` porque REDOME nao faz parte do cadastro de sangue/plaquetas.
+- `medula_interest`: campo legado opcional; o novo fluxo envia `null`.
 - `contact_preference`: `email`, `whatsapp`, `telefone`.
 - `consent_lgpd` obrigatorio como `true`.
 - `consent_updates` opcional booleano.
