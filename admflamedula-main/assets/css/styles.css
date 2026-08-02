@@ -1904,3 +1904,71 @@ tbody tr:hover {
 .geo-item.patient-geo span.count {
   background: var(--blue);
 }
+
+html {
+  width: 100%;
+  max-width: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body,
+.shell,
+.app-panel,
+.content {
+  max-width: 100%;
+}
+
+@media (max-width: 760px) {
+  body {
+    overflow-x: clip;
+  }
+
+  .sidebar {
+    width: min(88vw, 320px);
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .topbar {
+    min-height: 64px;
+    padding-top: calc(10px + env(safe-area-inset-top, 0px));
+  }
+
+  .topbar-left h1 {
+    font-size: 1.2rem;
+    line-height: 1.15;
+  }
+
+  .content {
+    width: 100%;
+    min-width: 0;
+    padding: 12px;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    overflow-x: clip;
+  }
+
+  .section-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .action-button,
+  .icon-button,
+  .menu-button {
+    min-height: 44px;
+  }
+
+  .global-search,
+  .global-search input,
+  .filter-input,
+  .filter-select {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .global-search input,
+  .filter-input,
+  .filter-select {
+    font-size: 16px;
+  }
+}

@@ -188,8 +188,8 @@ function sortByOrder(items) {
   return [...items].sort((first, second) => (first.order ?? 0) - (second.order ?? 0));
 }
 
-function hasRenderableHeroImages(items) {
-  return items.length > 0 && items.every((item) => isValidUrl(item.image_url));
+function getRenderableHeroItems(items) {
+  return items.filter((item) => isValidUrl(item.image_url));
 }
 
 async function loadHeroContent() {
@@ -197,8 +197,9 @@ async function loadHeroContent() {
     const rows = await getPublishedHero();
     if (!rows.length) return sortByOrder(heroNewsItems);
     const normalizedRows = await enrichWithAssets(rows, normalizeHeroRows);
-    return hasRenderableHeroImages(normalizedRows)
-      ? normalizedRows
+    const renderableRows = getRenderableHeroItems(normalizedRows);
+    return renderableRows.length
+      ? sortByOrder(renderableRows)
       : sortByOrder(heroNewsItems);
   } catch (error) {
     logDevError('hero fallback', error);

@@ -41,8 +41,6 @@ const summaryStatus = document.getElementById('apoieSummaryStatus');
 const whatsappArea = document.getElementById('apoieWhatsappArea');
 const whatsappButton = document.getElementById('apoieWhatsappButton');
 const pixCodeBox = document.getElementById('apoiePixCode');
-const institutionalFigure = document.querySelector('.apoie-institutional-figure-step');
-const institutionalImage = document.querySelector('.apoie-institutional-image');
 const qrCard = document.querySelector('.apoie-qr-card');
 const qrImage = document.querySelector('.apoie-qr-image');
 
@@ -203,7 +201,6 @@ function prepareImage(image, container, label) {
 function startPixMediaPreload() {
   if (!mediaReadyPromise) {
     mediaReadyPromise = Promise.allSettled([
-      prepareImage(institutionalImage, institutionalFigure, 'a imagem institucional'),
       prepareImage(qrImage, qrCard, 'o QR Code PIX'),
     ]);
   }
