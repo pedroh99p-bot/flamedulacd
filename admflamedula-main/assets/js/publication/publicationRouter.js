@@ -5,7 +5,8 @@ import {
   listPublicationItems,
   createPublicationItem,
   updatePublicationItem,
-  deletePublicationItem
+  deletePublicationItem,
+  verifyPublicationIsPublic
 } from "../services/publicationService.js";
 import { showToast } from "../toast.js";
 import {
@@ -105,12 +106,17 @@ function renderShell() {
         <h2>${escapeHtml(config.heading)}</h2>
         <p>${publicationState.totalItems} registros cadastrados</p>
       </div>
-      ${!isViewer ? `
-        <button class="action-button primary" type="button" id="btnNewPublication">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-          <span>Novo ${escapeHtml(typeLabel)}</span>
-        </button>
-      ` : ""}
+      <div class="publication-heading-actions">
+        <a class="action-button secondary" href="/" target="_blank" rel="noopener noreferrer">
+          <span>Ver site publicado</span>
+        </a>
+        ${!isViewer ? `
+          <button class="action-button primary" type="button" id="btnNewPublication">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+            <span>Novo ${escapeHtml(typeLabel)}</span>
+          </button>
+        ` : ""}
+      </div>
     </div>
 
     <article class="card table-card">
@@ -182,20 +188,20 @@ function renderRows() {
 
     return `
       <tr>
-        <td>
+        <td data-label="Imagem">
           <div class="table-thumb">
             ${imgUrl ? `<img src="${escapeHtml(imgUrl)}" alt="${escapeHtml(item.image_alt || item[config.titleField] || '')}" loading="lazy">` : `<div class="thumb-placeholder"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></div>`}
           </div>
         </td>
-        <td><strong>${escapeHtml(item[config.titleField] || "-")}</strong></td>
-        <td>${item.sort_order ?? 0}</td>
-        <td>
+        <td data-label="Título"><strong>${escapeHtml(item[config.titleField] || "-")}</strong></td>
+        <td data-label="Ordem">${item.sort_order ?? 0}</td>
+        <td data-label="Status">
           <span class="badge ${statusTone}">
             ${statusLabel}
           </span>
         </td>
-        <td>${dateStr}</td>
-        <td style="text-align: right;">
+        <td data-label="Atualizado">${dateStr}</td>
+        <td data-label="Ações" style="text-align: right;">
           <div class="row-actions" style="justify-content: flex-end;">
             ${publicationState.role !== "viewer" ? `
               <button class="icon-button btn-toggle-pub" data-id="${item.id}" data-published="${isPublished}" title="${isPublished ? 'Despublicar' : 'Publicar'}">
@@ -1190,6 +1196,20 @@ async function handleSaveForm(mode) {
 
   const isPublish = mode !== "draft";
 
+  const hasPublishImage = Boolean(
+    publicationState.selectedAsset
+    || (!publicationState.mediaRemoved && (
+      publicationState.formData?.image_asset_id
+      || publicationState.formData?.image_url
+    ))
+  );
+  if (isPublish && config.requiresImageOnPublish && !hasPublishImage) {
+    setPublicationSaveStatus("error", "Escolha uma imagem antes de publicar.");
+    showToast("Escolha uma imagem antes de publicar.", "error");
+    setWizardStep(2, form, { validate: false });
+    return;
+  }
+
   const payload = {
     [config.titleField]: titleInput.value.trim(),
     sort_order: Number(form.querySelector("[name='sort_order']")?.value || 0),
@@ -1325,6 +1345,23 @@ async function handleSaveForm(mode) {
     }
 
     const successMessage = getSaveSuccessMessage(mode);
+
+    // Keep retries attached to the row that was just created. If the public
+    // verification fails, pressing publish again updates instead of duplicating.
+    publicationState.editorMode = "edit";
+    publicationState.editingId = savedRecord.id;
+    publicationState.formData = { ...savedRecord };
+
+    if (mode === "publish") {
+      const visibility = await verifyPublicationIsPublic(table, savedRecord.id);
+      if (!visibility.visible) {
+        const reason = visibility.error?.message
+          ? ` A leitura pública respondeu: ${visibility.error.message}`
+          : " Confira as permissões do CMS e tente novamente.";
+        throw new Error(`O conteúdo foi salvo, mas ainda não está visível no site.${reason}`);
+      }
+    }
+
     setPublicationSaveStatus("saved", successMessage);
     showToast(successMessage);
     clearDraftFromSession();
@@ -1341,7 +1378,7 @@ async function handleSaveForm(mode) {
       metadata: { content_type: activeType, step: mode }
     });
     console.error(err);
-    setPublicationSaveStatus("error", "Nao foi possivel salvar. Seus dados continuam aqui.");
+    setPublicationSaveStatus("error", err.message || "Nao foi possivel salvar. Seus dados continuam aqui.");
     showToast(err.message || "Nao foi possivel salvar. Seus dados continuam aqui.", "error");
   } finally {
     publicationState.saving = false;
@@ -1351,9 +1388,7 @@ async function handleSaveForm(mode) {
 
 function getSaveSuccessMessage(mode) {
   if (mode === "schedule") return "Conteúdo agendado com sucesso";
-  if (mode === "publish") return publicationState.editorMode === "edit"
-    ? "Alterações publicadas com sucesso"
-    : "Conteúdo publicado com sucesso";
+  if (mode === "publish") return "Conteúdo publicado e confirmado no site";
   return publicationState.editorMode === "edit"
     ? "Alterações salvas como rascunho"
     : "Rascunho salvo com sucesso";

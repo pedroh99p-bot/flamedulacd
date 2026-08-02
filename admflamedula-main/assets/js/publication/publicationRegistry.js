@@ -7,6 +7,7 @@ const PUBLICATION_TYPES = {
     heading: "Notícias principais",
     titleField: "title",
     supportsImage: true,
+    requiresImageOnPublish: true,
   },
   actions: {
     tab: "actions",
@@ -16,6 +17,7 @@ const PUBLICATION_TYPES = {
     heading: "Ações e mobilizações",
     titleField: "title",
     supportsImage: true,
+    requiresImageOnPublish: true,
   },
   media_items: {
     tab: "media",

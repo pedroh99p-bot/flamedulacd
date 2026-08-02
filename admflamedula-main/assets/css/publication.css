@@ -1112,3 +1112,250 @@
   color: var(--muted);
   opacity: 0.5;
 }
+
+/* Publication workspace: explicit site preview and mobile-first content list. */
+.publication-heading-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 760px) {
+  #tab-hero .section-heading,
+  #tab-actions .section-heading,
+  #tab-media .section-heading,
+  #tab-testimonials .section-heading,
+  #tab-team .section-heading,
+  #tab-faq .section-heading,
+  #tab-metrics .section-heading {
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .publication-heading-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .publication-heading-actions .action-button {
+    width: 100%;
+    min-height: 48px;
+    justify-content: center;
+    text-align: center;
+  }
+
+  #tab-hero .table-wrap,
+  #tab-actions .table-wrap,
+  #tab-media .table-wrap,
+  #tab-testimonials .table-wrap,
+  #tab-team .table-wrap,
+  #tab-faq .table-wrap,
+  #tab-metrics .table-wrap {
+    overflow: visible;
+  }
+
+  #tab-hero table,
+  #tab-actions table,
+  #tab-media table,
+  #tab-testimonials table,
+  #tab-team table,
+  #tab-faq table,
+  #tab-metrics table,
+  #tab-hero tbody,
+  #tab-actions tbody,
+  #tab-media tbody,
+  #tab-testimonials tbody,
+  #tab-team tbody,
+  #tab-faq tbody,
+  #tab-metrics tbody {
+    display: block;
+    width: 100%;
+  }
+
+  #tab-hero thead,
+  #tab-actions thead,
+  #tab-media thead,
+  #tab-testimonials thead,
+  #tab-team thead,
+  #tab-faq thead,
+  #tab-metrics thead {
+    display: none;
+  }
+
+  #tab-hero tbody tr,
+  #tab-actions tbody tr,
+  #tab-media tbody tr,
+  #tab-testimonials tbody tr,
+  #tab-team tbody tr,
+  #tab-faq tbody tr,
+  #tab-metrics tbody tr {
+    display: block;
+    margin: 0 0 12px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+    box-shadow: var(--shadow-soft);
+  }
+
+  #tab-hero tbody td,
+  #tab-actions tbody td,
+  #tab-media tbody td,
+  #tab-testimonials tbody td,
+  #tab-team tbody td,
+  #tab-faq tbody td,
+  #tab-metrics tbody td {
+    display: grid;
+    grid-template-columns: minmax(74px, 0.38fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+    padding: 10px 0;
+    border: 0;
+    border-bottom: 1px solid var(--border);
+    text-align: left !important;
+    overflow-wrap: anywhere;
+  }
+
+  #tab-hero tbody td:last-child,
+  #tab-actions tbody td:last-child,
+  #tab-media tbody td:last-child,
+  #tab-testimonials tbody td:last-child,
+  #tab-team tbody td:last-child,
+  #tab-faq tbody td:last-child,
+  #tab-metrics tbody td:last-child {
+    border-bottom: 0;
+  }
+
+  #tab-hero tbody td::before,
+  #tab-actions tbody td::before,
+  #tab-media tbody td::before,
+  #tab-testimonials tbody td::before,
+  #tab-team tbody td::before,
+  #tab-faq tbody td::before,
+  #tab-metrics tbody td::before {
+    content: attr(data-label);
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  #tab-hero .row-actions,
+  #tab-actions .row-actions,
+  #tab-media .row-actions,
+  #tab-testimonials .row-actions,
+  #tab-team .row-actions,
+  #tab-faq .row-actions,
+  #tab-metrics .row-actions {
+    justify-content: flex-start !important;
+  }
+
+  .editorial-modal-panel {
+    width: 100%;
+    height: 100svh;
+    height: 100dvh;
+    max-height: 100svh;
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+
+  .editorial-modal-header {
+    padding-top: calc(14px + env(safe-area-inset-top, 0px));
+    padding-bottom: 14px;
+  }
+
+  .editorial-modal-body {
+    padding-top: 18px;
+    padding-bottom: 22px;
+  }
+
+  .editorial-modal-footer {
+    gap: 10px;
+    padding-top: 10px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+
+  #btnEditorialModalCancel {
+    display: none;
+  }
+
+  .editorial-modal-footer .footer-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .editorial-modal-footer .action-button {
+    min-width: 0;
+    min-height: 48px;
+    padding: 10px 12px;
+    white-space: normal;
+    line-height: 1.2;
+  }
+
+  #btnWizardNext {
+    grid-column: 1 / -1;
+  }
+
+  #btnWizardBack:not([hidden]) + #btnWizardNext {
+    grid-column: auto;
+  }
+
+  .form-field-group input,
+  .form-field-group textarea,
+  .form-field-group select {
+    min-width: 0;
+    max-width: 100%;
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  .publication-wizard-progress {
+    justify-content: space-between;
+    padding: 10px 14px;
+  }
+
+  .wizard-progress-step {
+    min-width: 0;
+    gap: 5px;
+  }
+
+  .wizard-progress-step strong {
+    display: inline;
+    font-size: 0.68rem;
+    white-space: nowrap;
+  }
+
+  .wizard-progress-line {
+    width: 18px;
+    min-width: 12px;
+    margin: 0 3px;
+  }
+
+  .wizard-media-mount,
+  .publication-review-layout,
+  .form-grid,
+  .form-field-row {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 390px) {
+  .publication-heading-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .wizard-progress-step strong {
+    font-size: 0.62rem;
+  }
+
+  .wizard-progress-step span {
+    width: 25px;
+    height: 25px;
+  }
+}

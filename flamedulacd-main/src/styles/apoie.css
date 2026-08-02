@@ -636,6 +636,30 @@ body.apoie-page-entering .apoie-footer {
     border-bottom: 0;
 }
 
+.apoie-confirmation-banner {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    color: #4c0519;
+    background: linear-gradient(135deg, #fff 0%, #fff7ed 100%);
+    border: 1px solid rgba(127, 29, 29, 0.14);
+    border-radius: 18px;
+}
+
+.apoie-confirmation-banner img {
+    display: block;
+    width: 64px;
+    height: 50px;
+    object-fit: contain;
+}
+
+.apoie-confirmation-banner p {
+    margin: 0;
+    line-height: 1.5;
+}
+
 .apoie-institutional-figure {
     position: relative;
     display: grid;
