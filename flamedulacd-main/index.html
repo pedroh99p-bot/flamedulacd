@@ -45,8 +45,8 @@
 
             <div class="video-reels-container" id="containerIntroVideo">
                 <div class="video-reels-player-wrapper">
-                    <video id="introVideo" playsinline preload="metadata" muted>
-                        <source src="https://res.cloudinary.com/dm9mnc97u/video/upload/v1780677944/WhatsApp-Video-2026-06-05-at-13.40.33_xxhh84.webm" type="video/webm">
+                    <video id="introVideo" playsinline preload="metadata" muted poster="https://res.cloudinary.com/wzzu3kvb/video/upload/so_0,f_jpg,q_auto/WhatsApp_Video_2026-08-02_at_15.33.58_n6h5fw.jpg">
+                        <source src="https://res.cloudinary.com/wzzu3kvb/video/upload/f_auto,q_auto/WhatsApp_Video_2026-08-02_at_15.33.58_n6h5fw.mp4" type="video/mp4">
                     </video>
 
                     <div class="play-btn-center" style="display:none;">▶</div>
@@ -66,8 +66,8 @@
                 <p class="intro-subtitle" style="font-size: 0.85rem; margin-bottom: 16px; color: var(--donor-main); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-inline: auto;">Fundador da FlaMedula</p>
 
                 <div class="intro-highlight-box" style="padding: 12px 16px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.4);">
-                    <span class="highlight-tag" style="font-size: 0.7rem; padding: 4px 8px; margin-bottom: 6px;">💡 VOCÊ SABIA?</span>
-                    <p style="font-size: 0.8rem; line-height: 1.4; margin-bottom: 0; color: rgba(255,255,255,0.8);">A coleta de medula pode ser por <b>aférese (pela veia)</b> ou <b>punção</b>. A decisão é sempre segura e feita pela equipe médica.</p>
+                    <span class="highlight-tag" style="font-size: 0.7rem; padding: 4px 8px; margin-bottom: 6px;">🩸 REDE FLAMEDULA</span>
+                    <p style="font-size: 0.8rem; line-height: 1.4; margin-bottom: 0; color: rgba(255,255,255,0.8);">Aqui você entra em uma rede de pessoas dispostas a doar <b>sangue ou plaquetas</b>. A triagem e a doação acontecem no hemocentro.</p>
                 </div>
 
                 <button class="btn btn-donor btn-glow intro-continue-btn" id="btn-continue-site" type="button">Continuar para o site</button>
@@ -185,13 +185,19 @@
                 </div>
 
                 <div class="mini-app-screen is-active" id="hubGrid" data-screen="choice">
-                    <p class="mini-choice-intro">A FlaMedula usa essas informações para orientar, organizar casos e mobilizar pessoas quando houver necessidade.</p>
+                    <p class="mini-choice-intro">Escolha o que você precisa. O cadastro de doador abaixo é da rede FlaMedula para sangue e plaquetas — não é cadastro no REDOME.</p>
+
+                    <ol class="donor-journey" aria-label="Como funciona o cadastro de doador">
+                        <li><strong>1. Você se cadastra</strong><span>Leva cerca de 2 minutos.</span></li>
+                        <li><strong>2. A FlaMedula orienta</strong><span>Você recebe campanhas e próximos passos.</span></li>
+                        <li><strong>3. O hemocentro confirma</strong><span>Triagem e doação são feitas no canal oficial.</span></li>
+                    </ol>
 
                     <button type="button" class="hub-card path-card card-donor" data-action="choose-flow" data-flow="donor">
                         <span class="path-icon">🩸</span>
                         <span class="path-text">
-                            <span class="path-title">Quero me cadastrar como doador</span>
-                            <span class="path-copy">Para quem já doa, quer começar ou quer entender melhor sobre medula.</span>
+                            <span class="path-title">Quero doar sangue ou plaquetas</span>
+                            <span class="path-copy">Entre na rede FlaMedula para receber orientação e avisos de campanhas.</span>
                         </span>
                     </button>
 
@@ -218,30 +224,32 @@
                     <label class="form-honeypot" aria-hidden="true">Website
                         <input type="text" name="website" tabindex="-1" autocomplete="off">
                     </label>
-                    <section class="mini-step is-active" data-step="0" data-title="🩸 Você já é doador?" data-label="Doador - etapa 1 de 4">
+                    <section class="mini-step is-active" data-step="0" data-title="🩸 Como você quer ajudar?" data-label="Doador - etapa 1 de 3">
                         <div class="step-copy">
                             <span class="step-icon">🩸</span>
                             <div>
-                                <h4>🩸 Você já é doador?</h4>
-                                <p>Você pode participar mesmo que ainda não doe. A rede usa essa informação para orientar melhor cada pessoa.</p>
+                                <h4>Como você quer ajudar?</h4>
+                                <p>Escolha uma opção. Este cadastro é para doação de sangue e plaquetas, não para o REDOME.</p>
                             </div>
                         </div>
-                        <fieldset class="option-fieldset" data-field-group="blood_donor_status">
-                            <legend>Perfil de doação</legend>
-                            <div class="radio-card-grid donor-profile-options">
-                                <label class="radio-label radio-card option-card-with-emoji"><input type="radio" name="blood_donor_status" value="ja_doador"> <span class="option-emoji">🩸</span> <span>Sim, já sou doador de sangue</span></label>
-                                <label class="radio-label radio-card option-card-with-emoji"><input type="radio" name="blood_donor_status" value="quero_comecar"> <span class="option-emoji">🌱</span> <span>Ainda não sou, mas quero começar</span></label>
-                                <label class="radio-label radio-card option-card-with-emoji"><input type="radio" name="blood_donor_status" value="quero_entender"> <span class="option-emoji">🤔</span> <span>Ainda não sei, quero entender melhor</span></label>
+                        <fieldset class="option-fieldset" data-field-group="donation_interest">
+                            <legend>Quero receber orientação sobre</legend>
+                            <div class="radio-card-grid donor-interest-options">
+                                <label class="radio-label radio-card option-card-with-emoji"><input type="radio" name="donation_interest" value="sangue"> <span class="option-emoji">🩸</span> <span>Doação de sangue</span></label>
+                                <label class="radio-label radio-card option-card-with-emoji"><input type="radio" name="donation_interest" value="plaquetas"> <span class="option-emoji">🟡</span> <span>Doação de plaquetas</span></label>
+                                <label class="radio-label radio-card option-card-with-emoji"><input type="radio" name="donation_interest" value="sangue_e_plaquetas"> <span class="option-emoji">🤝</span> <span>Sangue e plaquetas</span></label>
+                                <label class="radio-label radio-card option-card-with-emoji"><input type="radio" name="donation_interest" value="quero_entender"> <span class="option-emoji">💬</span> <span>Ainda não sei; quero entender</span></label>
                             </div>
                         </fieldset>
+                        <p class="responsible-note"><strong>Importante:</strong> a FlaMedula organiza sua intenção e entra em contato. O hemocentro sempre confirma os critérios e a aptidão no dia.</p>
                     </section>
 
-                    <section class="mini-step" data-step="1" data-title="📍 Agora seus dados básicos" data-label="Doador - etapa 2 de 4">
+                    <section class="mini-step" data-step="1" data-title="📍 Seus dados de contato" data-label="Doador - etapa 2 de 3">
                         <div class="step-copy">
                             <span class="step-icon">📍</span>
                             <div>
-                                <h4>📍 Agora seus dados básicos</h4>
-                                <p>Essas informações ajudam a organizar mobilizações por região.</p>
+                                <h4>Onde e como falar com você?</h4>
+                                <p>Usamos estes dados para avisar sobre campanhas e locais de doação na sua região.</p>
                             </div>
                         </div>
                         <div class="compact-form-grid">
@@ -261,6 +269,14 @@
                                 <label for="donor-estado">Estado</label>
                                 <input id="donor-estado" name="estado" type="text" class="form-control" autocomplete="address-level1" placeholder="Ex: RJ">
                             </div>
+                            <fieldset class="option-fieldset form-col-full" data-field-group="blood_donor_status">
+                                <legend>Você já doa sangue ou plaquetas?</legend>
+                                <div class="radio-card-grid donor-profile-options">
+                                    <label class="radio-label radio-card"><input type="radio" name="blood_donor_status" value="ja_doador"> <span>Sim, já doo</span></label>
+                                    <label class="radio-label radio-card"><input type="radio" name="blood_donor_status" value="quero_comecar"> <span>Ainda não, mas quero começar</span></label>
+                                    <label class="radio-label radio-card"><input type="radio" name="blood_donor_status" value="quero_entender"> <span>Quero entender primeiro</span></label>
+                                </div>
+                            </fieldset>
                             <div class="form-group" id="donorBloodTypeField" hidden>
                                 <label for="donor-tipo-sanguineo">Tipo sanguíneo <span class="optional-label">opcional</span></label>
                                 <select id="donor-tipo-sanguineo" name="tipo_sanguineo" class="form-control" disabled>
@@ -274,44 +290,17 @@
                                     <option value="O+">O+</option>
                                     <option value="O-">O-</option>
                                 </select>
-                                <small>Usado apenas para ações de doação de sangue. A compatibilidade de medula depende do exame HLA.</small>
+                                <small>Use somente se souber. A triagem do hemocentro sempre confirma as informações.</small>
                             </div>
                         </div>
                     </section>
 
-                    <section class="mini-step" data-step="2" data-title="🧬 E sobre medula?" data-label="Doador - etapa 3 de 4">
-                        <div class="step-copy">
-                            <span class="step-icon">🧬</span>
-                            <div>
-                                <h4>🧬 E sobre medula?</h4>
-                                <p>O cadastro oficial de medula acontece pelos canais de saúde e REDOME. A FlaMedula pode orientar o caminho.</p>
-                            </div>
-                        </div>
-                        <fieldset class="option-fieldset" data-field-group="redome_status">
-                            <legend>Você já é cadastrado como doador de medula no REDOME?</legend>
-                            <div class="radio-card-grid compact-options">
-                                <label class="radio-label radio-card"><input type="radio" name="redome_status" value="sim"> <span>Sim</span></label>
-                                <label class="radio-label radio-card"><input type="radio" name="redome_status" value="nao"> <span>Não</span></label>
-                                <label class="radio-label radio-card"><input type="radio" name="redome_status" value="nao_tenho_certeza"> <span>Não tenho certeza</span></label>
-                            </div>
-                        </fieldset>
-                        <p class="conditional-note" id="redome-positive-note">Ótimo. Manter seus dados atualizados ajuda os canais oficiais a encontrarem você se houver necessidade.</p>
-                        <fieldset class="option-fieldset conditional-field is-hidden" id="medula-interest-group" data-field-group="medula_interest">
-                            <legend>Você tem interesse em receber orientação para entender o cadastro de medula?</legend>
-                            <div class="radio-card-grid">
-                                <label class="radio-label radio-card"><input type="radio" name="medula_interest" value="sim_tenho_interesse"> <span>Sim, tenho interesse</span></label>
-                                <label class="radio-label radio-card"><input type="radio" name="medula_interest" value="quero_entender_melhor"> <span>Quero entender melhor antes</span></label>
-                                <label class="radio-label radio-card"><input type="radio" name="medula_interest" value="nao_neste_momento"> <span>Não neste momento</span></label>
-                            </div>
-                        </fieldset>
-                    </section>
-
-                    <section class="mini-step" data-step="3" data-title="📲 Como podemos falar com você?" data-label="Doador - etapa 4 de 4">
+                    <section class="mini-step" data-step="2" data-title="📲 Confirme o contato" data-label="Doador - etapa 3 de 3">
                         <div class="step-copy">
                             <span class="step-icon">📲</span>
                             <div>
-                                <h4>📲 Como podemos falar com você?</h4>
-                                <p>Escolha o melhor canal para receber orientação e avisos de campanha.</p>
+                                <h4>Como prefere receber orientação?</h4>
+                                <p>Escolha um canal e autorize o contato. Seus dados não criam nem alteram cadastro no REDOME.</p>
                             </div>
                         </div>
                         <fieldset class="option-fieldset" data-field-group="contact_preference">
@@ -329,14 +318,14 @@
                         <div class="authorization-card">
                             <label class="checkbox-group">
                                 <input type="checkbox" id="lgpd-donor" name="consent_lgpd">
-                                <span>Autorizo a FlaMedula a usar estes dados para contato, orientação e ativações de campanha relacionadas à doação de sangue e medula.</span>
+                                <span>Autorizo a FlaMedula a usar estes dados para contato, orientação e campanhas de doação de sangue e plaquetas.</span>
                             </label>
                             <label class="checkbox-group">
                                 <input type="checkbox" id="updates-donor" name="consent_updates">
                                 <span>Também aceito receber avisos sobre campanhas, ações e formas de apoio à FlaMedula.</span>
                             </label>
                         </div>
-                        <p class="responsible-note">A FlaMedula orienta e mobiliza. Cadastros oficiais, triagens e doações seguem pelos canais de saúde, hemocentros e REDOME.</p>
+                        <p class="responsible-note"><strong>Este é um cadastro na rede FlaMedula.</strong> A triagem e a doação acontecem no hemocentro. Se você quiser saber sobre medula, o Dedeco pode explicar o REDOME separadamente.</p>
                     </section>
 
                     <div class="mini-step-footer">
@@ -482,8 +471,8 @@
                 </div>
 
                 <div class="success-msg" id="success-donor" hidden>
-                    <h3 class="title-sm">✅ Cadastro recebido.</h3>
-                    <p class="text-body">Cadastro recebido. A equipe da FlaMedula poderá entrar em contato pelos canais autorizados.</p>
+                    <h3 class="title-sm">✅ Você entrou na rede FlaMedula.</h3>
+                    <p class="text-body">Cadastro recebido para orientação sobre sangue e plaquetas. Isso não cria nem altera cadastro no REDOME. A equipe poderá falar com você pelo canal autorizado.</p>
                     <button type="button" class="btn btn-outline" data-action="switch-flow">Voltar para opções</button>
                 </div>
 
@@ -1009,11 +998,11 @@
             ></div>
 
             <div class="dedeco-quick-actions" aria-label="Assuntos principais">
-                <button class="dedeco-quick-action" type="button" data-dedeco-action="where-redome">📍 Onde me cadastrar</button>
-                <button class="dedeco-quick-action" type="button" data-dedeco-action="marrow">🧬 Como funciona o REDOME</button>
-                <button class="dedeco-quick-action" type="button" data-dedeco-action="hla">🔎 Compatibilidade e HLA</button>
-                <button class="dedeco-quick-action" type="button" data-dedeco-action="update-data">🔄 Atualizar meu cadastro</button>
-                <button class="dedeco-quick-action" type="button" data-dedeco-action="after-match">📞 Se o REDOME me chamar</button>
+                <button class="dedeco-quick-action" type="button" data-dedeco-action="where-blood">📍 Onde doar sangue</button>
+                <button class="dedeco-quick-action" type="button" data-dedeco-action="platelets">🟡 Como doar plaquetas</button>
+                <button class="dedeco-quick-action" type="button" data-dedeco-action="eligibility">✅ Quem pode doar</button>
+                <button class="dedeco-quick-action" type="button" data-dedeco-action="prepare">🎒 O que levar</button>
+                <button class="dedeco-quick-action" type="button" data-dedeco-action="marrow">🧬 Medula e REDOME</button>
                 <button class="dedeco-quick-action" type="button" data-dedeco-action="story">❤️ História do Dedeco</button>
                 <button class="dedeco-quick-action" type="button" data-dedeco-action="human">💬 Falar com a equipe</button>
             </div>
@@ -1029,7 +1018,7 @@
                         <option value="">UF</option>
                     </select>
                 </label>
-                <button type="submit">Procurar hemocentro do REDOME</button>
+                <button type="submit">Procurar hemocentro para doação</button>
             </form>
 
             <form class="dedeco-chat-composer" id="dedecoChatComposer">

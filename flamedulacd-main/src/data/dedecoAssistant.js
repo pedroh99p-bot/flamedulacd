@@ -7,6 +7,10 @@ export const DEDECO_ASSISTANT_SOURCES = Object.freeze({
     label: 'Hemovida — doação de sangue',
     url: 'https://www.gov.br/pt-br/servicos/consultar-o-guia-hemovida-para-obter-as-regras-para-doacao-de-sangue',
   },
+  platelets: {
+    label: 'INCA — doação de plaquetas',
+    url: 'https://www.gov.br/inca/pt-br/acesso-a-informacao/perguntas-frequentes/doacao-de-plaquetas',
+  },
   redome: {
     label: 'REDOME — cadastro e hemocentros',
     url: 'https://redome.inca.gov.br/doadores/',
@@ -31,6 +35,12 @@ export const BLOOD_DONATION_GUIDANCE = [
   'Em geral, a doação de sangue é permitida dos 16 aos 69 anos. Menores de 18 anos precisam de autorização formal do responsável.',
   'É necessário pesar pelo menos 50 kg, apresentar documento oficial com foto, estar alimentado e ter dormido ao menos 6 horas.',
   'A decisão final é sempre da triagem do hemocentro. Condições de saúde, medicamentos, viagens e procedimentos recentes precisam ser avaliados pela equipe.',
+];
+
+export const PLATELET_DONATION_GUIDANCE = [
+  'Na doação por aférese, um equipamento separa as plaquetas e devolve os outros componentes do sangue ao doador.',
+  'A doação costuma precisar de avaliação e agendamento. Critérios e horários variam de um hemocentro para outro.',
+  'O hemocentro confirma no dia se a pessoa está apta. Informe medicamentos e siga a orientação da equipe antes de ir.',
 ];
 
 export const MARROW_DONATION_GUIDANCE = [

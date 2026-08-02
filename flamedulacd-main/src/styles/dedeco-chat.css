@@ -290,6 +290,7 @@
 
 .dedeco-location-form label {
     display: grid;
+    min-width: 0;
     gap: 4px;
     color: #4b5563;
     font-size: 0.72rem;
@@ -300,6 +301,9 @@
 .dedeco-location-form select,
 .dedeco-chat-composer input {
     width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
     min-height: 44px;
     border: 1px solid #d1d5db;
     border-radius: 10px;
@@ -400,6 +404,34 @@
 
     .dedeco-chat-open .dedeco-chat-launcher {
         visibility: hidden;
+    }
+
+    .is-registration-flow .dedeco-assistant {
+        right: 10px;
+        left: auto;
+    }
+
+    .is-registration-flow .dedeco-chat-launcher {
+        width: 54px;
+        min-width: 54px;
+        min-height: 54px;
+        padding: 3px;
+        border-radius: 50%;
+    }
+
+    .is-registration-flow .dedeco-launcher-copy {
+        display: none;
+    }
+
+    .is-registration-flow .dedeco-launcher-avatar {
+        width: 46px;
+        height: 46px;
+    }
+}
+
+@media (max-width: 420px) {
+    .dedeco-location-form {
+        grid-template-columns: minmax(0, 1fr);
     }
 }
 

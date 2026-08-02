@@ -9,6 +9,7 @@ function normalizeDonor(row) {
   const marrowInterest = row.medula_interest || "";
   return {
     ...row,
+    donation_interest_raw: row.donation_interest,
     blood_donor_status_raw: row.blood_donor_status,
     redome_status_raw: row.redome_status,
     medula_interest_raw: row.medula_interest,

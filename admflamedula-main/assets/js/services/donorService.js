@@ -10,6 +10,16 @@ export function formatBloodDonorStatus(value) {
   return "Não informado";
 }
 
+export function formatDonationInterest(value) {
+  const labels = {
+    sangue: "Sangue",
+    plaquetas: "Plaquetas",
+    sangue_e_plaquetas: "Sangue e plaquetas",
+    quero_entender: "Quer entender"
+  };
+  return labels[String(value || "").toLowerCase().trim()] || "Não informado";
+}
+
 export function formatRedomeStatus(value) {
   if (!value) return "Não informado";
   const val = String(value).toLowerCase().trim();
@@ -33,6 +43,7 @@ function normalizeDonor(row) {
   const marrowInterest = row.medula_interest || "";
   return {
     ...row,
+    donation_interest_raw: row.donation_interest,
     blood_donor_status_raw: row.blood_donor_status,
     redome_status_raw: row.redome_status,
     medula_interest_raw: row.medula_interest,

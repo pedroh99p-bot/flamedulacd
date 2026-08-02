@@ -12,6 +12,7 @@ import {
 import { bindAuthStateRedirect, handleLogout, requireAuth } from "./auth.js";
 import {
   formatBloodDonorStatus,
+  formatDonationInterest,
   formatRedomeStatus,
   formatMarrowInterest
 } from "./services/donorService.js";
@@ -62,6 +63,7 @@ const state = {
   globalQuery: "",
   donorFilters: {
     estado: "",
+    donation_interest: "",
     redome_status: "",
     medula_interest: "",
     blood_donor_status: "",
@@ -106,6 +108,7 @@ const donorSearchFields = [
   "cidade",
   "estado",
   "tipo_sanguineo",
+  "donation_interest_raw",
   "status",
   "origem",
   "observacoes"
@@ -284,6 +287,7 @@ function bindEvents() {
     renderMatching();
   });
   bindFilter("donorStateFilter", "donorFilters", "estado");
+  bindFilter("donorDonationInterestFilter", "donorFilters", "donation_interest");
   bindFilter("donorRedomeFilter", "donorFilters", "redome_status");
   bindFilter("donorStatusFilter", "donorFilters", "status");
   bindFilter("donorMarrowFilter", "donorFilters", "medula_interest");
@@ -299,6 +303,7 @@ function bindEvents() {
   document.getElementById("btnClearDonorFilters")?.addEventListener("click", () => {
     state.donorFilters = {
       estado: "",
+      donation_interest: "",
       redome_status: "",
       medula_interest: "",
       blood_donor_status: "",
@@ -309,6 +314,7 @@ function bindEvents() {
 
     [
       "donorStateFilter",
+      "donorDonationInterestFilter",
       "donorRedomeFilter",
       "donorStatusFilter",
       "donorMarrowFilter",
@@ -494,20 +500,18 @@ function renderOverview() {
     donations.filter(dn => new Date(dn.created_at) >= sevenDaysAgo).length;
 
   const totalDonors = donors.length;
-  const redomeYes = donors.filter(d => formatRedomeStatus(d.redome_status_raw) === "Sim").length;
-  const redomeNo = donors.filter(d => formatRedomeStatus(d.redome_status_raw) === "Não").length;
-  const marrowYes = donors.filter(d => formatMarrowInterest(d.medula_interest_raw) === "Sim").length;
-  const marrowMaybe = donors.filter(d => formatMarrowInterest(d.medula_interest_raw) === "Quero saber mais").length;
-  const marrowNo = donors.filter(d => formatMarrowInterest(d.medula_interest_raw) === "Não").length;
-  const bothUnk = donors.filter(d => formatRedomeStatus(d.redome_status_raw) === "Não informado" && formatMarrowInterest(d.medula_interest_raw) === "Não informado").length;
-
+  const bloodInterest = donors.filter(d => ["sangue", "sangue_e_plaquetas"].includes(d.donation_interest_raw)).length;
+  const plateletInterest = donors.filter(d => ["plaquetas", "sangue_e_plaquetas"].includes(d.donation_interest_raw)).length;
+  const alreadyDonate = donors.filter(d => formatBloodDonorStatus(d.blood_donor_status_raw) === "Sim").length;
+  const wantToStart = donors.filter(d => ["quero_comecar", "quero_entender"].includes(d.blood_donor_status_raw)).length;
+  const donationInterestUnknown = donors.filter(d => formatDonationInterest(d.donation_interest_raw) === "Não informado").length;
   renderMetrics("overviewMetrics", [
     { label: "Total de cadastros", value: totalDonors, detail: "Pessoas na rede", icon: "users", tone: "red", featured: true },
-    { label: "Cadastrados no REDOME", value: redomeYes, detail: "Cadastro ativo", icon: "check-circle", tone: "red" },
-    { label: "Interessados em medula", value: marrowYes, detail: "Sim / Interessado", icon: "heart", tone: "red" },
-    { label: "Querem saber mais", value: marrowMaybe, detail: "Dúvidas pendentes", icon: "help-circle", tone: "yellow" },
-    { label: "Sem interesse", value: marrowNo, detail: "Declarado não", icon: "x-circle", tone: "yellow" },
-    { label: "Não informados", value: bothUnk, detail: "Campos nulos/vazios", icon: "alert-circle", tone: "blue" },
+    { label: "Interesse em sangue", value: bloodInterest, detail: "Sangue ou ambos", icon: "droplet", tone: "red" },
+    { label: "Interesse em plaquetas", value: plateletInterest, detail: "Plaquetas ou ambos", icon: "heart", tone: "yellow" },
+    { label: "Já doam", value: alreadyDonate, detail: "Experiência informada", icon: "check-circle", tone: "green" },
+    { label: "Querem começar", value: wantToStart, detail: "Novos doadores", icon: "sparkles", tone: "blue" },
+    { label: "Interesse não informado", value: donationInterestUnknown, detail: "Inclui cadastros antigos", icon: "alert-circle", tone: "blue" },
     { label: "Pacientes cadastrados", value: patients.length, detail: "Casos de pacientes", icon: "activity", tone: "blue" },
     { label: "Novos cadastros", value: recentCount, detail: "Últimos 7 dias", icon: "calendar-check", tone: "green" }
   ]);
@@ -516,11 +520,11 @@ function renderOverview() {
   const funnelContainer = document.getElementById("overviewFunnel");
   if (funnelContainer) {
     funnelContainer.innerHTML = `
-      ${makeFunnelBar("Já cadastrados no REDOME", redomeYes, totalDonors, "red")}
-      ${makeFunnelBar("Ainda não cadastrados no REDOME", redomeNo, totalDonors, "blue")}
-      ${makeFunnelBar("Interessados em doar medula", marrowYes, totalDonors, "green")}
-      ${makeFunnelBar("Sem interesse no momento", marrowNo, totalDonors, "yellow")}
-      ${makeFunnelBar("Informação não preenchida", bothUnk, totalDonors, "gray")}
+      ${makeFunnelBar("Interesse em doar sangue", bloodInterest, totalDonors, "red")}
+      ${makeFunnelBar("Interesse em doar plaquetas", plateletInterest, totalDonors, "yellow")}
+      ${makeFunnelBar("Já são doadores", alreadyDonate, totalDonors, "green")}
+      ${makeFunnelBar("Querem começar", wantToStart, totalDonors, "blue")}
+      ${makeFunnelBar("Interesse não informado", donationInterestUnknown, totalDonors, "gray")}
     `;
   }
 
@@ -693,10 +697,12 @@ function renderDonorCard(donor) {
   const redomeText = formatRedomeStatus(donor.redome_status_raw);
   const interestText = formatMarrowInterest(donor.medula_interest_raw);
   const bloodText = formatBloodDonorStatus(donor.blood_donor_status_raw);
+  const donationInterestText = formatDonationInterest(donor.donation_interest_raw);
 
   const redomeClass = redomeText === "Sim" ? "positive" : redomeText === "Não" ? "danger" : "info";
   const interestClass = interestText === "Sim" ? "positive" : interestText === "Não" ? "danger" : interestText === "Quero saber mais" ? "warning" : "info";
   const bloodClass = bloodText === "Sim" ? "positive" : bloodText === "Não" ? "danger" : "info";
+  const donationInterestClass = donationInterestText === "Não informado" ? "info" : "positive";
 
   return `
     <article class="record-card">
@@ -714,9 +720,10 @@ function renderDonorCard(donor) {
         </div>
         <div class="record-badges">
           ${demoBadge(donor)}
+          <span class="badge ${donationInterestClass}">Interesse principal: ${escapeHtml(donationInterestText)}</span>
           <span class="badge ${bloodClass}">Doador de sangue: ${bloodText}</span>
-          <span class="badge ${redomeClass}">Cadastro no REDOME: ${redomeText}</span>
-          <span class="badge ${interestClass}">Interesse em doar medula: ${interestText}</span>
+          ${donor.redome_status_raw ? `<span class="badge ${redomeClass}">REDOME (legado): ${redomeText}</span>` : ""}
+          ${donor.medula_interest_raw ? `<span class="badge ${interestClass}">Medula (legado): ${interestText}</span>` : ""}
           <span class="badge ${donor.consent_lgpd === false ? "danger" : "positive"}">Contato: ${donor.consent_lgpd === false ? "Não autorizado" : "Autorizado"}</span>
           <span class="badge info">Preferência: ${escapeHtml(donor.contact_preference || "Não informado")}</span>
           <span class="badge info">Origem: ${escapeHtml(donor.origem || "-")}</span>
@@ -999,18 +1006,20 @@ function renderReports() {
   const patients = getReportPatients();
   const donations = getReportDonations();
   const paid = donations.filter(isConfirmedDonation);
-  const marrow = donors.filter((donor) => donor.quer_doar_medula).length;
+  const blood = donors.filter((donor) => ["sangue", "sangue_e_plaquetas"].includes(donor.donation_interest_raw)).length;
+  const platelets = donors.filter((donor) => ["plaquetas", "sangue_e_plaquetas"].includes(donor.donation_interest_raw)).length;
   const urgent = patients.filter((patient) => patient.status === "urgente").length;
   const raised = sumBy(paid, "valor");
 
   document.getElementById("reportSummaryText").textContent =
-    `No recorte atual, ha ${formatNumber(donors.length)} doadores, ${formatNumber(marrow)} interessados em doar medula, `
+    `No recorte atual, ha ${formatNumber(donors.length)} doadores, ${formatNumber(blood)} interessados em sangue e ${formatNumber(platelets)} em plaquetas, `
     + `${formatNumber(patients.length)} pacientes acompanhados e ${formatCurrency(raised)} confirmados em doacoes monetarias. `
     + `${formatNumber(urgent)} pacientes estao marcados como urgentes.`;
 
   renderMetrics("reportMetrics", [
     { label: "Doadores no recorte", value: donors.length, detail: "Filtro aplicado", icon: "users", tone: "red" },
-    { label: "Interesse em medula", value: marrow, detail: "Dentro do recorte", icon: "heart", tone: "blue" },
+    { label: "Interesse em sangue", value: blood, detail: "Dentro do recorte", icon: "droplet", tone: "red" },
+    { label: "Interesse em plaquetas", value: platelets, detail: "Dentro do recorte", icon: "heart", tone: "yellow" },
     { label: "Pacientes urgentes", value: urgent, detail: "Prioridade", icon: "alert-triangle", tone: "red", featured: true },
     { label: "Arrecadacao no periodo", value: raised, detail: "Pagos", icon: "dollar-sign", tone: "green", format: "currency" }
   ]);
@@ -1101,21 +1110,20 @@ function getFilteredDonors() {
     const redomeFormatted = formatRedomeStatus(donor.redome_status_raw);
     const marrowFormatted = formatMarrowInterest(donor.medula_interest_raw);
     const bloodFormatted = formatBloodDonorStatus(donor.blood_donor_status_raw);
+    const donationInterestFormatted = formatDonationInterest(donor.donation_interest_raw);
 
-    if (segment === "ja_doadores" && redomeFormatted !== "Sim") return false;
-    if (segment === "ainda_nao" && redomeFormatted !== "Não") return false;
-    if (segment === "interessados" && marrowFormatted !== "Sim") return false;
-    if (segment === "sem_interesse" && marrowFormatted !== "Não") return false;
+    if (["sangue", "plaquetas", "sangue_e_plaquetas"].includes(segment) && donor.donation_interest_raw !== segment) return false;
+    if (segment === "ja_doadores" && bloodFormatted !== "Sim") return false;
+    if (segment === "quero_comecar" && !["quero_comecar", "quero_entender"].includes(donor.blood_donor_status_raw)) return false;
     if (segment === "nao_informado") {
-      const isRedomeUnk = redomeFormatted === "Não informado";
-      const isInterestUnk = marrowFormatted === "Não informado";
-      if (!isRedomeUnk && !isInterestUnk) return false;
+      if (donationInterestFormatted !== "Não informado") return false;
     }
 
     // 2. Filtros de campo selecionado
     const redome = state.donorFilters.redome_status;
     const interest = state.donorFilters.medula_interest;
     const blood = state.donorFilters.blood_donor_status;
+    const donationInterest = state.donorFilters.donation_interest;
     const whatsapp = state.donorFilters.contato_whatsapp;
 
     let redomeMatch = true;
@@ -1134,10 +1142,16 @@ function getFilteredDonors() {
     else if (blood === "nao_doador") bloodMatch = (bloodFormatted === "Não");
     else if (blood === "nao_informado") bloodMatch = (bloodFormatted === "Não informado");
 
+    const donationInterestMatch = !donationInterest
+      || (donationInterest === "nao_informado"
+        ? donationInterestFormatted === "Não informado"
+        : donor.donation_interest_raw === donationInterest);
+
     return (!state.donorFilters.estado || donor.estado === state.donorFilters.estado)
       && redomeMatch
       && interestMatch
       && bloodMatch
+      && donationInterestMatch
       && (!state.donorFilters.status || donor.status === state.donorFilters.status)
       && (!whatsapp || donor.contato_whatsapp_realizado === (whatsapp === "realizado"));
   });
@@ -1353,6 +1367,7 @@ function openDetails(type, id) {
         ["Email", record.email || "Não informado"],
         ["Telefone", record.telefone || "Não informado"],
         ["Cidade/Estado", `${record.cidade || "-"} / ${record.estado || "-"}`],
+        ["Interesse principal", formatDonationInterest(record.donation_interest_raw)],
         ["Bairro", record.bairro || "Não informado"],
         ["Tipo sanguíneo", record.tipo_sanguineo || "Não informado"],
         ["Doador de sangue", formatBloodDonorStatus(record.blood_donor_status_raw)],
@@ -1569,6 +1584,7 @@ function buildEntityFormMarkup(entityType, record, submitting) {
       ${renderTextField("Telefone", "telefone", record.telefone, "tel")}
       ${renderTextField("Cidade", "cidade", record.cidade)}
       ${renderTextField("Estado", "estado", record.estado)}
+      ${renderSelectField("Interesse principal", "donation_interest", record.donation_interest, ["", "sangue", "plaquetas", "sangue_e_plaquetas", "quero_entender"], formatDonationInterest)}
       ${renderSelectField("Tipo sanguineo", "tipo_sanguineo", record.tipo_sanguineo, ["", "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"])}
       ${renderSelectField("Doador de sangue", "blood_donor_status", record.blood_donor_status, ["nao_informado", "ja_doador", "doador_recorrente", "quero_comecar", "interessado"])}
       ${renderSelectField("Status REDOME", "redome_status", record.redome_status, ["nao_informado", "cadastrado", "nao_cadastrado"])}
@@ -2235,6 +2251,7 @@ function exportDonorsCsv(rows, filename) {
     { label: "idade", value: "idade" },
     { label: "peso", value: "peso" },
     { label: "tipo_sanguineo", value: "tipo_sanguineo" },
+    { label: "interesse_principal", value: (row) => formatDonationInterest(row.donation_interest_raw) },
     { label: "ja_doador_sangue", value: (row) => yesNo(row.ja_doador_sangue) },
     { label: "quer_doar_sangue", value: (row) => yesNo(row.quer_doar_sangue) },
     { label: "quer_doar_medula", value: (row) => yesNo(row.quer_doar_medula) },
@@ -2304,6 +2321,7 @@ function exportReportCsv() {
       tipo_registro: "donor_leads",
       nome: row.nome,
       estado: row.estado,
+      interesse_principal: formatDonationInterest(row.donation_interest_raw),
       tipo_sanguineo: row.tipo_sanguineo,
       status: row.status,
       valor: "",
@@ -2313,6 +2331,7 @@ function exportReportCsv() {
       tipo_registro: "patient_cases",
       nome: row.nome_paciente,
       estado: row.estado,
+      interesse_principal: "",
       tipo_sanguineo: row.tipo_sanguineo,
       status: row.status,
       valor: "",
@@ -2322,6 +2341,7 @@ function exportReportCsv() {
       tipo_registro: "donation_intents",
       nome: row.nome,
       estado: "",
+      interesse_principal: "",
       tipo_sanguineo: "",
       status: row.status_pagamento,
       valor: row.valor,
@@ -2338,6 +2358,7 @@ function exportReportCsv() {
     { label: "tipo_registro", value: "tipo_registro" },
     { label: "nome", value: "nome" },
     { label: "estado", value: "estado" },
+    { label: "interesse_principal", value: "interesse_principal" },
     { label: "tipo_sanguineo", value: "tipo_sanguineo" },
     { label: "status", value: "status" },
     { label: "valor", value: "valor" },
@@ -2409,6 +2430,7 @@ function buildDonorPayload(formData) {
     telefone: getStringValue(formData, "telefone"),
     cidade: getStringValue(formData, "cidade"),
     estado: getStringValue(formData, "estado"),
+    donation_interest: getNullableStringValue(formData, "donation_interest"),
     blood_donor_status: getStringValue(formData, "blood_donor_status"),
     redome_status: getStringValue(formData, "redome_status"),
     medula_interest: getStringValue(formData, "medula_interest"),

@@ -140,11 +140,12 @@
     }
     .compact-form-grid,
     .support-benefit-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr) !important;
     }
     .radio-card-grid,
     .radio-card-grid.compact-options,
-    .radio-card-grid.patient-options {
+    .radio-card-grid.patient-options,
+    .radio-card-grid.donor-interest-options {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
@@ -206,8 +207,10 @@
     }
     .radio-card-grid,
     .radio-card-grid.compact-options,
-    .radio-card-grid.patient-options {
-        grid-template-columns: 1fr;
+    .radio-card-grid.patient-options,
+    .radio-card-grid.donor-interest-options,
+    .donor-journey {
+        grid-template-columns: minmax(0, 1fr);
     }
     .radio-label {
         min-height: 58px;

@@ -5,14 +5,13 @@ import { hasMinPhoneDigits, isValidEmail } from '../utils/formValidation.js';
 const FLOW_CONFIG = {
   donor: {
     className: 'flow-donor',
-    title: 'Doador ou interessado',
+    title: 'Doador de sangue ou plaquetas',
     submitText: 'Enviar meu cadastro',
     loadingText: 'Enviando...',
     successId: 'success-donor',
     stepFields: [
-      ['blood_donor_status'],
-      ['nome', 'telefone'],
-      ['redome_status'],
+      ['donation_interest'],
+      ['nome', 'telefone', 'blood_donor_status'],
       ['contact_preference', 'consent_lgpd'],
     ],
   },
@@ -260,31 +259,6 @@ function applyPublicFlowCopyAdjustments() {
   const patientForm = getFlowForm('patient');
   if (!donorForm || !patientForm) return;
 
-  const donorStepZeroText = donorForm.querySelector('[data-step="0"] .step-copy p');
-  if (donorStepZeroText) {
-    donorStepZeroText.textContent = 'Doacao de sangue e cadastro de medula sao caminhos diferentes. A FlaMedula usa essa resposta para orientar sem misturar os dois processos.';
-  }
-
-  const donorStepTwoText = donorForm.querySelector('[data-step="2"] .step-copy p');
-  if (donorStepTwoText) {
-    donorStepTwoText.textContent = 'Estar no REDOME significa estar cadastrado para uma possivel compatibilidade. Isso nao significa que a doacao ja aconteceu.';
-  }
-
-  const redomeNote = document.getElementById('redome-positive-note');
-  if (redomeNote) {
-    redomeNote.textContent = 'Otimo. Manter seus dados atualizados ajuda os canais oficiais a localizar voce se houver compatibilidade futura.';
-  }
-
-  const medulaLegend = document.querySelector('#medula-interest-group legend');
-  if (medulaLegend) {
-    medulaLegend.textContent = 'Voce quer receber orientacao para entender como funciona o cadastro de medula?';
-  }
-
-  const donorStepThreeText = donorForm.querySelector('[data-step="3"] .step-copy p');
-  if (donorStepThreeText) {
-    donorStepThreeText.textContent = 'Escolha o melhor canal para receber orientacao sobre sangue, REDOME e medula sem misturar os temas.';
-  }
-
   const patientStepTwoText = patientForm.querySelector('[data-step="2"] .step-copy p');
   if (patientStepTwoText) {
     patientStepTwoText.textContent = 'Selecione a necessidade principal e adicione um contexto breve para orientar a equipe.';
@@ -294,42 +268,12 @@ function applyPublicFlowCopyAdjustments() {
   if (urgencyGroup) urgencyGroup.hidden = true;
 }
 
-export function updateDonorConditionalFields() {
-  const form = getFlowForm('donor');
-  if (!form) return;
-
-  const redomeStatus = getCheckedValue(form, 'redome_status');
-  const medulaGroup = document.getElementById('medula-interest-group');
-  const redomeNote = document.getElementById('redome-positive-note');
-  const shouldAskMedula = redomeStatus === 'nao' || redomeStatus === 'nao_tenho_certeza';
-
-  medulaGroup?.classList.toggle('is-hidden', !shouldAskMedula);
-  medulaGroup?.classList.toggle('is-visible', shouldAskMedula);
-  redomeNote?.classList.toggle('is-visible', redomeStatus === 'sim');
-
-  medulaGroup?.querySelectorAll('input[name="medula_interest"]').forEach((input) => {
-    input.required = shouldAskMedula;
-    if (!shouldAskMedula) input.checked = false;
-  });
-
-  if (!shouldAskMedula) {
-    setFieldInvalid(form, 'medula_interest', false);
-  }
-}
-
 function getRequiredFieldsForStep(flow, stepIndex) {
   const config = FLOW_CONFIG[flow];
   const fields = [...(config?.stepFields?.[stepIndex] || [])];
   const form = getFlowForm(flow);
 
   if (flow === 'donor' && stepIndex === 2) {
-    const redomeStatus = getCheckedValue(form, 'redome_status');
-    if (redomeStatus === 'nao' || redomeStatus === 'nao_tenho_certeza') {
-      fields.push('medula_interest');
-    }
-  }
-
-  if (flow === 'donor' && stepIndex === 3) {
     if (getCheckedValue(form, 'contact_preference') === 'email') {
       fields.push('email');
     }
@@ -405,20 +349,16 @@ function validateStep(flow, stepIndex = state.step) {
 }
 
 export function buildDonorPayload(form = getFlowForm('donor')) {
-  const redomeStatus = getCheckedValue(form, 'redome_status');
-  const medulaInterest = redomeStatus === 'sim'
-    ? 'ja_cadastrado_redome'
-    : getCheckedValue(form, 'medula_interest');
-
   const payload = {
     nome: getFormValue(form, 'nome'),
     telefone: getFormValue(form, 'telefone'),
     email: getFormValue(form, 'email') || null,
     cidade: getFormValue(form, 'cidade'),
     estado: getFormValue(form, 'estado'),
+    donation_interest: getCheckedValue(form, 'donation_interest'),
     blood_donor_status: getCheckedValue(form, 'blood_donor_status'),
-    redome_status: redomeStatus,
-    medula_interest: medulaInterest,
+    redome_status: null,
+    medula_interest: null,
     contact_preference: getCheckedValue(form, 'contact_preference'),
     consent_lgpd: getCheckboxValue(form, 'consent_lgpd'),
     consent_updates: getCheckboxValue(form, 'consent_updates'),
@@ -538,10 +478,11 @@ function startFlow(flow) {
 
   state.flow = flow;
   state.step = 0;
+  document.body.classList.add('is-registration-flow');
+  document.dispatchEvent(new CustomEvent('flamedula:registration-flow', { detail: { active: true } }));
   showOnlyActiveFlow();
 
   if (flow === 'donor') {
-    updateDonorConditionalFields();
     updateContactPreferenceState();
   }
 }
@@ -549,6 +490,8 @@ function startFlow(flow) {
 function showChoice() {
   state.flow = 'choice';
   state.step = 0;
+  document.body.classList.remove('is-registration-flow');
+  document.dispatchEvent(new CustomEvent('flamedula:registration-flow', { detail: { active: false } }));
   showOnlyActiveFlow();
 }
 
@@ -709,7 +652,6 @@ function handleHubInput(event) {
   const step = getCurrentStep();
   setFieldInvalid(step, fieldName, false);
 
-  if (fieldName === 'redome_status') updateDonorConditionalFields();
   if (fieldName === 'contact_preference') updateContactPreferenceState();
 
   if (getFeedback()?.textContent) {
@@ -737,7 +679,6 @@ export function initHubCadastro() {
   miniApp?.addEventListener('input', handleHubInput);
   miniApp?.addEventListener('change', handleHubInput);
 
-  updateDonorConditionalFields();
   updateContactPreferenceState();
   applyPublicFlowCopyAdjustments();
   showChoice();

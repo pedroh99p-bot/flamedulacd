@@ -13,6 +13,7 @@ const ALLOWED_FIELDS = [
   "cidade",
   "estado",
   "tipo_sanguineo",
+  "donation_interest",
   "blood_donor_status",
   "redome_status",
   "medula_interest",
@@ -26,6 +27,7 @@ const ALLOWED_FIELDS = [
 ];
 
 const DONOR_STATUS = ["ja_doador", "quero_comecar", "quero_entender"];
+const DONATION_INTEREST = ["sangue", "plaquetas", "sangue_e_plaquetas", "quero_entender"];
 const REDOME_STATUS = ["sim", "nao", "nao_tenho_certeza"];
 const MEDULA_INTEREST = ["ja_cadastrado_redome", "sim_tenho_interesse", "quero_entender_melhor", "nao_neste_momento", null];
 const CONTACT = ["email", "whatsapp", "telefone"];
@@ -65,6 +67,7 @@ Deno.serve(async (req) => {
     cidade: cleanString(payload.cidade, 120),
     estado: cleanState(payload.estado),
     tipo_sanguineo: cleanString(payload.tipo_sanguineo, 3),
+    donation_interest: cleanString(payload.donation_interest, 40),
     blood_donor_status: cleanString(payload.blood_donor_status, 60),
     redome_status: cleanString(payload.redome_status, 60),
     medula_interest: cleanString(payload.medula_interest, 80),
@@ -83,6 +86,7 @@ Deno.serve(async (req) => {
   if (!isValidPhone(row.telefone)) fieldErrors.telefone = "Informe um telefone válido.";
   if (row.email && !isValidEmail(row.email)) fieldErrors.email = "Informe um e-mail válido.";
   if (row.tipo_sanguineo && !BLOOD_TYPES.includes(row.tipo_sanguineo)) fieldErrors.tipo_sanguineo = "Tipo sanguíneo inválido.";
+  if (row.donation_interest && !DONATION_INTEREST.includes(row.donation_interest)) fieldErrors.donation_interest = "Valor inválido.";
   if (row.blood_donor_status && !DONOR_STATUS.includes(row.blood_donor_status)) fieldErrors.blood_donor_status = "Valor inválido.";
   if (row.redome_status && !REDOME_STATUS.includes(row.redome_status)) fieldErrors.redome_status = "Valor inválido.";
   if (!MEDULA_INTEREST.includes(row.medula_interest)) fieldErrors.medula_interest = "Valor inválido.";
