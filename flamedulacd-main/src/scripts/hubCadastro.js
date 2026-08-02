@@ -111,6 +111,24 @@ function prefersReducedMotion() {
   return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 }
 
+function keepFlowHeadingVisible() {
+  const miniApp = getMiniApp();
+  if (!miniApp) return;
+
+  window.requestAnimationFrame(() => {
+    const navbarHeight = document.querySelector('.navbar')?.getBoundingClientRect().height || 0;
+    const safeTop = navbarHeight + 12;
+    const miniAppTop = miniApp.getBoundingClientRect().top;
+
+    if (miniAppTop >= safeTop) return;
+
+    window.scrollTo({
+      top: Math.max(0, window.scrollY + miniAppTop - safeTop),
+      behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+    });
+  });
+}
+
 function getChoiceCards() {
   return [...document.querySelectorAll('[data-action="choose-flow"]')];
 }
@@ -471,6 +489,7 @@ function showOnlyActiveFlow() {
   updateMiniHeader();
   updateFooter(state.flow);
   setFeedback('');
+  keepFlowHeadingVisible();
 }
 
 function startFlow(flow) {

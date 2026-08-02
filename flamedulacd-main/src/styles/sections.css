@@ -275,7 +275,11 @@
 }
 
 /* === ACTION HUB MINI APP === */
-.hub-section { padding: 80px 0; position: relative; }
+.hub-section {
+    position: relative;
+    padding: 80px 0;
+    scroll-margin-top: calc(var(--nav-h) + 12px);
+}
 .bg-glow-hub { position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.03) 0%, transparent 60%); z-index: -1; }
 .hub-header { text-align: center; margin-bottom: 36px; max-width: 760px; margin-inline: auto; }
 .hub-header .text-large { margin-top: 14px; }
