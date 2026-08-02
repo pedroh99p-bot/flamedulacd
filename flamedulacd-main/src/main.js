@@ -33,6 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initLandingPublicContent();
   renderAmbassadors();
   setupScrollReveal();
-  setupVideoReelsPlayer('vidWrapperInfo', 'infoVideo', null, 'playPauseBtnInfo', 'muteBtnInfo', 'vidProgressContainerInfo', 'vidProgressFilledInfo');
+  setupVideoReelsPlayer('vidWrapperInfo', 'infoVideo', 'playBtnCenterInfo', 'playPauseBtnInfo', 'muteBtnInfo', 'vidProgressContainerInfo', 'vidProgressFilledInfo');
   initInfoVideoCtas();
 });
