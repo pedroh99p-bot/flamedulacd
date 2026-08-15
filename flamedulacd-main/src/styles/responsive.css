@@ -401,4 +401,18 @@
     .cta-buttons .btn { width: 100%; }
 }
 
-@media (max-width: 900px) { .footer-grid { grid-template-columns: 1fr; gap: 40px;} .footer-bottom { flex-direction: column; gap: 16px; text-align: center;} }
+@media (max-width: 900px) {
+    .footer-grid { grid-template-columns: 1fr; gap: 40px; }
+    .footer-social-hub { grid-template-columns: 1fr; }
+    .footer-social-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .footer-social-portal { grid-column: 1; }
+    .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+}
+
+@media (max-width: 520px) {
+    .footer-section { padding-top: 56px; }
+    .footer-social-hub { margin-inline: -4px; padding: 24px 16px; border-radius: 20px; }
+    .footer-social-links { grid-row: 3; grid-template-columns: 1fr; }
+    .footer-social-link { min-height: 60px; }
+    .footer-social-portal { grid-row: 2; width: 100%; text-align: center; }
+}
